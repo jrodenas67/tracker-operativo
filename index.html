@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Taperia de Caldes — Tracker Operativo 2026</title>
+<title>La Taperia de Caldes â Tracker Operativo 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -311,11 +311,11 @@
     /* Section title */
     .section-title { font-size: 15px; }
 
-    /* Paginación compacta */
+    /* PaginaciÃ³n compacta */
     .pagination { flex-wrap: wrap; gap: 4px; }
     .page-btn { padding: 4px 8px; font-size: 11px; }
 
-    /* Donut más pequeño */
+    /* Donut mÃ¡s pequeÃ±o */
     .donut-wrap { width: 130px; height: 130px; }
     .donut-center .big { font-size: 18px; }
 
@@ -332,20 +332,22 @@
 
 <header>
   <div class="logo">
-    <h1>🍽 La Taperia de Caldes</h1>
-    <p>Tracker Operativo 2026 · Datos del Excel actualizado</p>
+    <h1>ð½ La Taperia de Caldes</h1>
+    <p>Tracker Operativo 2026 Â· Datos del Excel actualizado</p>
   </div>
   <nav>
-    <button class="active" data-icon="📊" onclick="showTab('dashboard',this)">Dashboard</button>
-    <button data-icon="💶" onclick="showTab('facturacion',this)">Facturación</button>
-    <button data-icon="👥" onclick="showTab('personal',this)">Personal</button>
-    <button data-icon="📅" onclick="showTab('eventos',this)">Eventos</button>
-    <button data-icon="🔔" onclick="showTab('alertas',this)">Alertas</button>
-    <button data-icon="🛒" onclick="showTab('productmix',this)">Product Mix</button>
-    <button data-icon="📐" onclick="showTab('omnes',this)">Omnes</button>
-    <button data-icon="📈" onclick="showTab('ebitda',this)">P&L EBITDA</button>
-    <button data-icon="🧾" onclick="showTab('arqueo',this)">Arqueo</button>
-    <button data-icon="🏆" onclick="showTab('incentivos',this)">Incentivos</button>
+    <button class="active" data-icon="ð" onclick="showTab('dashboard',this)">Dashboard</button>
+    <button data-icon="ð¶" onclick="showTab('facturacion',this)">FacturaciÃ³n</button>
+    <button data-icon="ð¥" onclick="showTab('personal',this)">Personal</button>
+    <button data-icon="ð" onclick="showTab('eventos',this)">Eventos</button>
+    <button data-icon="ð" onclick="showTab('alertas',this)">Alertas</button>
+    <button data-icon="ð" onclick="showTab('productmix',this)">Product Mix</button>
+    <button data-icon="ð" onclick="showTab('omnes',this)">Omnes</button>
+    <button data-icon="ð" onclick="showTab('ebitda',this)">P&L EBITDA</button>
+    <button data-icon="ð§¾" onclick="showTab('arqueo',this)">Arqueo</button>
+    <button data-icon="ð" onclick="showTab('incentivos',this)">Incentivos</button>
+  
+    <button data-icon="📲" onclick="showTab('horarios',this)" style="background:rgba(39,133,90,.12);color:#27855a;font-weight:600;">Horarios</button>
   </nav>
 </header>
 
@@ -353,34 +355,34 @@
 <div id="dashboard" class="tab active">
   <div class="kpi-grid">
     <div class="kpi">
-      <label>Facturación real</label>
-      <div class="val">79.775 €</div>
-      <div class="sub">Enero–Abril 2026</div>
-      <span class="badge neutral">57 días operativos</span>
+      <label>FacturaciÃ³n real</label>
+      <div class="val">79.775 â¬</div>
+      <div class="sub">EneroâAbril 2026</div>
+      <span class="badge neutral">57 dÃ­as operativos</span>
     </div>
     <div class="kpi green">
       <label>Coste personal</label>
-      <div class="val">24.903 €</div>
-      <div class="sub">31,2% ratio ✓</div>
+      <div class="val">24.903 â¬</div>
+      <div class="sub">31,2% ratio â</div>
       <span class="badge ok">Dentro del objetivo</span>
     </div>
     <div class="kpi">
       <label>Margen bruto</label>
-      <div class="val">54.872 €</div>
+      <div class="val">54.872 â¬</div>
       <div class="sub">68,8% sobre ventas</div>
       <span class="badge neutral">Acumulado 2026</span>
     </div>
     <div class="kpi blue">
-      <label>Mejor día</label>
-      <div class="val">3.908 €</div>
-      <div class="sub">07/02 — sáb</div>
-      <span class="badge neutral">Record Ene–Abr</span>
+      <label>Mejor dÃ­a</label>
+      <div class="val">3.908 â¬</div>
+      <div class="sub">07/02 â sÃ¡b</div>
+      <span class="badge neutral">Record EneâAbr</span>
     </div>
   </div>
 
   <div class="grid2">
     <div class="card">
-      <div class="card-title">Facturación mensual 2026 vs 2025</div>
+      <div class="card-title">FacturaciÃ³n mensual 2026 vs 2025</div>
       <div class="bar-chart" id="monthly-bars"></div>
     </div>
     <div class="card">
@@ -391,11 +393,11 @@
 
   <div class="grid3">
     <div class="card">
-      <div class="card-title">Distribución por turno (global)</div>
+      <div class="card-title">DistribuciÃ³n por turno (global)</div>
       <div class="donut-wrap">
         <svg viewBox="0 0 160 160" width="160" height="160">
           <circle cx="80" cy="80" r="60" fill="none" stroke="#242220" stroke-width="22"/>
-          <!-- Mañana: 8947 / 80867 = 11.1% -->
+          <!-- MaÃ±ana: 8947 / 80867 = 11.1% -->
           <circle cx="80" cy="80" r="60" fill="none" stroke="#5db87a" stroke-width="22"
             stroke-dasharray="41.7 335.8" stroke-dashoffset="0"/>
           <!-- Mediodia: 42811 / 80867 = 52.9% -->
@@ -407,21 +409,21 @@
         </svg>
         <div class="donut-center">
           <div class="big">80.9k</div>
-          <div class="small">€ total</div>
+          <div class="small">â¬ total</div>
         </div>
       </div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#5db87a"></div><span style="flex:1">Mañana</span><span class="mono">8.948 € · 11%</span></div>
-        <div class="legend-item"><div class="legend-dot" style="background:#d4a853"></div><span style="flex:1">Mediodía</span><span class="mono">42.811 € · 53%</span></div>
-        <div class="legend-item"><div class="legend-dot" style="background:#5b8fd4"></div><span style="flex:1">Noche</span><span class="mono">29.108 € · 36%</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5db87a"></div><span style="flex:1">MaÃ±ana</span><span class="mono">8.948 â¬ Â· 11%</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d4a853"></div><span style="flex:1">MediodÃ­a</span><span class="mono">42.811 â¬ Â· 53%</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5b8fd4"></div><span style="flex:1">Noche</span><span class="mono">29.108 â¬ Â· 36%</span></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Top 5 días por facturación</div>
+      <div class="card-title">Top 5 dÃ­as por facturaciÃ³n</div>
       <div id="top-days-list"></div>
     </div>
     <div class="card">
-      <div class="card-title">Empleados — top 5 coste acumulado</div>
+      <div class="card-title">Empleados â top 5 coste acumulado</div>
       <div id="emp-top-list"></div>
     </div>
   </div>
@@ -431,7 +433,7 @@
     <div class="tbl-wrap">
       <table id="monthly-table">
         <thead><tr>
-          <th>Mes</th><th>Días</th><th>Facturación</th><th>Coste</th><th>Margen</th><th>% Coste</th><th>vs 2025</th><th>Prev. 2026</th>
+          <th>Mes</th><th>DÃ­as</th><th>FacturaciÃ³n</th><th>Coste</th><th>Margen</th><th>% Coste</th><th>vs 2025</th><th>Prev. 2026</th>
         </tr></thead>
         <tbody id="monthly-tbody"></tbody>
       </table>
@@ -439,7 +441,7 @@
   </div>
 </div>
 
-<!-- FACTURACIÓN -->
+<!-- FACTURACIÃN -->
 <div id="facturacion" class="tab">
   <div class="filters" id="fac-filters">
     <button class="filter-btn active" onclick="filterFac(0,this)">Todo</button>
@@ -449,24 +451,24 @@
     <button class="filter-btn" onclick="filterFac(4,this)">Abril</button>
   </div>
   <div class="filters" id="day-filters">
-    <button class="filter-btn active" onclick="filterDay('',this)">Todos los días</button>
+    <button class="filter-btn active" onclick="filterDay('',this)">Todos los dÃ­as</button>
     <button class="filter-btn" onclick="filterDay('lun',this)">Lunes</button>
     <button class="filter-btn" onclick="filterDay('mar',this)">Martes</button>
-    <button class="filter-btn" onclick="filterDay('mié',this)">Miércoles</button>
+    <button class="filter-btn" onclick="filterDay('miÃ©',this)">MiÃ©rcoles</button>
     <button class="filter-btn" onclick="filterDay('jue',this)">Jueves</button>
     <button class="filter-btn" onclick="filterDay('vie',this)">Viernes</button>
-    <button class="filter-btn" onclick="filterDay('sáb',this)">Sábado</button>
+    <button class="filter-btn" onclick="filterDay('sÃ¡b',this)">SÃ¡bado</button>
     <button class="filter-btn" onclick="filterDay('dom',this)">Domingo</button>
   </div>
   <div style="color:var(--text2);font-size:12px;margin-bottom:16px;" id="fac-count"></div>
 
   <div class="grid2" style="margin-bottom:20px;">
     <div class="card">
-      <div class="card-title">Real vs Previsto (selección)</div>
+      <div class="card-title">Real vs Previsto (selecciÃ³n)</div>
       <div id="rv-chart"></div>
     </div>
     <div class="card">
-      <div class="card-title">Distribución por turno (selección)</div>
+      <div class="card-title">DistribuciÃ³n por turno (selecciÃ³n)</div>
       <div id="turno-sel-chart"></div>
     </div>
   </div>
@@ -476,7 +478,7 @@
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Fecha</th><th>Día</th><th>Mañana</th><th>Mediodía</th><th>Noche</th><th>Total real</th><th>Previsto</th><th>Desv. €</th><th>% Coste</th><th>Evento</th>
+          <th>Fecha</th><th>DÃ­a</th><th>MaÃ±ana</th><th>MediodÃ­a</th><th>Noche</th><th>Total real</th><th>Previsto</th><th>Desv. â¬</th><th>% Coste</th><th>Evento</th>
         </tr></thead>
         <tbody id="daily-tbody"></tbody>
       </table>
@@ -489,7 +491,7 @@
 <div id="personal" class="tab">
   <div class="filters">
     <button class="filter-btn active" onclick="filterEmp('anual',this)">Acumulado 2026</button>
-    <button class="filter-btn" onclick="filterEmp('mes',this)">Último mes (Abril)</button>
+    <button class="filter-btn" onclick="filterEmp('mes',this)">Ãltimo mes (Abril)</button>
   </div>
 
   <div class="grid2">
@@ -498,14 +500,14 @@
       <div id="emp-bars"></div>
     </div>
     <div class="card">
-      <div class="card-title">Distribución coste</div>
+      <div class="card-title">DistribuciÃ³n coste</div>
       <div class="donut-wrap" id="emp-donut-wrap">
         <svg viewBox="0 0 160 160" width="160" height="160" id="emp-donut-svg">
           <circle cx="80" cy="80" r="60" fill="none" stroke="#242220" stroke-width="22"/>
         </svg>
         <div class="donut-center">
           <div class="big" id="emp-donut-total">25.5k</div>
-          <div class="small">€ total</div>
+          <div class="small">â¬ total</div>
         </div>
       </div>
       <div class="legend" id="emp-legend"></div>
@@ -518,7 +520,7 @@
       <table>
         <thead>
           <tr id="emp-thead">
-            <th>Empleado</th><th>€/hora</th><th>Horas</th><th>Coste total</th><th>% s/masa</th><th>Mañana</th><th>Mediodía</th><th>Noche</th>
+            <th>Empleado</th><th>â¬/hora</th><th>Horas</th><th>Coste total</th><th>% s/masa</th><th>MaÃ±ana</th><th>MediodÃ­a</th><th>Noche</th>
           </tr>
         </thead>
         <tbody id="emp-tbody"></tbody>
@@ -533,14 +535,14 @@
     <div class="card-title">Calendario completo de eventos 2026</div>
     <div class="filters">
       <button class="filter-btn active" onclick="filterEv('all',this)">Todos</button>
-      <button class="filter-btn" onclick="filterEv('past',this)">✓ Pasados</button>
-      <button class="filter-btn" onclick="filterEv('confirmed',this)">⚡ Confirmados</button>
-      <button class="filter-btn" onclick="filterEv('pending',this)">📅 Pendientes</button>
+      <button class="filter-btn" onclick="filterEv('past',this)">â Pasados</button>
+      <button class="filter-btn" onclick="filterEv('confirmed',this)">â¡ Confirmados</button>
+      <button class="filter-btn" onclick="filterEv('pending',this)">ð Pendientes</button>
     </div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Mes</th><th>Fecha</th><th>Evento</th><th>Tipo</th><th>Mult.</th><th>Previsto</th><th>Real</th><th>Desviación</th><th>Estado</th>
+          <th>Mes</th><th>Fecha</th><th>Evento</th><th>Tipo</th><th>Mult.</th><th>Previsto</th><th>Real</th><th>DesviaciÃ³n</th><th>Estado</th>
         </tr></thead>
         <tbody id="ev-tbody"></tbody>
       </table>
@@ -550,16 +552,16 @@
 
 <!-- ALERTAS -->
 <div id="alertas" class="tab">
-  <div class="section-title">🔴 Alertas y acciones prioritarias <span>Actualizado Abril 2026</span></div>
+  <div class="section-title">ð´ Alertas y acciones prioritarias <span>Actualizado Abril 2026</span></div>
 
   <div id="alert-blocks"></div>
 
-  <div class="section-title" style="margin-top:32px;">📋 Días con ratio coste &gt; 45% — rentabilidad a revisar</div>
+  <div class="section-title" style="margin-top:32px;">ð DÃ­as con ratio coste &gt; 45% â rentabilidad a revisar</div>
   <div class="card">
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Fecha</th><th>Día</th><th>Facturación</th><th>Coste</th><th>Ratio</th><th>vs media (31,2%)</th>
+          <th>Fecha</th><th>DÃ­a</th><th>FacturaciÃ³n</th><th>Coste</th><th>Ratio</th><th>vs media (31,2%)</th>
         </tr></thead>
         <tbody id="high-ratio-tbody"></tbody>
       </table>
@@ -571,19 +573,19 @@
 <div id="productmix" class="tab">
   <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:28px;">
     <div class="kpi">
-      <label>Total ventas (histórico)</label>
-      <div class="val">209.026 €</div>
-      <div class="sub">Caja 1 — datos 2025–2026</div>
+      <label>Total ventas (histÃ³rico)</label>
+      <div class="val">209.026 â¬</div>
+      <div class="sub">Caja 1 â datos 2025â2026</div>
     </div>
     <div class="kpi green">
-      <label>Familia líder</label>
+      <label>Familia lÃ­der</label>
       <div class="val" style="font-size:20px;">Tapas Calientes</div>
-      <div class="sub">61.782 € · 29,6% del total</div>
+      <div class="sub">61.782 â¬ Â· 29,6% del total</div>
     </div>
     <div class="kpi blue">
       <label>Producto top</label>
-      <div class="val" style="font-size:18px;">Menú</div>
-      <div class="sub">20.879 € · 1.440 uds</div>
+      <div class="val" style="font-size:18px;">MenÃº</div>
+      <div class="sub">20.879 â¬ Â· 1.440 uds</div>
     </div>
   </div>
 
@@ -593,14 +595,14 @@
       <div id="fam-bars"></div>
     </div>
     <div class="card">
-      <div class="card-title">Distribución top 6 familias</div>
+      <div class="card-title">DistribuciÃ³n top 6 familias</div>
       <div class="donut-wrap">
         <svg viewBox="0 0 160 160" width="160" height="160" id="fam-donut-svg">
           <circle cx="80" cy="80" r="60" fill="none" stroke="#e8e4de" stroke-width="22"/>
         </svg>
         <div class="donut-center">
           <div class="big" id="fam-donut-val">209k</div>
-          <div class="small">€ total</div>
+          <div class="small">â¬ total</div>
         </div>
       </div>
       <div class="legend" id="fam-legend"></div>
@@ -615,7 +617,7 @@
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>#</th><th>Producto</th><th>Familia</th><th>Uds</th><th>Importe €</th><th>% total</th>
+          <th>#</th><th>Producto</th><th>Familia</th><th>Uds</th><th>Importe â¬</th><th>% total</th>
         </tr></thead>
         <tbody id="prod-tbody"></tbody>
       </table>
@@ -626,22 +628,22 @@
 <!-- OMNES -->
 <div id="omnes" class="tab">
   <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,#fffdf7,#fff8e8);border-color:#e8d9a0;">
-    <div class="card-title" style="color:#8a6a00;">📐 Principios de Omnes — Metodología de precios</div>
+    <div class="card-title" style="color:#8a6a00;">ð Principios de Omnes â MetodologÃ­a de precios</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:8px;">
       <div style="padding:12px;background:white;border-radius:8px;border:1px solid #e8dbd0;">
-        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">① Dispersión</div>
-        <div style="font-size:12px;color:var(--text);">3 zonas de precio: baja, media, alta. Mide la distribución de productos por rango.</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">â  DispersiÃ³n</div>
+        <div style="font-size:12px;color:var(--text);">3 zonas de precio: baja, media, alta. Mide la distribuciÃ³n de productos por rango.</div>
       </div>
       <div style="padding:12px;background:white;border-radius:8px;border:1px solid #e8dbd0;">
-        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">② Apertura</div>
-        <div style="font-size:12px;color:var(--text);">Pmáx ÷ Pmín. Objetivo: ≤2,5x (&lt;10 prod.) o ≤3x (&gt;9 prod.). Exceder = carta demasiado amplia.</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">â¡ Apertura</div>
+        <div style="font-size:12px;color:var(--text);">PmÃ¡x Ã· PmÃ­n. Objetivo: â¤2,5x (&lt;10 prod.) o â¤3x (&gt;9 prod.). Exceder = carta demasiado amplia.</div>
       </div>
       <div style="padding:12px;background:white;border-radius:8px;border:1px solid #e8dbd0;">
-        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">③ Ratio D/O</div>
-        <div style="font-size:12px;color:var(--text);">Precio medio demandado ÷ precio medio ofertado. Ideal: 0,85–1,05. Indica si el cliente compra en la gama esperada.</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">â¢ Ratio D/O</div>
+        <div style="font-size:12px;color:var(--text);">Precio medio demandado Ã· precio medio ofertado. Ideal: 0,85â1,05. Indica si el cliente compra en la gama esperada.</div>
       </div>
       <div style="padding:12px;background:white;border-radius:8px;border:1px solid #e8dbd0;">
-        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">④ Promoción</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:6px;">â£ PromociÃ³n</div>
         <div style="font-size:12px;color:var(--text);">Destacar productos de gama media para guiar al cliente hacia el precio objetivo.</div>
       </div>
     </div>
@@ -659,14 +661,14 @@
   </div>
 
   <div class="card">
-    <div class="card-title">Análisis completo de precios — Subfamilias</div>
+    <div class="card-title">AnÃ¡lisis completo de precios â Subfamilias</div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Subfamilia</th><th>Nº prod.</th><th>P. mín</th><th>P. máx</th>
-          <th>① Baja</th><th>① Media</th><th>① Alta</th>
-          <th>② Apertura</th><th>② Límite</th><th>② Estado</th>
-          <th>③ Ratio D/O</th><th>③ Estado</th>
+          <th>Subfamilia</th><th>NÂº prod.</th><th>P. mÃ­n</th><th>P. mÃ¡x</th>
+          <th>â  Baja</th><th>â  Media</th><th>â  Alta</th>
+          <th>â¡ Apertura</th><th>â¡ LÃ­mite</th><th>â¡ Estado</th>
+          <th>â¢ Ratio D/O</th><th>â¢ Estado</th>
         </tr></thead>
         <tbody id="omnes-tbody"></tbody>
       </table>
@@ -677,15 +679,15 @@
 <script>
 // ========== DATA ==========
 const DATA = {
-  daily: [{"fecha":"2026-01-02","dia":"vie","mes":1,"manana":181.98,"mediodia":702.65,"noche":727.68,"total":1612.31,"previsto":1865.41,"coste":485.09,"pctCoste":0.3009,"evento":""},{"fecha":"2026-01-03","dia":"sáb","mes":1,"manana":180.19,"mediodia":1059.47,"noche":382.82,"total":1622.48,"previsto":2049.82,"coste":469.53,"pctCoste":0.2894,"evento":""},{"fecha":"2026-01-04","dia":"dom","mes":1,"manana":105.81,"mediodia":833.84,"noche":0.0,"total":939.65,"previsto":1690.06,"coste":374.33,"pctCoste":0.3984,"evento":""},{"fecha":"2026-01-07","dia":"mié","mes":1,"manana":97.4,"mediodia":343.52,"noche":159.98,"total":600.9,"previsto":1039.95,"coste":391.22,"pctCoste":0.6511,"evento":""},{"fecha":"2026-01-08","dia":"jue","mes":1,"manana":80.31,"mediodia":553.39,"noche":39.63,"total":673.33,"previsto":1100.22,"coste":447.85,"pctCoste":0.6651,"evento":""},{"fecha":"2026-01-09","dia":"vie","mes":1,"manana":123.26,"mediodia":210.75,"noche":652.09,"total":986.1,"previsto":1865.41,"coste":342.1,"pctCoste":0.3469,"evento":""},{"fecha":"2026-01-10","dia":"sáb","mes":1,"manana":130.85,"mediodia":1168.21,"noche":1131.23,"total":2430.29,"previsto":2049.82,"coste":518.99,"pctCoste":0.2135,"evento":""},{"fecha":"2026-01-11","dia":"dom","mes":1,"manana":95.79,"mediodia":758.85,"noche":0.0,"total":854.64,"previsto":1690.06,"coste":306.24,"pctCoste":0.3583,"evento":""},{"fecha":"2026-01-14","dia":"mié","mes":1,"manana":218.08,"mediodia":212.53,"noche":103.28,"total":533.89,"previsto":1039.95,"coste":288.7,"pctCoste":0.5408,"evento":""},{"fecha":"2026-01-15","dia":"jue","mes":1,"manana":125.54,"mediodia":469.56,"noche":210.6,"total":805.7,"previsto":1100.22,"coste":417.77,"pctCoste":0.5185,"evento":""},{"fecha":"2026-01-16","dia":"vie","mes":1,"manana":107.89,"mediodia":209.32,"noche":933.73,"total":1250.94,"previsto":1865.41,"coste":487.6,"pctCoste":0.3898,"evento":""},{"fecha":"2026-01-17","dia":"sáb","mes":1,"manana":85.19,"mediodia":460.75,"noche":455.55,"total":1001.49,"previsto":2049.82,"coste":449.78,"pctCoste":0.4491,"evento":""},{"fecha":"2026-01-18","dia":"dom","mes":1,"manana":157.7,"mediodia":965.87,"noche":0.0,"total":1123.57,"previsto":1690.06,"coste":347.71,"pctCoste":0.3095,"evento":""},{"fecha":"2026-01-21","dia":"mié","mes":1,"manana":201.31,"mediodia":344.81,"noche":208.73,"total":754.85,"previsto":1039.95,"coste":370.41,"pctCoste":0.4907,"evento":""},{"fecha":"2026-01-22","dia":"jue","mes":1,"manana":150.96,"mediodia":624.94,"noche":92.68,"total":868.58,"previsto":1100.22,"coste":385.47,"pctCoste":0.4438,"evento":""},{"fecha":"2026-01-23","dia":"vie","mes":1,"manana":137.45,"mediodia":250.45,"noche":812.96,"total":1200.86,"previsto":1865.41,"coste":469.0,"pctCoste":0.3906,"evento":""},{"fecha":"2026-01-24","dia":"sáb","mes":1,"manana":233.58,"mediodia":685.5,"noche":668.82,"total":1587.9,"previsto":2049.82,"coste":466.51,"pctCoste":0.2938,"evento":""},{"fecha":"2026-01-25","dia":"dom","mes":1,"manana":283.69,"mediodia":1524.29,"noche":0.0,"total":1807.98,"previsto":1690.06,"coste":384.38,"pctCoste":0.2126,"evento":""},{"fecha":"2026-01-28","dia":"mié","mes":1,"manana":161.14,"mediodia":233.54,"noche":125.41,"total":520.09,"previsto":1039.95,"coste":404.91,"pctCoste":0.7785,"evento":""},{"fecha":"2026-01-29","dia":"jue","mes":1,"manana":186.89,"mediodia":868.48,"noche":289.96,"total":1345.33,"previsto":1100.22,"coste":280.57,"pctCoste":0.2086,"evento":""},{"fecha":"2026-01-30","dia":"vie","mes":1,"manana":109.96,"mediodia":477.46,"noche":1400.91,"total":1988.33,"previsto":1865.41,"coste":492.2,"pctCoste":0.2475,"evento":""},{"fecha":"2026-01-31","dia":"sáb","mes":1,"manana":129.5,"mediodia":1084.27,"noche":721.14,"total":1934.91,"previsto":2049.82,"coste":601.84,"pctCoste":0.311,"evento":""},{"fecha":"2026-02-01","dia":"dom","mes":2,"manana":218.07,"mediodia":875.83,"noche":0.0,"total":1093.9,"previsto":1690.06,"coste":376.48,"pctCoste":0.3442,"evento":""},{"fecha":"2026-02-04","dia":"mié","mes":2,"manana":119.49,"mediodia":244.93,"noche":182.91,"total":547.33,"previsto":1039.95,"coste":407.89,"pctCoste":0.7452,"evento":""},{"fecha":"2026-02-05","dia":"jue","mes":2,"manana":142.64,"mediodia":373.61,"noche":701.17,"total":1217.42,"previsto":1100.22,"coste":438.35,"pctCoste":0.3601,"evento":""},{"fecha":"2026-02-06","dia":"vie","mes":2,"manana":126.59,"mediodia":501.9,"noche":1328.73,"total":1957.22,"previsto":1865.41,"coste":542.42,"pctCoste":0.2771,"evento":""},{"fecha":"2026-02-07","dia":"sáb","mes":2,"manana":266.87,"mediodia":2389.89,"noche":1250.82,"total":3907.58,"previsto":2049.82,"coste":630.82,"pctCoste":0.1614,"evento":""},{"fecha":"2026-02-08","dia":"dom","mes":2,"manana":289.88,"mediodia":1830.82,"noche":0.0,"total":2120.7,"previsto":1690.06,"coste":456.12,"pctCoste":0.2151,"evento":""},{"fecha":"2026-02-11","dia":"mié","mes":2,"manana":167.31,"mediodia":358.44,"noche":602.65,"total":1128.4,"previsto":1039.95,"coste":460.59,"pctCoste":0.4082,"evento":""},{"fecha":"2026-02-12","dia":"jue","mes":2,"manana":118.64,"mediodia":206.56,"noche":293.31,"total":618.51,"previsto":1100.22,"coste":415.99,"pctCoste":0.6726,"evento":""},{"fecha":"2026-02-13","dia":"vie","mes":2,"manana":225.33,"mediodia":378.39,"noche":501.77,"total":1105.49,"previsto":1865.41,"coste":476.21,"pctCoste":0.4308,"evento":""},{"fecha":"2026-02-14","dia":"sáb","mes":2,"manana":169.26,"mediodia":1474.64,"noche":1898.82,"total":3542.72,"previsto":2049.82,"coste":594.47,"pctCoste":0.1678,"evento":"San Valentín"},{"fecha":"2026-02-15","dia":"dom","mes":2,"manana":216.71,"mediodia":1342.64,"noche":0.0,"total":1559.35,"previsto":1690.06,"coste":411.63,"pctCoste":0.264,"evento":""},{"fecha":"2026-02-18","dia":"mié","mes":2,"manana":130.72,"mediodia":399.24,"noche":240.46,"total":770.42,"previsto":1039.95,"coste":357.61,"pctCoste":0.4642,"evento":""},{"fecha":"2026-02-19","dia":"jue","mes":2,"manana":122.81,"mediodia":572.43,"noche":97.45,"total":792.69,"previsto":1100.22,"coste":374.43,"pctCoste":0.4724,"evento":""},{"fecha":"2026-02-20","dia":"vie","mes":2,"manana":100.61,"mediodia":355.25,"noche":804.16,"total":1260.02,"previsto":1865.41,"coste":439.91,"pctCoste":0.3491,"evento":""},{"fecha":"2026-02-21","dia":"sáb","mes":2,"manana":168.76,"mediodia":1685.16,"noche":1330.53,"total":3184.45,"previsto":2049.82,"coste":605.54,"pctCoste":0.1902,"evento":""},{"fecha":"2026-02-22","dia":"dom","mes":2,"manana":223.91,"mediodia":1961.4,"noche":0.0,"total":2185.31,"previsto":1690.06,"coste":514.02,"pctCoste":0.2352,"evento":"Carnaval"},{"fecha":"2026-03-11","dia":"mié","mes":3,"manana":86.82,"mediodia":297.83,"noche":190.63,"total":575.28,"previsto":1039.95,"coste":370.62,"pctCoste":0.6442,"evento":""},{"fecha":"2026-03-12","dia":"jue","mes":3,"manana":69.66,"mediodia":329.1,"noche":191.8,"total":590.56,"previsto":1100.22,"coste":428.31,"pctCoste":0.7253,"evento":""},{"fecha":"2026-03-13","dia":"vie","mes":3,"manana":103.23,"mediodia":427.49,"noche":842.55,"total":1373.27,"previsto":1865.41,"coste":524.46,"pctCoste":0.3819,"evento":""},{"fecha":"2026-03-14","dia":"sáb","mes":3,"manana":183.96,"mediodia":884.15,"noche":1143.82,"total":2211.93,"previsto":2049.82,"coste":493.62,"pctCoste":0.2232,"evento":""},{"fecha":"2026-03-15","dia":"dom","mes":3,"manana":360.48,"mediodia":2310.0,"noche":12.85,"total":2683.33,"previsto":1690.06,"coste":495.99,"pctCoste":0.1848,"evento":"Mercado Olla"},{"fecha":"2026-03-18","dia":"mié","mes":3,"manana":148.34,"mediodia":587.4,"noche":255.19,"total":990.93,"previsto":1039.95,"coste":371.67,"pctCoste":0.3751,"evento":""},{"fecha":"2026-03-19","dia":"jue","mes":3,"manana":87.19,"mediodia":278.02,"noche":268.18,"total":633.39,"previsto":1100.22,"coste":349.1,"pctCoste":0.5512,"evento":""},{"fecha":"2026-03-20","dia":"vie","mes":3,"manana":152.66,"mediodia":573.44,"noche":893.64,"total":1619.74,"previsto":1865.41,"coste":455.33,"pctCoste":0.2811,"evento":""},{"fecha":"2026-03-21","dia":"sáb","mes":3,"manana":158.51,"mediodia":550.91,"noche":1290.16,"total":1999.58,"previsto":2049.82,"coste":514.75,"pctCoste":0.2574,"evento":""},{"fecha":"2026-03-22","dia":"dom","mes":3,"manana":166.85,"mediodia":542.11,"noche":0.0,"total":708.96,"previsto":1690.06,"coste":318.99,"pctCoste":0.4499,"evento":""},{"fecha":"2026-03-25","dia":"mié","mes":3,"manana":169.38,"mediodia":262.39,"noche":339.68,"total":771.45,"previsto":1039.95,"coste":373.54,"pctCoste":0.4842,"evento":""},{"fecha":"2026-03-26","dia":"jue","mes":3,"manana":99.37,"mediodia":269.89,"noche":419.24,"total":788.5,"previsto":1100.22,"coste":320.37,"pctCoste":0.4063,"evento":""},{"fecha":"2026-03-27","dia":"vie","mes":3,"manana":109.91,"mediodia":702.22,"noche":1151.0,"total":1963.13,"previsto":1865.41,"coste":494.54,"pctCoste":0.2519,"evento":""},{"fecha":"2026-03-28","dia":"sáb","mes":3,"manana":149.47,"mediodia":718.28,"noche":944.88,"total":1812.63,"previsto":2049.82,"coste":478.33,"pctCoste":0.2639,"evento":""},{"fecha":"2026-03-29","dia":"dom","mes":3,"manana":175.69,"mediodia":1341.94,"noche":0.0,"total":1517.63,"previsto":1690.06,"coste":436.9,"pctCoste":0.2879,"evento":"Semana Santa"},{"fecha":"2026-04-01","dia":"mié","mes":4,"manana":176.55,"mediodia":791.48,"noche":508.02,"total":1476.05,"previsto":1039.95,"coste":411.23,"pctCoste":0.2786,"evento":""},{"fecha":"2026-04-02","dia":"jue","mes":4,"manana":153.22,"mediodia":652.32,"noche":688.16,"total":1493.7,"previsto":1100.22,"coste":414.05,"pctCoste":0.2772,"evento":""},{"fecha":"2026-04-03","dia":"vie","mes":4,"manana":114.7,"mediodia":1117.17,"noche":0.0,"total":1231.87,"previsto":1865.41,"coste":485.62,"pctCoste":0.3942,"evento":""},{"fecha":"2026-04-04","dia":"sáb","mes":4,"manana":187.4,"mediodia":1181.72,"noche":528.59,"total":1897.71,"previsto":2049.82,"coste":481.14,"pctCoste":0.2535,"evento":""}],
+  daily: [{"fecha":"2026-01-02","dia":"vie","mes":1,"manana":181.98,"mediodia":702.65,"noche":727.68,"total":1612.31,"previsto":1865.41,"coste":485.09,"pctCoste":0.3009,"evento":""},{"fecha":"2026-01-03","dia":"sÃ¡b","mes":1,"manana":180.19,"mediodia":1059.47,"noche":382.82,"total":1622.48,"previsto":2049.82,"coste":469.53,"pctCoste":0.2894,"evento":""},{"fecha":"2026-01-04","dia":"dom","mes":1,"manana":105.81,"mediodia":833.84,"noche":0.0,"total":939.65,"previsto":1690.06,"coste":374.33,"pctCoste":0.3984,"evento":""},{"fecha":"2026-01-07","dia":"miÃ©","mes":1,"manana":97.4,"mediodia":343.52,"noche":159.98,"total":600.9,"previsto":1039.95,"coste":391.22,"pctCoste":0.6511,"evento":""},{"fecha":"2026-01-08","dia":"jue","mes":1,"manana":80.31,"mediodia":553.39,"noche":39.63,"total":673.33,"previsto":1100.22,"coste":447.85,"pctCoste":0.6651,"evento":""},{"fecha":"2026-01-09","dia":"vie","mes":1,"manana":123.26,"mediodia":210.75,"noche":652.09,"total":986.1,"previsto":1865.41,"coste":342.1,"pctCoste":0.3469,"evento":""},{"fecha":"2026-01-10","dia":"sÃ¡b","mes":1,"manana":130.85,"mediodia":1168.21,"noche":1131.23,"total":2430.29,"previsto":2049.82,"coste":518.99,"pctCoste":0.2135,"evento":""},{"fecha":"2026-01-11","dia":"dom","mes":1,"manana":95.79,"mediodia":758.85,"noche":0.0,"total":854.64,"previsto":1690.06,"coste":306.24,"pctCoste":0.3583,"evento":""},{"fecha":"2026-01-14","dia":"miÃ©","mes":1,"manana":218.08,"mediodia":212.53,"noche":103.28,"total":533.89,"previsto":1039.95,"coste":288.7,"pctCoste":0.5408,"evento":""},{"fecha":"2026-01-15","dia":"jue","mes":1,"manana":125.54,"mediodia":469.56,"noche":210.6,"total":805.7,"previsto":1100.22,"coste":417.77,"pctCoste":0.5185,"evento":""},{"fecha":"2026-01-16","dia":"vie","mes":1,"manana":107.89,"mediodia":209.32,"noche":933.73,"total":1250.94,"previsto":1865.41,"coste":487.6,"pctCoste":0.3898,"evento":""},{"fecha":"2026-01-17","dia":"sÃ¡b","mes":1,"manana":85.19,"mediodia":460.75,"noche":455.55,"total":1001.49,"previsto":2049.82,"coste":449.78,"pctCoste":0.4491,"evento":""},{"fecha":"2026-01-18","dia":"dom","mes":1,"manana":157.7,"mediodia":965.87,"noche":0.0,"total":1123.57,"previsto":1690.06,"coste":347.71,"pctCoste":0.3095,"evento":""},{"fecha":"2026-01-21","dia":"miÃ©","mes":1,"manana":201.31,"mediodia":344.81,"noche":208.73,"total":754.85,"previsto":1039.95,"coste":370.41,"pctCoste":0.4907,"evento":""},{"fecha":"2026-01-22","dia":"jue","mes":1,"manana":150.96,"mediodia":624.94,"noche":92.68,"total":868.58,"previsto":1100.22,"coste":385.47,"pctCoste":0.4438,"evento":""},{"fecha":"2026-01-23","dia":"vie","mes":1,"manana":137.45,"mediodia":250.45,"noche":812.96,"total":1200.86,"previsto":1865.41,"coste":469.0,"pctCoste":0.3906,"evento":""},{"fecha":"2026-01-24","dia":"sÃ¡b","mes":1,"manana":233.58,"mediodia":685.5,"noche":668.82,"total":1587.9,"previsto":2049.82,"coste":466.51,"pctCoste":0.2938,"evento":""},{"fecha":"2026-01-25","dia":"dom","mes":1,"manana":283.69,"mediodia":1524.29,"noche":0.0,"total":1807.98,"previsto":1690.06,"coste":384.38,"pctCoste":0.2126,"evento":""},{"fecha":"2026-01-28","dia":"miÃ©","mes":1,"manana":161.14,"mediodia":233.54,"noche":125.41,"total":520.09,"previsto":1039.95,"coste":404.91,"pctCoste":0.7785,"evento":""},{"fecha":"2026-01-29","dia":"jue","mes":1,"manana":186.89,"mediodia":868.48,"noche":289.96,"total":1345.33,"previsto":1100.22,"coste":280.57,"pctCoste":0.2086,"evento":""},{"fecha":"2026-01-30","dia":"vie","mes":1,"manana":109.96,"mediodia":477.46,"noche":1400.91,"total":1988.33,"previsto":1865.41,"coste":492.2,"pctCoste":0.2475,"evento":""},{"fecha":"2026-01-31","dia":"sÃ¡b","mes":1,"manana":129.5,"mediodia":1084.27,"noche":721.14,"total":1934.91,"previsto":2049.82,"coste":601.84,"pctCoste":0.311,"evento":""},{"fecha":"2026-02-01","dia":"dom","mes":2,"manana":218.07,"mediodia":875.83,"noche":0.0,"total":1093.9,"previsto":1690.06,"coste":376.48,"pctCoste":0.3442,"evento":""},{"fecha":"2026-02-04","dia":"miÃ©","mes":2,"manana":119.49,"mediodia":244.93,"noche":182.91,"total":547.33,"previsto":1039.95,"coste":407.89,"pctCoste":0.7452,"evento":""},{"fecha":"2026-02-05","dia":"jue","mes":2,"manana":142.64,"mediodia":373.61,"noche":701.17,"total":1217.42,"previsto":1100.22,"coste":438.35,"pctCoste":0.3601,"evento":""},{"fecha":"2026-02-06","dia":"vie","mes":2,"manana":126.59,"mediodia":501.9,"noche":1328.73,"total":1957.22,"previsto":1865.41,"coste":542.42,"pctCoste":0.2771,"evento":""},{"fecha":"2026-02-07","dia":"sÃ¡b","mes":2,"manana":266.87,"mediodia":2389.89,"noche":1250.82,"total":3907.58,"previsto":2049.82,"coste":630.82,"pctCoste":0.1614,"evento":""},{"fecha":"2026-02-08","dia":"dom","mes":2,"manana":289.88,"mediodia":1830.82,"noche":0.0,"total":2120.7,"previsto":1690.06,"coste":456.12,"pctCoste":0.2151,"evento":""},{"fecha":"2026-02-11","dia":"miÃ©","mes":2,"manana":167.31,"mediodia":358.44,"noche":602.65,"total":1128.4,"previsto":1039.95,"coste":460.59,"pctCoste":0.4082,"evento":""},{"fecha":"2026-02-12","dia":"jue","mes":2,"manana":118.64,"mediodia":206.56,"noche":293.31,"total":618.51,"previsto":1100.22,"coste":415.99,"pctCoste":0.6726,"evento":""},{"fecha":"2026-02-13","dia":"vie","mes":2,"manana":225.33,"mediodia":378.39,"noche":501.77,"total":1105.49,"previsto":1865.41,"coste":476.21,"pctCoste":0.4308,"evento":""},{"fecha":"2026-02-14","dia":"sÃ¡b","mes":2,"manana":169.26,"mediodia":1474.64,"noche":1898.82,"total":3542.72,"previsto":2049.82,"coste":594.47,"pctCoste":0.1678,"evento":"San ValentÃ­n"},{"fecha":"2026-02-15","dia":"dom","mes":2,"manana":216.71,"mediodia":1342.64,"noche":0.0,"total":1559.35,"previsto":1690.06,"coste":411.63,"pctCoste":0.264,"evento":""},{"fecha":"2026-02-18","dia":"miÃ©","mes":2,"manana":130.72,"mediodia":399.24,"noche":240.46,"total":770.42,"previsto":1039.95,"coste":357.61,"pctCoste":0.4642,"evento":""},{"fecha":"2026-02-19","dia":"jue","mes":2,"manana":122.81,"mediodia":572.43,"noche":97.45,"total":792.69,"previsto":1100.22,"coste":374.43,"pctCoste":0.4724,"evento":""},{"fecha":"2026-02-20","dia":"vie","mes":2,"manana":100.61,"mediodia":355.25,"noche":804.16,"total":1260.02,"previsto":1865.41,"coste":439.91,"pctCoste":0.3491,"evento":""},{"fecha":"2026-02-21","dia":"sÃ¡b","mes":2,"manana":168.76,"mediodia":1685.16,"noche":1330.53,"total":3184.45,"previsto":2049.82,"coste":605.54,"pctCoste":0.1902,"evento":""},{"fecha":"2026-02-22","dia":"dom","mes":2,"manana":223.91,"mediodia":1961.4,"noche":0.0,"total":2185.31,"previsto":1690.06,"coste":514.02,"pctCoste":0.2352,"evento":"Carnaval"},{"fecha":"2026-03-11","dia":"miÃ©","mes":3,"manana":86.82,"mediodia":297.83,"noche":190.63,"total":575.28,"previsto":1039.95,"coste":370.62,"pctCoste":0.6442,"evento":""},{"fecha":"2026-03-12","dia":"jue","mes":3,"manana":69.66,"mediodia":329.1,"noche":191.8,"total":590.56,"previsto":1100.22,"coste":428.31,"pctCoste":0.7253,"evento":""},{"fecha":"2026-03-13","dia":"vie","mes":3,"manana":103.23,"mediodia":427.49,"noche":842.55,"total":1373.27,"previsto":1865.41,"coste":524.46,"pctCoste":0.3819,"evento":""},{"fecha":"2026-03-14","dia":"sÃ¡b","mes":3,"manana":183.96,"mediodia":884.15,"noche":1143.82,"total":2211.93,"previsto":2049.82,"coste":493.62,"pctCoste":0.2232,"evento":""},{"fecha":"2026-03-15","dia":"dom","mes":3,"manana":360.48,"mediodia":2310.0,"noche":12.85,"total":2683.33,"previsto":1690.06,"coste":495.99,"pctCoste":0.1848,"evento":"Mercado Olla"},{"fecha":"2026-03-18","dia":"miÃ©","mes":3,"manana":148.34,"mediodia":587.4,"noche":255.19,"total":990.93,"previsto":1039.95,"coste":371.67,"pctCoste":0.3751,"evento":""},{"fecha":"2026-03-19","dia":"jue","mes":3,"manana":87.19,"mediodia":278.02,"noche":268.18,"total":633.39,"previsto":1100.22,"coste":349.1,"pctCoste":0.5512,"evento":""},{"fecha":"2026-03-20","dia":"vie","mes":3,"manana":152.66,"mediodia":573.44,"noche":893.64,"total":1619.74,"previsto":1865.41,"coste":455.33,"pctCoste":0.2811,"evento":""},{"fecha":"2026-03-21","dia":"sÃ¡b","mes":3,"manana":158.51,"mediodia":550.91,"noche":1290.16,"total":1999.58,"previsto":2049.82,"coste":514.75,"pctCoste":0.2574,"evento":""},{"fecha":"2026-03-22","dia":"dom","mes":3,"manana":166.85,"mediodia":542.11,"noche":0.0,"total":708.96,"previsto":1690.06,"coste":318.99,"pctCoste":0.4499,"evento":""},{"fecha":"2026-03-25","dia":"miÃ©","mes":3,"manana":169.38,"mediodia":262.39,"noche":339.68,"total":771.45,"previsto":1039.95,"coste":373.54,"pctCoste":0.4842,"evento":""},{"fecha":"2026-03-26","dia":"jue","mes":3,"manana":99.37,"mediodia":269.89,"noche":419.24,"total":788.5,"previsto":1100.22,"coste":320.37,"pctCoste":0.4063,"evento":""},{"fecha":"2026-03-27","dia":"vie","mes":3,"manana":109.91,"mediodia":702.22,"noche":1151.0,"total":1963.13,"previsto":1865.41,"coste":494.54,"pctCoste":0.2519,"evento":""},{"fecha":"2026-03-28","dia":"sÃ¡b","mes":3,"manana":149.47,"mediodia":718.28,"noche":944.88,"total":1812.63,"previsto":2049.82,"coste":478.33,"pctCoste":0.2639,"evento":""},{"fecha":"2026-03-29","dia":"dom","mes":3,"manana":175.69,"mediodia":1341.94,"noche":0.0,"total":1517.63,"previsto":1690.06,"coste":436.9,"pctCoste":0.2879,"evento":"Semana Santa"},{"fecha":"2026-04-01","dia":"miÃ©","mes":4,"manana":176.55,"mediodia":791.48,"noche":508.02,"total":1476.05,"previsto":1039.95,"coste":411.23,"pctCoste":0.2786,"evento":""},{"fecha":"2026-04-02","dia":"jue","mes":4,"manana":153.22,"mediodia":652.32,"noche":688.16,"total":1493.7,"previsto":1100.22,"coste":414.05,"pctCoste":0.2772,"evento":""},{"fecha":"2026-04-03","dia":"vie","mes":4,"manana":114.7,"mediodia":1117.17,"noche":0.0,"total":1231.87,"previsto":1865.41,"coste":485.62,"pctCoste":0.3942,"evento":""},{"fecha":"2026-04-04","dia":"sÃ¡b","mes":4,"manana":187.4,"mediodia":1181.72,"noche":528.59,"total":1897.71,"previsto":2049.82,"coste":481.14,"pctCoste":0.2535,"evento":""}],
   monthly: [{"mes":"Enero","real2026":26444.12,"prev2026":34897.1,"real2025":24019.87,"dias":22,"pctCoste":0.3472},{"mes":"Febrero","real2026":26991.51,"prev2026":24926.47,"real2025":26308.68,"dias":16,"pctCoste":0.278},{"mes":"Marzo","real2026":20240.31,"prev2026":23236.41,"real2025":20665.45,"dias":15,"pctCoste":0.3175},{"mes":"Abril","real2026":6099.33,"prev2026":33122.05,"real2025":28882.83,"dias":4,"pctCoste":0.2938},{"mes":"Mayo","real2026":0,"prev2026":36587.17,"real2025":24854.73,"dias":0,"pctCoste":0},{"mes":"Junio","real2026":0,"prev2026":30981.87,"real2025":34530.88,"dias":0,"pctCoste":0},{"mes":"Julio","real2026":0,"prev2026":34987.45,"real2025":44024.97,"dias":0,"pctCoste":0},{"mes":"Agosto","real2026":0,"prev2026":34721.76,"real2025":60080.85,"dias":0,"pctCoste":0},{"mes":"Septiembre","real2026":0,"prev2026":32021.83,"real2025":30861.73,"dias":0,"pctCoste":0},{"mes":"Octubre","real2026":0,"prev2026":35997.33,"real2025":38013.47,"dias":0,"pctCoste":0},{"mes":"Noviembre","real2026":0,"prev2026":32671.94,"real2025":19490.39,"dias":0,"pctCoste":0},{"mes":"Diciembre","real2026":0,"prev2026":33122.05,"real2025":19796.6,"dias":0,"pctCoste":0}],
-  employees: [{"nombre":"Sonia","euroHora":16,"horas":526.58,"total":8425.33,"pct":0.3306,"costeMa":1828,"costeMd":3844,"costeNo":2753.33},{"nombre":"Lourdes","euroHora":10,"horas":515.75,"total":5157.5,"pct":0.2024,"costeMa":2317.5,"costeMd":1932.5,"costeNo":907.5},{"nombre":"Jonh","euroHora":7.25,"horas":473.75,"total":3434.69,"pct":0.1348,"costeMa":607.19,"costeMd":1547.88,"costeNo":1279.62},{"nombre":"Alejandra","euroHora":6.39,"horas":362.75,"total":2317.97,"pct":0.091,"costeMa":766.8,"costeMd":862.65,"costeNo":688.52},{"nombre":"Mireia M.","euroHora":17.13,"horas":96,"total":1644.48,"pct":0.0645,"costeMa":0,"costeMd":0,"costeNo":1644.48},{"nombre":"Rubi","euroHora":5.17,"horas":305.33,"total":1578.57,"pct":0.0619,"costeMa":630.74,"costeMd":422.65,"costeNo":525.19},{"nombre":"Gabi","euroHora":7.3,"horas":171.25,"total":1250.12,"pct":0.0491,"costeMa":405.15,"costeMd":503.7,"costeNo":341.28},{"nombre":"Brigitte","euroHora":8,"horas":114.25,"total":914,"pct":0.0359,"costeMa":12,"costeMd":486,"costeNo":416},{"nombre":"Génesis","euroHora":8,"horas":31.75,"total":254,"pct":0.01,"costeMa":0,"costeMd":128,"costeNo":126},{"nombre":"Adria","euroHora":8,"horas":19.5,"total":156,"pct":0.0061,"costeMa":0,"costeMd":156,"costeNo":0}],
-  employeesMes: [{"nombre":"Sonia","euroHora":16,"horas":39.33,"total":629.33,"pct":0.3512},{"nombre":"Lourdes","euroHora":10,"horas":45.75,"total":457.5,"pct":0.2553},{"nombre":"Jonh","euroHora":7.25,"horas":35.5,"total":257.38,"pct":0.1436},{"nombre":"Rubi","euroHora":5.17,"horas":42.08,"total":217.57,"pct":0.1214},{"nombre":"Brigitte","euroHora":8,"horas":18.25,"total":146,"pct":0.0815},{"nombre":"Mireia M.","euroHora":17.13,"horas":2,"total":34.26,"pct":0.0191},{"nombre":"Génesis","euroHora":8,"horas":3.25,"total":26,"pct":0.0145},{"nombre":"Adria","euroHora":8,"horas":3,"total":24,"pct":0.0134},{"nombre":"Alejandra","euroHora":6.39,"horas":0,"total":0,"pct":0},{"nombre":"Gabi","euroHora":7.3,"horas":0,"total":0,"pct":0}],
-  events: [{"mes":"Enero","fecha":"19/01/2026","evento":"San Antonio Abad","tipo":"Festivo local","mult":1.5,"prev":1800,"real":0,"estado":"✓ Pasado"},{"mes":"Febrero","fecha":"14/02/2026","evento":"San Valentín","tipo":"Evento especial","mult":2.8,"prev":4000,"real":3542.72,"estado":"✓ Pasado"},{"mes":"Febrero","fecha":"21-22/02","evento":"Carnaval","tipo":"Fiesta local","mult":2.0,"prev":3500,"real":3184.45,"estado":"✓ Pasado"},{"mes":"Marzo","fecha":"15/03/2026","evento":"Mercado Olla","tipo":"Mercado local","mult":1.8,"prev":2800,"real":2683.33,"estado":"✓ Pasado"},{"mes":"Marzo","fecha":"28-29/03","evento":"Semana Santa","tipo":"Festivo","mult":1.9,"prev":2200,"real":1812.63,"estado":"✓ Pasado"},{"mes":"Abril","fecha":"26/04/2026","evento":"Joan Pera — Casino","tipo":"Monólogo","mult":2.5,"prev":2800,"real":0,"estado":"⚡ Confirmado"},{"mes":"Abril","fecha":"2026-04-04","evento":"Barça: Atlético (F) LaLiga","tipo":"⚽ Fútbol Barça","mult":1.3,"prev":0,"real":0,"estado":"✓ Pasado"},{"mes":"Abril","fecha":"2026-08-04","evento":"Barça vs Atlético (Champions QF ida)","tipo":"⚽ Champions","mult":1.8,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Abril","fecha":"14/04/2026","evento":"Barça: Atlético Champions QF vuelta","tipo":"⚽ Champions","mult":1.6,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Abril","fecha":"22/04/2026","evento":"Barça vs Celta de Vigo LaLiga","tipo":"⚽ Fútbol Barça","mult":1.3,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Abril","fecha":"25/04/2026","evento":"Barça: Bayern Champions SF","tipo":"⚽ Champions","mult":1.8,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Mayo","fecha":"17-18/05","evento":"Fira Titiriteiros","tipo":"Feria","mult":1.5,"prev":1800,"real":0,"estado":"📅 Pendiente"},{"mes":"Mayo","fecha":"13/05/2026","evento":"Barça: Alavés LaLiga","tipo":"⚽ Fútbol Barça","mult":1.2,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Mayo","fecha":"17/05/2026","evento":"Barça vs Betis LaLiga","tipo":"⚽ Fútbol Barça","mult":1.3,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Mayo","fecha":"24/05/2026","evento":"Barça: Valencia última jornada","tipo":"⚽ Fútbol Barça","mult":1.4,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Mayo","fecha":"El Clásico","evento":"⭐ Barça vs Real Madrid ¡EL CLÁSICO!","tipo":"⚽ Fútbol Barça","mult":2.5,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Junio","fecha":"24/06/2026","evento":"San Juan / Caldeja't","tipo":"Festivo","mult":1.5,"prev":2000,"real":0,"estado":"📅 Pendiente"},{"mes":"Junio","fecha":"15/06/2026","evento":"🇪🇸 España vs Cabo Verde (Mundial)","tipo":"🏆 Selección España","mult":2.0,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Junio","fecha":"26/06/2026","evento":"🇪🇸 Uruguay vs España (Mundial)","tipo":"🏆 Selección España","mult":2.2,"prev":0,"real":0,"estado":"⚡ Confirmado"},{"mes":"Julio","fecha":"11/07/2026","evento":"Escaldàrium","tipo":"Fiesta mayor","mult":2.1,"prev":3800,"real":0,"estado":"📅 Pendiente"},{"mes":"Julio","fecha":"Est. julio","evento":"🇪🇸 España Octavos Mundial","tipo":"🏆 Selección España","mult":2.5,"prev":0,"real":0,"estado":"⚠️ Por confirmar"},{"mes":"Julio","fecha":"Est. julio","evento":"🇪🇸 España Cuartos Mundial","tipo":"🏆 Selección España","mult":2.8,"prev":0,"real":0,"estado":"⚠️ Por confirmar"},{"mes":"Agosto","fecha":"15-16/08","evento":"Asunción pico","tipo":"Festivo","mult":1.8,"prev":3500,"real":0,"estado":"📅 Pendiente"},{"mes":"Agosto","fecha":"16/08/2026","evento":"Barça: Mallorca J1 nueva temp.","tipo":"⚽ Fútbol Barça","mult":1.3,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Septiembre","fecha":"27/09/2026","evento":"MIAU Festival Arte","tipo":"Festival arte","mult":1.5,"prev":2200,"real":0,"estado":"📅 Pendiente"},{"mes":"Septiembre","fecha":"26/09/2026","evento":"🇪🇸 Inglaterra vs España (Nations L.)","tipo":"🏆 Selección España","mult":1.5,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Septiembre","fecha":"29/09/2026","evento":"🇪🇸 España vs Croacia (Nations L.)","tipo":"🏆 Selección España","mult":1.5,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Octubre","fecha":"10-11/10","evento":"Festa Major","tipo":"Fiesta mayor","mult":2.7,"prev":6500,"real":0,"estado":"📅 Pendiente"},{"mes":"Octubre","fecha":"18-19/10","evento":"Capvuitada/Mercat","tipo":"Feria/festivo","mult":1.9,"prev":3800,"real":0,"estado":"📅 Pendiente"},{"mes":"Noviembre","fecha":"28/11/2026","evento":"Casino espectáculo","tipo":"Monólogo","mult":2.5,"prev":4200,"real":0,"estado":"⚠️ Por confirmar"},{"mes":"Noviembre","fecha":"15/11/2026","evento":"🇪🇸 España vs Inglaterra (Nations L.)","tipo":"🏆 Selección España","mult":1.8,"prev":0,"real":0,"estado":"📅 Pendiente"},{"mes":"Diciembre","fecha":"5-6/12/2026","evento":"Fira Nadal","tipo":"Feria Navidad","mult":2.4,"prev":5500,"real":0,"estado":"📅 Pendiente"},{"mes":"Diciembre","fecha":"31/12/2026","evento":"Fin de Año","tipo":"Especial","mult":2.0,"prev":3000,"real":0,"estado":"📅 Pendiente"}]
+  employees: [{"nombre":"Sonia","euroHora":16,"horas":526.58,"total":8425.33,"pct":0.3306,"costeMa":1828,"costeMd":3844,"costeNo":2753.33},{"nombre":"Lourdes","euroHora":10,"horas":515.75,"total":5157.5,"pct":0.2024,"costeMa":2317.5,"costeMd":1932.5,"costeNo":907.5},{"nombre":"Jonh","euroHora":7.25,"horas":473.75,"total":3434.69,"pct":0.1348,"costeMa":607.19,"costeMd":1547.88,"costeNo":1279.62},{"nombre":"Alejandra","euroHora":6.39,"horas":362.75,"total":2317.97,"pct":0.091,"costeMa":766.8,"costeMd":862.65,"costeNo":688.52},{"nombre":"Mireia M.","euroHora":17.13,"horas":96,"total":1644.48,"pct":0.0645,"costeMa":0,"costeMd":0,"costeNo":1644.48},{"nombre":"Rubi","euroHora":5.17,"horas":305.33,"total":1578.57,"pct":0.0619,"costeMa":630.74,"costeMd":422.65,"costeNo":525.19},{"nombre":"Gabi","euroHora":7.3,"horas":171.25,"total":1250.12,"pct":0.0491,"costeMa":405.15,"costeMd":503.7,"costeNo":341.28},{"nombre":"Brigitte","euroHora":8,"horas":114.25,"total":914,"pct":0.0359,"costeMa":12,"costeMd":486,"costeNo":416},{"nombre":"GÃ©nesis","euroHora":8,"horas":31.75,"total":254,"pct":0.01,"costeMa":0,"costeMd":128,"costeNo":126},{"nombre":"Adria","euroHora":8,"horas":19.5,"total":156,"pct":0.0061,"costeMa":0,"costeMd":156,"costeNo":0}],
+  employeesMes: [{"nombre":"Sonia","euroHora":16,"horas":39.33,"total":629.33,"pct":0.3512},{"nombre":"Lourdes","euroHora":10,"horas":45.75,"total":457.5,"pct":0.2553},{"nombre":"Jonh","euroHora":7.25,"horas":35.5,"total":257.38,"pct":0.1436},{"nombre":"Rubi","euroHora":5.17,"horas":42.08,"total":217.57,"pct":0.1214},{"nombre":"Brigitte","euroHora":8,"horas":18.25,"total":146,"pct":0.0815},{"nombre":"Mireia M.","euroHora":17.13,"horas":2,"total":34.26,"pct":0.0191},{"nombre":"GÃ©nesis","euroHora":8,"horas":3.25,"total":26,"pct":0.0145},{"nombre":"Adria","euroHora":8,"horas":3,"total":24,"pct":0.0134},{"nombre":"Alejandra","euroHora":6.39,"horas":0,"total":0,"pct":0},{"nombre":"Gabi","euroHora":7.3,"horas":0,"total":0,"pct":0}],
+  events: [{"mes":"Enero","fecha":"19/01/2026","evento":"San Antonio Abad","tipo":"Festivo local","mult":1.5,"prev":1800,"real":0,"estado":"â Pasado"},{"mes":"Febrero","fecha":"14/02/2026","evento":"San ValentÃ­n","tipo":"Evento especial","mult":2.8,"prev":4000,"real":3542.72,"estado":"â Pasado"},{"mes":"Febrero","fecha":"21-22/02","evento":"Carnaval","tipo":"Fiesta local","mult":2.0,"prev":3500,"real":3184.45,"estado":"â Pasado"},{"mes":"Marzo","fecha":"15/03/2026","evento":"Mercado Olla","tipo":"Mercado local","mult":1.8,"prev":2800,"real":2683.33,"estado":"â Pasado"},{"mes":"Marzo","fecha":"28-29/03","evento":"Semana Santa","tipo":"Festivo","mult":1.9,"prev":2200,"real":1812.63,"estado":"â Pasado"},{"mes":"Abril","fecha":"26/04/2026","evento":"Joan Pera â Casino","tipo":"MonÃ³logo","mult":2.5,"prev":2800,"real":0,"estado":"â¡ Confirmado"},{"mes":"Abril","fecha":"2026-04-04","evento":"BarÃ§a: AtlÃ©tico (F) LaLiga","tipo":"â½ FÃºtbol BarÃ§a","mult":1.3,"prev":0,"real":0,"estado":"â Pasado"},{"mes":"Abril","fecha":"2026-08-04","evento":"BarÃ§a vs AtlÃ©tico (Champions QF ida)","tipo":"â½ Champions","mult":1.8,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Abril","fecha":"14/04/2026","evento":"BarÃ§a: AtlÃ©tico Champions QF vuelta","tipo":"â½ Champions","mult":1.6,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Abril","fecha":"22/04/2026","evento":"BarÃ§a vs Celta de Vigo LaLiga","tipo":"â½ FÃºtbol BarÃ§a","mult":1.3,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Abril","fecha":"25/04/2026","evento":"BarÃ§a: Bayern Champions SF","tipo":"â½ Champions","mult":1.8,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Mayo","fecha":"17-18/05","evento":"Fira Titiriteiros","tipo":"Feria","mult":1.5,"prev":1800,"real":0,"estado":"ð Pendiente"},{"mes":"Mayo","fecha":"13/05/2026","evento":"BarÃ§a: AlavÃ©s LaLiga","tipo":"â½ FÃºtbol BarÃ§a","mult":1.2,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Mayo","fecha":"17/05/2026","evento":"BarÃ§a vs Betis LaLiga","tipo":"â½ FÃºtbol BarÃ§a","mult":1.3,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Mayo","fecha":"24/05/2026","evento":"BarÃ§a: Valencia Ãºltima jornada","tipo":"â½ FÃºtbol BarÃ§a","mult":1.4,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Mayo","fecha":"El ClÃ¡sico","evento":"â­ BarÃ§a vs Real Madrid Â¡EL CLÃSICO!","tipo":"â½ FÃºtbol BarÃ§a","mult":2.5,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Junio","fecha":"24/06/2026","evento":"San Juan / Caldeja't","tipo":"Festivo","mult":1.5,"prev":2000,"real":0,"estado":"ð Pendiente"},{"mes":"Junio","fecha":"15/06/2026","evento":"ðªð¸ EspaÃ±a vs Cabo Verde (Mundial)","tipo":"ð SelecciÃ³n EspaÃ±a","mult":2.0,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Junio","fecha":"26/06/2026","evento":"ðªð¸ Uruguay vs EspaÃ±a (Mundial)","tipo":"ð SelecciÃ³n EspaÃ±a","mult":2.2,"prev":0,"real":0,"estado":"â¡ Confirmado"},{"mes":"Julio","fecha":"11/07/2026","evento":"EscaldÃ rium","tipo":"Fiesta mayor","mult":2.1,"prev":3800,"real":0,"estado":"ð Pendiente"},{"mes":"Julio","fecha":"Est. julio","evento":"ðªð¸ EspaÃ±a Octavos Mundial","tipo":"ð SelecciÃ³n EspaÃ±a","mult":2.5,"prev":0,"real":0,"estado":"â ï¸ Por confirmar"},{"mes":"Julio","fecha":"Est. julio","evento":"ðªð¸ EspaÃ±a Cuartos Mundial","tipo":"ð SelecciÃ³n EspaÃ±a","mult":2.8,"prev":0,"real":0,"estado":"â ï¸ Por confirmar"},{"mes":"Agosto","fecha":"15-16/08","evento":"AsunciÃ³n pico","tipo":"Festivo","mult":1.8,"prev":3500,"real":0,"estado":"ð Pendiente"},{"mes":"Agosto","fecha":"16/08/2026","evento":"BarÃ§a: Mallorca J1 nueva temp.","tipo":"â½ FÃºtbol BarÃ§a","mult":1.3,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Septiembre","fecha":"27/09/2026","evento":"MIAU Festival Arte","tipo":"Festival arte","mult":1.5,"prev":2200,"real":0,"estado":"ð Pendiente"},{"mes":"Septiembre","fecha":"26/09/2026","evento":"ðªð¸ Inglaterra vs EspaÃ±a (Nations L.)","tipo":"ð SelecciÃ³n EspaÃ±a","mult":1.5,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Septiembre","fecha":"29/09/2026","evento":"ðªð¸ EspaÃ±a vs Croacia (Nations L.)","tipo":"ð SelecciÃ³n EspaÃ±a","mult":1.5,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Octubre","fecha":"10-11/10","evento":"Festa Major","tipo":"Fiesta mayor","mult":2.7,"prev":6500,"real":0,"estado":"ð Pendiente"},{"mes":"Octubre","fecha":"18-19/10","evento":"Capvuitada/Mercat","tipo":"Feria/festivo","mult":1.9,"prev":3800,"real":0,"estado":"ð Pendiente"},{"mes":"Noviembre","fecha":"28/11/2026","evento":"Casino espectÃ¡culo","tipo":"MonÃ³logo","mult":2.5,"prev":4200,"real":0,"estado":"â ï¸ Por confirmar"},{"mes":"Noviembre","fecha":"15/11/2026","evento":"ðªð¸ EspaÃ±a vs Inglaterra (Nations L.)","tipo":"ð SelecciÃ³n EspaÃ±a","mult":1.8,"prev":0,"real":0,"estado":"ð Pendiente"},{"mes":"Diciembre","fecha":"5-6/12/2026","evento":"Fira Nadal","tipo":"Feria Navidad","mult":2.4,"prev":5500,"real":0,"estado":"ð Pendiente"},{"mes":"Diciembre","fecha":"31/12/2026","evento":"Fin de AÃ±o","tipo":"Especial","mult":2.0,"prev":3000,"real":0,"estado":"ð Pendiente"}]
 };
 
 // ========== HELPERS ==========
-const fmt = n => new Intl.NumberFormat('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n) + ' €';
+const fmt = n => new Intl.NumberFormat('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n) + ' â¬';
 const fmtN = n => new Intl.NumberFormat('es-ES',{minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
 const pct = n => (n*100).toFixed(1) + '%';
 
@@ -723,7 +725,7 @@ function renderDashboard() {
       <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
         <div class="bar-wrap" style="height:18px;">
           <div class="bar-fill" style="width:${w2026}%;background:var(--accent);">
-            <span class="bar-val">${fmtN(m.real2026)} €</span>
+            <span class="bar-val">${fmtN(m.real2026)} â¬</span>
           </div>
         </div>
         <div class="bar-wrap" style="height:12px;">
@@ -733,8 +735,8 @@ function renderDashboard() {
       </div>
     </div>`;
   }).join('') + `<div style="margin-top:10px;font-size:11px;color:var(--text2);display:flex;gap:14px;">
-    <span style="color:var(--accent)">▬</span> 2026
-    <span style="color:var(--text3)">▬</span> 2025
+    <span style="color:var(--accent)">â¬</span> 2026
+    <span style="color:var(--text3)">â¬</span> 2025
   </div>`;
 
   // Ratio bars
@@ -763,7 +765,7 @@ function renderDashboard() {
         <div style="font-size:13px;font-weight:500;">${d.fecha} <span style="color:var(--text2);font-weight:400;">${d.dia}</span></div>
         ${d.evento ? `<div style="font-size:11px;color:var(--accent);">${d.evento}</div>` : ''}
       </div>
-      <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2);">${fmtN(d.total)} €</span>
+      <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2);">${fmtN(d.total)} â¬</span>
     </div>`).join('');
 
   // Emp top
@@ -774,7 +776,7 @@ function renderDashboard() {
     return `<div style="margin-bottom:10px;">
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
         <span style="color:var(--text);">${e.nombre}</span>
-        <span style="font-family:'DM Mono',monospace;color:var(--accent2);">${fmtN(e.total)} €</span>
+        <span style="font-family:'DM Mono',monospace;color:var(--accent2);">${fmtN(e.total)} â¬</span>
       </div>
       <div class="bar-wrap"><div class="bar-fill" style="width:${w}%;background:var(--blue);"></div></div>
     </div>`;
@@ -789,17 +791,17 @@ function renderDashboard() {
     return `<tr ${rowClass}>
       <td style="font-weight:500;">${m.mes}</td>
       <td class="mono">${m.dias}</td>
-      <td class="mono" style="color:var(--accent2);">${m.real2026 > 0 ? fmt(m.real2026) : '—'}</td>
-      <td class="mono">${m.real2026 > 0 ? fmt(coste) : '—'}</td>
-      <td class="mono ${m.real2026>0?'up':''}">${m.real2026 > 0 ? fmt(margen) : '—'}</td>
-      <td class="mono ${m.pctCoste > 0.4 ? 'warn-cell' : m.pctCoste > 0.32 ? '' : 'ok-cell'}">${m.pctCoste > 0 ? pct(m.pctCoste) : '—'}</td>
-      <td class="mono ${vs2025>0?'up':vs2025<0?'dn':''}">${vs2025 !== null ? (vs2025>0?'+':'')+(vs2025*100).toFixed(1)+'%' : '—'}</td>
-      <td class="mono" style="color:var(--text2);">${m.prev2026 > 0 ? fmt(m.prev2026) : '—'}</td>
+      <td class="mono" style="color:var(--accent2);">${m.real2026 > 0 ? fmt(m.real2026) : 'â'}</td>
+      <td class="mono">${m.real2026 > 0 ? fmt(coste) : 'â'}</td>
+      <td class="mono ${m.real2026>0?'up':''}">${m.real2026 > 0 ? fmt(margen) : 'â'}</td>
+      <td class="mono ${m.pctCoste > 0.4 ? 'warn-cell' : m.pctCoste > 0.32 ? '' : 'ok-cell'}">${m.pctCoste > 0 ? pct(m.pctCoste) : 'â'}</td>
+      <td class="mono ${vs2025>0?'up':vs2025<0?'dn':''}">${vs2025 !== null ? (vs2025>0?'+':'')+(vs2025*100).toFixed(1)+'%' : 'â'}</td>
+      <td class="mono" style="color:var(--text2);">${m.prev2026 > 0 ? fmt(m.prev2026) : 'â'}</td>
     </tr>`;
   }).join('');
 }
 
-// ========== FACTURACIÓN ==========
+// ========== FACTURACIÃN ==========
 function filterFac(mes, btn) {
   facMes = mes; facPage = 1;
   document.querySelectorAll('#fac-filters .filter-btn').forEach(b=>b.classList.remove('active'));
@@ -817,7 +819,7 @@ function renderFac() {
   if (facMes > 0) rows = rows.filter(r => r.mes === facMes);
   if (facDia) rows = rows.filter(r => r.dia === facDia);
   
-  document.getElementById('fac-count').textContent = `${rows.length} días · ${fmt(rows.reduce((s,r)=>s+r.total,0))} facturados · ${fmt(rows.reduce((s,r)=>s+r.coste,0))} coste personal`;
+  document.getElementById('fac-count').textContent = `${rows.length} dÃ­as Â· ${fmt(rows.reduce((s,r)=>s+r.total,0))} facturados Â· ${fmt(rows.reduce((s,r)=>s+r.coste,0))} coste personal`;
   
   // Real vs previsto mini chart
   const maxRV = Math.max(...rows.map(r=>Math.max(r.total,r.previsto)));
@@ -831,7 +833,7 @@ function renderFac() {
         <div class="bar-wrap" style="height:14px;">
           <div class="bar-fill" style="width:${wR}%;background:${col};opacity:0.9;"></div>
         </div>
-        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text2);width:60px;">${fmtN(r.total)}€</span>
+        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text2);width:60px;">${fmtN(r.total)}â¬</span>
       </div>
       <div style="display:flex;gap:3px;align-items:center;">
         <div class="bar-wrap" style="height:8px;">
@@ -839,7 +841,7 @@ function renderFac() {
         </div>
       </div>
     </div>`;
-  }).join('') + (rows.length>12?`<div style="font-size:11px;color:var(--text3);margin-top:4px;">Mostrando 12 de ${rows.length} días</div>`:'');
+  }).join('') + (rows.length>12?`<div style="font-size:11px;color:var(--text3);margin-top:4px;">Mostrando 12 de ${rows.length} dÃ­as</div>`:'');
 
   // Turno breakdown
   const maTot = rows.reduce((s,r)=>s+r.manana,0);
@@ -847,16 +849,16 @@ function renderFac() {
   const noTot = rows.reduce((s,r)=>s+r.noche,0);
   const tot = maTot+mdTot+noTot;
   document.getElementById('turno-sel-chart').innerHTML = [
-    {label:'Mediodía',val:mdTot,col:'var(--accent)'},
+    {label:'MediodÃ­a',val:mdTot,col:'var(--accent)'},
     {label:'Noche',val:noTot,col:'var(--blue)'},
-    {label:'Mañana',val:maTot,col:'var(--green)'}
+    {label:'MaÃ±ana',val:maTot,col:'var(--green)'}
   ].map(t => {
     const w = tot > 0 ? (t.val/tot*100).toFixed(1) : 0;
     return `<div class="bar-row" style="margin-bottom:12px;">
       <div class="bar-label">${t.label}</div>
       <div style="flex:1;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px;">
-          <span>${w}%</span><span class="mono">${fmtN(t.val)} €</span>
+          <span>${w}%</span><span class="mono">${fmtN(t.val)} â¬</span>
         </div>
         <div class="bar-wrap"><div class="bar-fill" style="width:${w}%;background:${t.col};"></div></div>
       </div>
@@ -915,7 +917,7 @@ function renderEmp(view) {
     return `<div style="margin-bottom:8px;">
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
         <span>${e.nombre}</span>
-        <span style="font-family:'DM Mono',monospace;color:${empColors[i%empColors.length]};">${fmtN(e.total)} € · ${(e.pct*100).toFixed(1)}%</span>
+        <span style="font-family:'DM Mono',monospace;color:${empColors[i%empColors.length]};">${fmtN(e.total)} â¬ Â· ${(e.pct*100).toFixed(1)}%</span>
       </div>
       <div class="bar-wrap"><div class="bar-fill" style="width:${w}%;background:${empColors[i%empColors.length]};"></div></div>
     </div>`;
@@ -943,22 +945,22 @@ function renderEmp(view) {
 
   // Table
   if(view==='anual') {
-    document.getElementById('emp-thead').innerHTML = '<th>Empleado</th><th>€/hora</th><th>Horas</th><th>Coste total</th><th>% s/masa</th><th>Mañana</th><th>Mediodía</th><th>Noche</th>';
+    document.getElementById('emp-thead').innerHTML = '<th>Empleado</th><th>â¬/hora</th><th>Horas</th><th>Coste total</th><th>% s/masa</th><th>MaÃ±ana</th><th>MediodÃ­a</th><th>Noche</th>';
     document.getElementById('emp-tbody').innerHTML = emps.map(e=>`<tr>
       <td style="font-weight:500;">${e.nombre}</td>
-      <td class="mono">${e.euroHora} €</td>
+      <td class="mono">${e.euroHora} â¬</td>
       <td class="mono">${e.horas}h</td>
       <td class="mono" style="color:var(--accent2);">${fmt(e.total)}</td>
       <td class="mono">${(e.pct*100).toFixed(1)}%</td>
-      <td class="mono">${fmtN(e.costeMa)} €</td>
-      <td class="mono">${fmtN(e.costeMd)} €</td>
-      <td class="mono">${fmtN(e.costeNo)} €</td>
+      <td class="mono">${fmtN(e.costeMa)} â¬</td>
+      <td class="mono">${fmtN(e.costeMd)} â¬</td>
+      <td class="mono">${fmtN(e.costeNo)} â¬</td>
     </tr>`).join('');
   } else {
-    document.getElementById('emp-thead').innerHTML = '<th>Empleado</th><th>€/hora</th><th>Horas</th><th>Coste mes</th><th>% s/masa</th>';
+    document.getElementById('emp-thead').innerHTML = '<th>Empleado</th><th>â¬/hora</th><th>Horas</th><th>Coste mes</th><th>% s/masa</th>';
     document.getElementById('emp-tbody').innerHTML = emps.map(e=>`<tr>
       <td style="font-weight:500;">${e.nombre}</td>
-      <td class="mono">${e.euroHora} €</td>
+      <td class="mono">${e.euroHora} â¬</td>
       <td class="mono">${e.horas}h</td>
       <td class="mono" style="color:var(--accent2);">${fmt(e.total)}</td>
       <td class="mono">${(e.pct*100).toFixed(1)}%</td>
@@ -988,10 +990,10 @@ function renderEvents(f) {
       <td class="mono" style="font-size:11px;">${e.fecha}</td>
       <td style="font-weight:500;max-width:200px;">${e.evento}</td>
       <td style="color:var(--text2);font-size:12px;">${e.tipo}</td>
-      <td><span class="mult-badge">×${e.mult}</span></td>
-      <td class="mono">${e.prev > 0 ? fmt(e.prev) : '—'}</td>
-      <td class="mono ${e.real>0?'ok-cell':''}">${e.real > 0 ? fmt(e.real) : '—'}</td>
-      <td class="mono ${desv?parseFloat(desv)>=0?'up':'dn':''}">${desv !== null ? (parseFloat(desv)>0?'+':'')+desv+'%' : '—'}</td>
+      <td><span class="mult-badge">Ã${e.mult}</span></td>
+      <td class="mono">${e.prev > 0 ? fmt(e.prev) : 'â'}</td>
+      <td class="mono ${e.real>0?'ok-cell':''}">${e.real > 0 ? fmt(e.real) : 'â'}</td>
+      <td class="mono ${desv?parseFloat(desv)>=0?'up':'dn':''}">${desv !== null ? (parseFloat(desv)>0?'+':'')+desv+'%' : 'â'}</td>
       <td class="${stClass}">${e.estado}</td>
     </tr>`;
   }).join('');
@@ -1005,12 +1007,12 @@ function renderAlertas() {
   const abovePrev = DATA.daily.filter(d=>d.total > d.previsto*1.1).length;
 
   const alerts = [
-    { type:'warn', icon:'⚠️', title:`${highRatio.length} días con ratio coste > 45%`, desc:`El objetivo es <32%. Los miércoles y jueves acumulan el 85% de estas alertas. Revisar plantilla en días valle.` },
-    { type:'ok', icon:'✅', title:'Febrero: mejor mes del período (+2.7% vs 2025)', desc:`26.991 € vs 26.308 € en 2025. San Valentín y Carnaval impulsaron la facturación.` },
-    { type:'warn', icon:'📉', title:`${belowPrev} días por debajo del 70% de previsión`, desc:`Enero acumula la mayoría. Los miércoles/jueves de enero estuvieron muy por debajo de objetivos.` },
-    { type:'info', icon:'📈', title:`${abovePrev} días superaron la previsión en >10%`, desc:`Los sábados de mediados de febrero y el Mercado Olla fueron los más destacados.` },
-    { type:'warn', icon:'🎭', title:'Joan Pera — Casino (26 abril): preparar capacidad', desc:`Evento confirmado, multiplicador ×2.5. Prever refuerzo de personal y mise en place.` },
-    { type:'info', icon:'⚽', title:'Champions + Mundial (mayo-julio): planificar aforo', desc:`Barça vs Bayern SF (25 abr), El Clásico y España en el Mundial son los eventos de máxima demanda.` },
+    { type:'warn', icon:'â ï¸', title:`${highRatio.length} dÃ­as con ratio coste > 45%`, desc:`El objetivo es <32%. Los miÃ©rcoles y jueves acumulan el 85% de estas alertas. Revisar plantilla en dÃ­as valle.` },
+    { type:'ok', icon:'â', title:'Febrero: mejor mes del perÃ­odo (+2.7% vs 2025)', desc:`26.991 â¬ vs 26.308 â¬ en 2025. San ValentÃ­n y Carnaval impulsaron la facturaciÃ³n.` },
+    { type:'warn', icon:'ð', title:`${belowPrev} dÃ­as por debajo del 70% de previsiÃ³n`, desc:`Enero acumula la mayorÃ­a. Los miÃ©rcoles/jueves de enero estuvieron muy por debajo de objetivos.` },
+    { type:'info', icon:'ð', title:`${abovePrev} dÃ­as superaron la previsiÃ³n en >10%`, desc:`Los sÃ¡bados de mediados de febrero y el Mercado Olla fueron los mÃ¡s destacados.` },
+    { type:'warn', icon:'ð­', title:'Joan Pera â Casino (26 abril): preparar capacidad', desc:`Evento confirmado, multiplicador Ã2.5. Prever refuerzo de personal y mise en place.` },
+    { type:'info', icon:'â½', title:'Champions + Mundial (mayo-julio): planificar aforo', desc:`BarÃ§a vs Bayern SF (25 abr), El ClÃ¡sico y EspaÃ±a en el Mundial son los eventos de mÃ¡xima demanda.` },
   ];
 
   document.getElementById('alert-blocks').innerHTML = alerts.map(a=>`
@@ -1033,9 +1035,9 @@ function renderAlertas() {
 }
 
 // ========== PRODUCT MIX & OMNES DATA ==========
-const PM = {"topProd":[{"producto":"Menu","familia":"Menu","uds":1440,"importe":20879.26,"pct":0.0999},{"producto":"Alhambra C:Copa","familia":"Cervezas","uds":1796,"importe":15020.69,"pct":0.0719},{"producto":"Calamars a l'andalusa","familia":"Tapas Calientes","uds":732,"importe":8008.33,"pct":0.0383},{"producto":"Patates Braves","familia":"Tapas Calientes","uds":1368,"importe":7500.9,"pct":0.0359},{"producto":"Cafe amb llet","familia":"Cafe","uds":3849,"importe":6569.89,"pct":0.0314},{"producto":"Tallat","familia":"Café","uds":3382,"importe":5595.97,"pct":0.0268},{"producto":"Fingers de pollastre","familia":"Tapas Calientes","uds":509,"importe":4891.78,"pct":0.0234},{"producto":"Ous amb Ibèric","familia":"Huevos estrellados","uds":304,"importe":4562.66,"pct":0.0218},{"producto":"Aigua Vidre","familia":"Refrescos","uds":1877,"importe":3827.44,"pct":0.0183},{"producto":"Bomba","familia":"Tapas Calientes","uds":444,"importe":3805.7,"pct":0.0182},{"producto":"Flors carxofes","familia":"Tapas Calientes","uds":215,"importe":2798.37,"pct":0.0134},{"producto":"Croquetes de l'àvia","familia":"Tapas Calientes","uds":754,"importe":2755.64,"pct":0.0132},{"producto":"Morro fregit","familia":"Tapas Calientes","uds":407,"importe":2618.56,"pct":0.0125},{"producto":"Nachos Texans","familia":"Tapas Calientes","uds":221,"importe":2282.93,"pct":0.0109},{"producto":"Pa cristal·lí","familia":"Suplementos","uds":645,"importe":2220.58,"pct":0.0106},{"producto":"Ous de Mallorca","familia":"Huevos estrellados","uds":169,"importe":1957.91,"pct":0.0094},{"producto":"Amanida Burrata","familia":"Ensaladas","uds":151,"importe":1939.2,"pct":0.0093},{"producto":"Reserva Vermella C:Copa","familia":"Cervezas","uds":279,"importe":1933.3,"pct":0.0092},{"producto":"Pintxo truita patata","familia":"Tapas Calientes","uds":290,"importe":1892.26,"pct":0.0091},{"producto":"Cafe Sol","familia":"Menu Postres","uds":1115,"importe":1844.09,"pct":0.0088},{"producto":"Mossets de camembert","familia":"Tapas Calientes","uds":211,"importe":1818.71,"pct":0.0087},{"producto":"Morro fregit mel","familia":"Tapas Calientes","uds":231,"importe":1759.07,"pct":0.0084},{"producto":"Pastís de formatge","familia":"Postres","uds":327,"importe":1738.78,"pct":0.0083},{"producto":"Amanida Montesa","familia":"Ensaladas","uds":181,"importe":1712.8,"pct":0.0082},{"producto":"Taula de Pinxito moruno","familia":"Tapas Calientes","uds":122,"importe":1701.69,"pct":0.0081},{"producto":"Pastis fastuc","familia":"Postres","uds":197,"importe":1611.15,"pct":0.0077},{"producto":"Cocacola Zero","familia":"Menu Bebidas","uds":544,"importe":1581.98,"pct":0.0076},{"producto":"Carn amb salsa","familia":"Tapas Calientes","uds":136,"importe":1564.56,"pct":0.0075},{"producto":"Cocacola","familia":"Menu Bebidas","uds":605,"importe":1516.02,"pct":0.0073},{"producto":"Americana","familia":"Tosta Pizzas","uds":132,"importe":1492.15,"pct":0.0071}],"families":[{"familia":"Tapas Calientes","uds":8842,"importe":61781.82,"pct":0.2956},{"familia":"Cervezas","uds":4485,"importe":23912.14,"pct":0.1144},{"familia":"Menu","uds":1469,"importe":20942.5,"pct":0.1002},{"familia":"Refrescos","uds":4978,"importe":10529.8,"pct":0.0504},{"familia":"Cafe","uds":5472,"importe":9397.55,"pct":0.045},{"familia":"Huevos estrellados","uds":705,"importe":8616.19,"pct":0.0412},{"familia":"Postres","uds":1677,"importe":8031.15,"pct":0.0384},{"familia":"Café","uds":4643,"importe":7564.94,"pct":0.0362},{"familia":"Vinos","uds":1359,"importe":6471.84,"pct":0.031},{"familia":"Tosta Pizzas","uds":526,"importe":6153.25,"pct":0.0294},{"familia":"Suplementos","uds":2456,"importe":5486.84,"pct":0.0262},{"familia":"Ensaladas","uds":438,"importe":4469.08,"pct":0.0214},{"familia":"Desayunos","uds":686,"importe":4412.27,"pct":0.0211},{"familia":"Menu Bebidas","uds":1611,"importe":3478.45,"pct":0.0166},{"familia":"Menu Postres","uds":1946,"importe":2712.69,"pct":0.013},{"familia":"Bolleria","uds":1981,"importe":2569.86,"pct":0.0123},{"familia":"Tapas frías","uds":313,"importe":2441.0,"pct":0.0117},{"familia":"Bocadillos calientes","uds":566,"importe":2343.12,"pct":0.0112},{"familia":"Huevos Estrellados","uds":213,"importe":2310.75,"pct":0.0111},{"familia":"Coca pizza","uds":204,"importe":2127.4,"pct":0.0102}]};
+const PM = {"topProd":[{"producto":"Menu","familia":"Menu","uds":1440,"importe":20879.26,"pct":0.0999},{"producto":"Alhambra C:Copa","familia":"Cervezas","uds":1796,"importe":15020.69,"pct":0.0719},{"producto":"Calamars a l'andalusa","familia":"Tapas Calientes","uds":732,"importe":8008.33,"pct":0.0383},{"producto":"Patates Braves","familia":"Tapas Calientes","uds":1368,"importe":7500.9,"pct":0.0359},{"producto":"Cafe amb llet","familia":"Cafe","uds":3849,"importe":6569.89,"pct":0.0314},{"producto":"Tallat","familia":"CafÃ©","uds":3382,"importe":5595.97,"pct":0.0268},{"producto":"Fingers de pollastre","familia":"Tapas Calientes","uds":509,"importe":4891.78,"pct":0.0234},{"producto":"Ous amb IbÃ¨ric","familia":"Huevos estrellados","uds":304,"importe":4562.66,"pct":0.0218},{"producto":"Aigua Vidre","familia":"Refrescos","uds":1877,"importe":3827.44,"pct":0.0183},{"producto":"Bomba","familia":"Tapas Calientes","uds":444,"importe":3805.7,"pct":0.0182},{"producto":"Flors carxofes","familia":"Tapas Calientes","uds":215,"importe":2798.37,"pct":0.0134},{"producto":"Croquetes de l'Ã via","familia":"Tapas Calientes","uds":754,"importe":2755.64,"pct":0.0132},{"producto":"Morro fregit","familia":"Tapas Calientes","uds":407,"importe":2618.56,"pct":0.0125},{"producto":"Nachos Texans","familia":"Tapas Calientes","uds":221,"importe":2282.93,"pct":0.0109},{"producto":"Pa cristalÂ·lÃ­","familia":"Suplementos","uds":645,"importe":2220.58,"pct":0.0106},{"producto":"Ous de Mallorca","familia":"Huevos estrellados","uds":169,"importe":1957.91,"pct":0.0094},{"producto":"Amanida Burrata","familia":"Ensaladas","uds":151,"importe":1939.2,"pct":0.0093},{"producto":"Reserva Vermella C:Copa","familia":"Cervezas","uds":279,"importe":1933.3,"pct":0.0092},{"producto":"Pintxo truita patata","familia":"Tapas Calientes","uds":290,"importe":1892.26,"pct":0.0091},{"producto":"Cafe Sol","familia":"Menu Postres","uds":1115,"importe":1844.09,"pct":0.0088},{"producto":"Mossets de camembert","familia":"Tapas Calientes","uds":211,"importe":1818.71,"pct":0.0087},{"producto":"Morro fregit mel","familia":"Tapas Calientes","uds":231,"importe":1759.07,"pct":0.0084},{"producto":"PastÃ­s de formatge","familia":"Postres","uds":327,"importe":1738.78,"pct":0.0083},{"producto":"Amanida Montesa","familia":"Ensaladas","uds":181,"importe":1712.8,"pct":0.0082},{"producto":"Taula de Pinxito moruno","familia":"Tapas Calientes","uds":122,"importe":1701.69,"pct":0.0081},{"producto":"Pastis fastuc","familia":"Postres","uds":197,"importe":1611.15,"pct":0.0077},{"producto":"Cocacola Zero","familia":"Menu Bebidas","uds":544,"importe":1581.98,"pct":0.0076},{"producto":"Carn amb salsa","familia":"Tapas Calientes","uds":136,"importe":1564.56,"pct":0.0075},{"producto":"Cocacola","familia":"Menu Bebidas","uds":605,"importe":1516.02,"pct":0.0073},{"producto":"Americana","familia":"Tosta Pizzas","uds":132,"importe":1492.15,"pct":0.0071}],"families":[{"familia":"Tapas Calientes","uds":8842,"importe":61781.82,"pct":0.2956},{"familia":"Cervezas","uds":4485,"importe":23912.14,"pct":0.1144},{"familia":"Menu","uds":1469,"importe":20942.5,"pct":0.1002},{"familia":"Refrescos","uds":4978,"importe":10529.8,"pct":0.0504},{"familia":"Cafe","uds":5472,"importe":9397.55,"pct":0.045},{"familia":"Huevos estrellados","uds":705,"importe":8616.19,"pct":0.0412},{"familia":"Postres","uds":1677,"importe":8031.15,"pct":0.0384},{"familia":"CafÃ©","uds":4643,"importe":7564.94,"pct":0.0362},{"familia":"Vinos","uds":1359,"importe":6471.84,"pct":0.031},{"familia":"Tosta Pizzas","uds":526,"importe":6153.25,"pct":0.0294},{"familia":"Suplementos","uds":2456,"importe":5486.84,"pct":0.0262},{"familia":"Ensaladas","uds":438,"importe":4469.08,"pct":0.0214},{"familia":"Desayunos","uds":686,"importe":4412.27,"pct":0.0211},{"familia":"Menu Bebidas","uds":1611,"importe":3478.45,"pct":0.0166},{"familia":"Menu Postres","uds":1946,"importe":2712.69,"pct":0.013},{"familia":"Bolleria","uds":1981,"importe":2569.86,"pct":0.0123},{"familia":"Tapas frÃ­as","uds":313,"importe":2441.0,"pct":0.0117},{"familia":"Bocadillos calientes","uds":566,"importe":2343.12,"pct":0.0112},{"familia":"Huevos Estrellados","uds":213,"importe":2310.75,"pct":0.0111},{"familia":"Coca pizza","uds":204,"importe":2127.4,"pct":0.0102}]};
 
-const OMNES = [{"sub":"Tapas Calientes","nProd":92,"pMin":1.6,"pMax":16.0,"baja":26,"media":52,"alta":14,"apertura":10.0,"limite":3.0,"estApert":"❌ Excede","ratioD":0.92,"estRatio":"✅ OK"},{"sub":"Tapas Frias","nProd":17,"pMin":3.95,"pMax":14.9,"baja":10,"media":4,"alta":3,"apertura":3.77,"limite":3.0,"estApert":"❌ Excede","ratioD":1.05,"estRatio":"✅ OK"},{"sub":"Ensaladas","nProd":7,"pMin":5.95,"pMax":12.65,"baja":1,"media":2,"alta":4,"apertura":2.13,"limite":2.5,"estApert":"✅ OK","ratioD":1.01,"estRatio":"✅ OK"},{"sub":"Huevos Estrellados","nProd":12,"pMin":7.95,"pMax":14.9,"baja":7,"media":3,"alta":2,"apertura":1.87,"limite":3.0,"estApert":"✅ OK","ratioD":1.0,"estRatio":"✅ OK"},{"sub":"Tosta Pizzas","nProd":8,"pMin":9.25,"pMax":12.9,"baja":1,"media":3,"alta":4,"apertura":1.39,"limite":2.5,"estApert":"✅ OK","ratioD":0.97,"estRatio":"✅ OK"},{"sub":"Bocadillos Calientes","nProd":32,"pMin":3.1,"pMax":7.0,"baja":15,"media":11,"alta":6,"apertura":2.26,"limite":3.0,"estApert":"✅ OK","ratioD":0.93,"estRatio":"✅ OK"},{"sub":"Bocadillos Frios","nProd":26,"pMin":2.9,"pMax":11.85,"baja":22,"media":3,"alta":1,"apertura":4.09,"limite":3.0,"estApert":"❌ Excede","ratioD":0.89,"estRatio":"✅ OK"},{"sub":"Postres","nProd":41,"pMin":1.0,"pMax":6.5,"baja":5,"media":6,"alta":30,"apertura":6.5,"limite":3.0,"estApert":"❌ Excede","ratioD":1.02,"estRatio":"✅ OK"},{"sub":"Cervezas Copa","nProd":15,"pMin":2.5,"pMax":3.5,"baja":10,"media":1,"alta":4,"apertura":1.4,"limite":3.0,"estApert":"✅ OK","ratioD":0.93,"estRatio":"✅ OK"},{"sub":"Cervezas Caña","nProd":11,"pMin":2.05,"pMax":4.15,"baja":5,"media":4,"alta":2,"apertura":2.02,"limite":3.0,"estApert":"✅ OK","ratioD":0.77,"estRatio":"❌ Bajo"},{"sub":"Cervezas Otros","nProd":19,"pMin":1.8,"pMax":11.65,"baja":17,"media":0,"alta":2,"apertura":6.47,"limite":3.0,"estApert":"❌ Excede","ratioD":0.82,"estRatio":"❌ Bajo"},{"sub":"Vinos Copa","nProd":35,"pMin":3.25,"pMax":9.1,"baja":33,"media":0,"alta":2,"apertura":2.8,"limite":3.0,"estApert":"✅ OK","ratioD":0.92,"estRatio":"✅ OK"},{"sub":"Vinos Botella","nProd":20,"pMin":15.15,"pMax":27.5,"baja":10,"media":7,"alta":3,"apertura":1.82,"limite":3.0,"estApert":"✅ OK","ratioD":0.93,"estRatio":"✅ OK"},{"sub":"Sangría/Jarra","nProd":5,"pMin":14.85,"pMax":17.0,"baja":4,"media":0,"alta":1,"apertura":1.14,"limite":2.5,"estApert":"✅ OK","ratioD":1.02,"estRatio":"✅ OK"},{"sub":"Aguas","nProd":7,"pMin":1.55,"pMax":5.0,"baja":6,"media":0,"alta":1,"apertura":3.23,"limite":2.5,"estApert":"❌ Excede","ratioD":0.82,"estRatio":"❌ Bajo"},{"sub":"Zumos","nProd":7,"pMin":2.2,"pMax":2.75,"baja":5,"media":0,"alta":2,"apertura":1.25,"limite":2.5,"estApert":"✅ OK","ratioD":1.07,"estRatio":"❌ Alto"},{"sub":"Refrescos","nProd":20,"pMin":2.1,"pMax":2.9,"baja":6,"media":0,"alta":14,"apertura":1.38,"limite":3.0,"estApert":"✅ OK","ratioD":1.05,"estRatio":"✅ OK"},{"sub":"Cafés","nProd":30,"pMin":1.24,"pMax":26.5,"baja":29,"media":0,"alta":1,"apertura":21.37,"limite":3.0,"estApert":"❌ Excede","ratioD":0.6,"estRatio":"❌ Bajo"}];
+const OMNES = [{"sub":"Tapas Calientes","nProd":92,"pMin":1.6,"pMax":16.0,"baja":26,"media":52,"alta":14,"apertura":10.0,"limite":3.0,"estApert":"â Excede","ratioD":0.92,"estRatio":"â OK"},{"sub":"Tapas Frias","nProd":17,"pMin":3.95,"pMax":14.9,"baja":10,"media":4,"alta":3,"apertura":3.77,"limite":3.0,"estApert":"â Excede","ratioD":1.05,"estRatio":"â OK"},{"sub":"Ensaladas","nProd":7,"pMin":5.95,"pMax":12.65,"baja":1,"media":2,"alta":4,"apertura":2.13,"limite":2.5,"estApert":"â OK","ratioD":1.01,"estRatio":"â OK"},{"sub":"Huevos Estrellados","nProd":12,"pMin":7.95,"pMax":14.9,"baja":7,"media":3,"alta":2,"apertura":1.87,"limite":3.0,"estApert":"â OK","ratioD":1.0,"estRatio":"â OK"},{"sub":"Tosta Pizzas","nProd":8,"pMin":9.25,"pMax":12.9,"baja":1,"media":3,"alta":4,"apertura":1.39,"limite":2.5,"estApert":"â OK","ratioD":0.97,"estRatio":"â OK"},{"sub":"Bocadillos Calientes","nProd":32,"pMin":3.1,"pMax":7.0,"baja":15,"media":11,"alta":6,"apertura":2.26,"limite":3.0,"estApert":"â OK","ratioD":0.93,"estRatio":"â OK"},{"sub":"Bocadillos Frios","nProd":26,"pMin":2.9,"pMax":11.85,"baja":22,"media":3,"alta":1,"apertura":4.09,"limite":3.0,"estApert":"â Excede","ratioD":0.89,"estRatio":"â OK"},{"sub":"Postres","nProd":41,"pMin":1.0,"pMax":6.5,"baja":5,"media":6,"alta":30,"apertura":6.5,"limite":3.0,"estApert":"â Excede","ratioD":1.02,"estRatio":"â OK"},{"sub":"Cervezas Copa","nProd":15,"pMin":2.5,"pMax":3.5,"baja":10,"media":1,"alta":4,"apertura":1.4,"limite":3.0,"estApert":"â OK","ratioD":0.93,"estRatio":"â OK"},{"sub":"Cervezas CaÃ±a","nProd":11,"pMin":2.05,"pMax":4.15,"baja":5,"media":4,"alta":2,"apertura":2.02,"limite":3.0,"estApert":"â OK","ratioD":0.77,"estRatio":"â Bajo"},{"sub":"Cervezas Otros","nProd":19,"pMin":1.8,"pMax":11.65,"baja":17,"media":0,"alta":2,"apertura":6.47,"limite":3.0,"estApert":"â Excede","ratioD":0.82,"estRatio":"â Bajo"},{"sub":"Vinos Copa","nProd":35,"pMin":3.25,"pMax":9.1,"baja":33,"media":0,"alta":2,"apertura":2.8,"limite":3.0,"estApert":"â OK","ratioD":0.92,"estRatio":"â OK"},{"sub":"Vinos Botella","nProd":20,"pMin":15.15,"pMax":27.5,"baja":10,"media":7,"alta":3,"apertura":1.82,"limite":3.0,"estApert":"â OK","ratioD":0.93,"estRatio":"â OK"},{"sub":"SangrÃ­a/Jarra","nProd":5,"pMin":14.85,"pMax":17.0,"baja":4,"media":0,"alta":1,"apertura":1.14,"limite":2.5,"estApert":"â OK","ratioD":1.02,"estRatio":"â OK"},{"sub":"Aguas","nProd":7,"pMin":1.55,"pMax":5.0,"baja":6,"media":0,"alta":1,"apertura":3.23,"limite":2.5,"estApert":"â Excede","ratioD":0.82,"estRatio":"â Bajo"},{"sub":"Zumos","nProd":7,"pMin":2.2,"pMax":2.75,"baja":5,"media":0,"alta":2,"apertura":1.25,"limite":2.5,"estApert":"â OK","ratioD":1.07,"estRatio":"â Alto"},{"sub":"Refrescos","nProd":20,"pMin":2.1,"pMax":2.9,"baja":6,"media":0,"alta":14,"apertura":1.38,"limite":3.0,"estApert":"â OK","ratioD":1.05,"estRatio":"â OK"},{"sub":"CafÃ©s","nProd":30,"pMin":1.24,"pMax":26.5,"baja":29,"media":0,"alta":1,"apertura":21.37,"limite":3.0,"estApert":"â Excede","ratioD":0.6,"estRatio":"â Bajo"}];
 
 // ========== PRODUCT MIX ==========
 const FAM_COLORS = ['#b8860b','#5db87a','#5b8fd4','#e05c4a','#9b7fd4','#4db8b8','#e0a050','#b0b870','#d47a7a','#7ab0d4','#c4a060','#70b070'];
@@ -1049,7 +1051,7 @@ function renderProductMix() {
     return `<div style="margin-bottom:7px;">
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
         <span>${f.familia}</span>
-        <span style="font-family:'DM Mono',monospace;color:${FAM_COLORS[i%FAM_COLORS.length]};">${fmtN(f.importe)} € · ${(f.pct*100).toFixed(1)}%</span>
+        <span style="font-family:'DM Mono',monospace;color:${FAM_COLORS[i%FAM_COLORS.length]};">${fmtN(f.importe)} â¬ Â· ${(f.pct*100).toFixed(1)}%</span>
       </div>
       <div class="bar-wrap"><div class="bar-fill" style="width:${w}%;background:${FAM_COLORS[i%FAM_COLORS.length]};"></div></div>
     </div>`;
@@ -1097,7 +1099,7 @@ function renderProdTable() {
     <td style="font-weight:500;max-width:220px;">${p.producto}</td>
     <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:${getFamColor(p.familia)}22;color:${getFamColor(p.familia)};font-weight:600;">${p.familia}</span></td>
     <td class="mono">${fmtN(p.uds)}</td>
-    <td class="mono" style="color:var(--accent2);font-weight:500;">${fmtN(p.importe)} €</td>
+    <td class="mono" style="color:var(--accent2);font-weight:500;">${fmtN(p.importe)} â¬</td>
     <td>
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:60px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
@@ -1120,13 +1122,13 @@ function renderOmnes() {
   // Summary cards
   const excApert = OMNES.filter(o=>o.estApert.includes('Excede'));
   const okAll = OMNES.filter(o=>o.estApert.includes('OK') && o.estRatio.includes('OK'));
-  const ratioIssue = OMNES.filter(o=>!o.estRatio.includes('✅ OK'));
+  const ratioIssue = OMNES.filter(o=>!o.estRatio.includes('â OK'));
 
   document.getElementById('omnes-summary').innerHTML = [
-    {cls:'warn',icon:'❌',title:`${excApert.length} subfamilias con apertura excesiva`,desc:`Carta demasiado amplia: ${excApert.map(o=>o.sub).join(', ')}. Considerar reducir rangos de precio.`},
-    {cls:'ok',icon:'✅',title:`${okAll.length} subfamilias con ambos indicadores OK`,desc:`Ensaladas, Huevos Estrellados, Tosta Pizzas, Bocadillos Calientes y otras están correctamente estructuradas.`},
-    {cls:'warn',icon:'⚠️',title:`${ratioIssue.length} subfamilias con ratio D/O problemático`,desc:`${ratioIssue.map(o=>`${o.sub} (${o.ratioD} ${o.estRatio})`).join('; ')}. El cliente no compra en la gama esperada.`},
-    {cls:'info',icon:'🎯',title:'Cafés: apertura crítica (21,4x)',desc:`Rango 1,24€–26,50€ muy elevado. Revisar si los cafés especiales justifican ese precio o distorsionan la percepción.`}
+    {cls:'warn',icon:'â',title:`${excApert.length} subfamilias con apertura excesiva`,desc:`Carta demasiado amplia: ${excApert.map(o=>o.sub).join(', ')}. Considerar reducir rangos de precio.`},
+    {cls:'ok',icon:'â',title:`${okAll.length} subfamilias con ambos indicadores OK`,desc:`Ensaladas, Huevos Estrellados, Tosta Pizzas, Bocadillos Calientes y otras estÃ¡n correctamente estructuradas.`},
+    {cls:'warn',icon:'â ï¸',title:`${ratioIssue.length} subfamilias con ratio D/O problemÃ¡tico`,desc:`${ratioIssue.map(o=>`${o.sub} (${o.ratioD} ${o.estRatio})`).join('; ')}. El cliente no compra en la gama esperada.`},
+    {cls:'info',icon:'ð¯',title:'CafÃ©s: apertura crÃ­tica (21,4x)',desc:`Rango 1,24â¬â26,50â¬ muy elevado. Revisar si los cafÃ©s especiales justifican ese precio o distorsionan la percepciÃ³n.`}
   ].map(a=>`<div class="alert-item ${a.cls}" style="margin-bottom:8px;">
     <div class="alert-icon">${a.icon}</div>
     <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
@@ -1134,7 +1136,7 @@ function renderOmnes() {
 
   // Ratio D/O chart
   document.getElementById('omnes-ratio-chart').innerHTML = OMNES.map(o=>{
-    const col = o.estRatio.includes('✅ OK') ? 'var(--green)' : o.estRatio.includes('Bajo') ? 'var(--red)' : 'var(--accent)';
+    const col = o.estRatio.includes('â OK') ? 'var(--green)' : o.estRatio.includes('Bajo') ? 'var(--red)' : 'var(--accent)';
     const w = Math.min((o.ratioD/1.5)*100,100).toFixed(1);
     const ideal = (0.95/1.5*100).toFixed(1);
     return `<div style="margin-bottom:8px;">
@@ -1151,8 +1153,8 @@ function renderOmnes() {
 
   // Omnes table
   document.getElementById('omnes-tbody').innerHTML = OMNES.map(o=>{
-    const apertOk = o.estApert.includes('✅ OK');
-    const ratioOk = o.estRatio === '✅ OK';
+    const apertOk = o.estApert.includes('â OK');
+    const ratioOk = o.estRatio === 'â OK';
     const total = o.baja+o.media+o.alta;
     const pBaja = total>0?(o.baja/total*100).toFixed(0):0;
     const pMedia = total>0?(o.media/total*100).toFixed(0):0;
@@ -1160,15 +1162,15 @@ function renderOmnes() {
     return `<tr>
       <td style="font-weight:600;font-size:13px;">${o.sub}</td>
       <td class="mono" style="color:var(--text2);">${o.nProd}</td>
-      <td class="mono">${o.pMin} €</td>
-      <td class="mono">${o.pMax} €</td>
+      <td class="mono">${o.pMin} â¬</td>
+      <td class="mono">${o.pMax} â¬</td>
       <td>
         <div style="display:flex;gap:2px;height:16px;border-radius:4px;overflow:hidden;width:80px;">
           <div style="width:${pBaja}%;background:#5b8fd4;" title="Baja ${o.baja}"></div>
           <div style="width:${pMedia}%;background:#5db87a;" title="Media ${o.media}"></div>
           <div style="width:${pAlta}%;background:#e05c4a;" title="Alta ${o.alta}"></div>
         </div>
-        <div style="font-size:10px;color:var(--text2);margin-top:2px;">${o.baja}·${o.media}·${o.alta}</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:2px;">${o.baja}Â·${o.media}Â·${o.alta}</div>
       </td>
       <td class="mono">${o.media}</td>
       <td class="mono">${o.alta}</td>
@@ -1189,27 +1191,27 @@ renderDashboard();
   <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:28px;">
     <div class="kpi">
       <label>Ventas acumuladas</label>
-      <div class="val">52.861 €</div>
+      <div class="val">52.861 â¬</div>
       <div class="sub">Enero + Febrero 2026</div>
       <span class="badge neutral">2 meses</span>
     </div>
     <div class="kpi green">
       <label>EBITDA total</label>
-      <div class="val">9.005 €</div>
+      <div class="val">9.005 â¬</div>
       <div class="sub">17,0% sobre ventas</div>
-      <span class="badge ok">Positivo ✓</span>
+      <span class="badge ok">Positivo â</span>
     </div>
     <div class="kpi">
       <label>EBITDAR total</label>
-      <div class="val">13.425 €</div>
-      <div class="sub">25,4% — antes alquileres</div>
-      <span class="badge neutral">Sólido</span>
+      <div class="val">13.425 â¬</div>
+      <div class="sub">25,4% â antes alquileres</div>
+      <span class="badge neutral">SÃ³lido</span>
     </div>
     <div class="kpi red">
       <label>Personal s/ventas</label>
       <div class="val">44,5%</div>
-      <div class="sub">20.308 € acumulado</div>
-      <span class="badge warn">⚠ Revisar</span>
+      <div class="sub">20.308 â¬ acumulado</div>
+      <span class="badge warn">â  Revisar</span>
     </div>
   </div>
 
@@ -1225,7 +1227,7 @@ renderDashboard();
   </div>
 
   <div class="card" style="margin-bottom:24px;">
-    <div class="card-title">Cuenta de resultados P&L — detalle mensual</div>
+    <div class="card-title">Cuenta de resultados P&L â detalle mensual</div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
@@ -1242,7 +1244,7 @@ renderDashboard();
   </div>
 
   <div class="card">
-    <div class="card-title">Cascada EBITDA — de ventas a resultado (acumulado)</div>
+    <div class="card-title">Cascada EBITDA â de ventas a resultado (acumulado)</div>
     <div id="ebitda-waterfall"></div>
   </div>
 </div>
@@ -1283,11 +1285,11 @@ function renderEBITDA() {
     return `<div style="margin-bottom:20px;">
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">
         <span style="font-weight:600;">${m.mes}</span>
-        <span class="mono" style="color:var(--text2);">Ventas: ${fmtN(m.ventas)} € · EBITDA: <span style="color:var(--green)">${fmtN(m.ebitda)} € (${pctE}%)</span></span>
+        <span class="mono" style="color:var(--text2);">Ventas: ${fmtN(m.ventas)} â¬ Â· EBITDA: <span style="color:var(--green)">${fmtN(m.ebitda)} â¬ (${pctE}%)</span></span>
       </div>
       <div style="font-size:10px;color:var(--text2);margin-bottom:3px;">Ventas</div>
       <div class="bar-wrap" style="height:20px;margin-bottom:4px;">
-        <div class="bar-fill" style="width:${wV}%;background:var(--accent);"><span class="bar-val">${fmtN(m.ventas)} €</span></div>
+        <div class="bar-fill" style="width:${wV}%;background:var(--accent);"><span class="bar-val">${fmtN(m.ventas)} â¬</span></div>
       </div>
       <div style="font-size:10px;color:var(--text2);margin-bottom:3px;">EBITDAR</div>
       <div class="bar-wrap" style="height:14px;margin-bottom:4px;">
@@ -1299,9 +1301,9 @@ function renderEBITDA() {
       </div>
     </div>`;
   }).join('') + `<div style="display:flex;gap:16px;margin-top:8px;font-size:11px;">
-    <span style="color:var(--accent)">▬ Ventas</span>
-    <span style="color:var(--blue)">▬ EBITDAR</span>
-    <span style="color:var(--green)">▬ EBITDA</span>
+    <span style="color:var(--accent)">â¬ Ventas</span>
+    <span style="color:var(--blue)">â¬ EBITDAR</span>
+    <span style="color:var(--green)">â¬ EBITDA</span>
   </div>`;
 
   // Costes %
@@ -1322,8 +1324,8 @@ function renderEBITDA() {
       <span class="mono" style="font-size:12px;color:${c.col};font-weight:600;width:40px;text-align:right;">${c.pct}%</span>
     </div>`).join('') +
     `<div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border);">
-      <div style="font-size:12px;color:var(--green);font-weight:600;">EBITDA total: 17,0% · EBITDAR: 25,4%</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:4px;">⚠ Personal >40% — umbral crítico para hostelería. Objetivo &lt;35%.</div>
+      <div style="font-size:12px;color:var(--green);font-weight:600;">EBITDA total: 17,0% Â· EBITDAR: 25,4%</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;">â  Personal >40% â umbral crÃ­tico para hostelerÃ­a. Objetivo &lt;35%.</div>
     </div>`;
 
   // P&L table
@@ -1334,25 +1336,25 @@ function renderEBITDA() {
     const isEBITDA = p.nombre==='EBITDA';
     return `<tr style="${rowBg}">
       <td style="font-weight:${isRes||isIng?'600':'400'};${nameCol}">${p.nombre}</td>
-      <td class="mono" style="text-align:right;">${p.total?fmt(p.total):'—'}</td>
-      <td class="mono" style="text-align:right;${p.acum<0?'color:var(--red)':isEBITDA?'color:var(--green)':''}">${p.acum!==0?fmt(p.acum):'—'}</td>
-      <td class="mono" style="text-align:right;">${p.ene?fmt(p.ene):'—'}</td>
-      <td class="mono" style="text-align:right;">${p.feb?fmt(p.feb):'—'}</td>
-      <td class="mono" style="text-align:right;${isPers&&p.pct>40?'color:var(--red);font-weight:600;':''}">${p.pct!==null&&p.pct>0?p.pct.toFixed(1)+'%':'—'}</td>
+      <td class="mono" style="text-align:right;">${p.total?fmt(p.total):'â'}</td>
+      <td class="mono" style="text-align:right;${p.acum<0?'color:var(--red)':isEBITDA?'color:var(--green)':''}">${p.acum!==0?fmt(p.acum):'â'}</td>
+      <td class="mono" style="text-align:right;">${p.ene?fmt(p.ene):'â'}</td>
+      <td class="mono" style="text-align:right;">${p.feb?fmt(p.feb):'â'}</td>
+      <td class="mono" style="text-align:right;${isPers&&p.pct>40?'color:var(--red);font-weight:600;':''}">${p.pct!==null&&p.pct>0?p.pct.toFixed(1)+'%':'â'}</td>
     </tr>`;
   }).join('');
 
   // Waterfall
   const wf = [
     {label:'Ventas',       val: 22953.54, type:'start'},
-    {label:'− CMV',        val: -8088.30, type:'neg'},
-    {label:'− Personal',   val:-10211.13, type:'neg'},
-    {label:'− Suministros',val:  -660.67, type:'neg'},
-    {label:'− Contratos',  val:  -752.55, type:'neg'},
-    {label:'− Marketing',  val:  -562.98, type:'neg'},
-    {label:'− Otros',      val:  -541.50, type:'neg'},
+    {label:'â CMV',        val: -8088.30, type:'neg'},
+    {label:'â Personal',   val:-10211.13, type:'neg'},
+    {label:'â Suministros',val:  -660.67, type:'neg'},
+    {label:'â Contratos',  val:  -752.55, type:'neg'},
+    {label:'â Marketing',  val:  -562.98, type:'neg'},
+    {label:'â Otros',      val:  -541.50, type:'neg'},
     {label:'= EBITDAR',    val:  2136.41, type:'sub'},
-    {label:'− Alquileres', val: -2209.93, type:'neg'},
+    {label:'â Alquileres', val: -2209.93, type:'neg'},
     {label:'= EBITDA',     val:   -73.52, type:'result'},
   ];
   const maxAbs = 22953.54;
@@ -1364,21 +1366,21 @@ function renderEBITDA() {
     return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px;">
       <div style="width:120px;font-size:12px;text-align:right;flex-shrink:0;font-weight:${s.type==='result'||s.type==='start'?'600':'400'};color:var(--text);">${s.label}</div>
       <div style="flex:1;"><div class="bar-wrap" style="height:${h}px;"><div class="bar-fill" style="width:${w}%;background:${col};opacity:0.85;"></div></div></div>
-      <span class="mono" style="font-size:12px;color:${col};font-weight:${s.type==='result'?'600':'400'};width:90px;text-align:right;">${sign}${fmtN(s.val)} €</span>
+      <span class="mono" style="font-size:12px;color:${col};font-weight:${s.type==='result'?'600':'400'};width:90px;text-align:right;">${sign}${fmtN(s.val)} â¬</span>
     </div>`;
   }).join('') +
   `<div style="font-size:11px;color:var(--text2);margin-top:12px;padding-top:8px;border-top:1px solid var(--border);">
-    * Datos acumulados Ene–Feb. EBITDA acumulado ligeramente negativo (−74 €) por el peso del personal en el primer mes. Total 2 meses: +9.005 €.
+    * Datos acumulados EneâFeb. EBITDA acumulado ligeramente negativo (â74 â¬) por el peso del personal en el primer mes. Total 2 meses: +9.005 â¬.
   </div>`;
 }
 </script>
 <!-- ARQUEO -->
 <div id="arqueo" class="tab">
   <div style="margin-bottom:20px;">
-    <div class="section-title">🧾 Arqueo de caja <span>Resumen diario por turno y caja</span></div>
+    <div class="section-title">ð§¾ Arqueo de caja <span>Resumen diario por turno y caja</span></div>
   </div>
 
-  <!-- Selector día -->
+  <!-- Selector dÃ­a -->
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
     <label style="font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Selecciona fecha</label>
     <select id="arqueo-date" onchange="renderArqueo()" style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
@@ -1386,37 +1388,37 @@ function renderEBITDA() {
     <span id="arqueo-dia-label" style="font-size:13px;color:var(--text2);"></span>
   </div>
 
-  <!-- KPIs del día -->
+  <!-- KPIs del dÃ­a -->
   <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;" id="arqueo-kpis"></div>
 
   <!-- Desglose turnos -->
   <div class="grid2" style="margin-bottom:20px;">
     <div class="card">
-      <div class="card-title">Caja 1 (Barra) — turnos del día</div>
+      <div class="card-title">Caja 1 (Barra) â turnos del dÃ­a</div>
       <div id="arqueo-c1"></div>
     </div>
     <div class="card">
-      <div class="card-title">Caja 2 (Comedor) — turnos del día</div>
+      <div class="card-title">Caja 2 (Comedor) â turnos del dÃ­a</div>
       <div id="arqueo-c2"></div>
     </div>
   </div>
 
   <!-- Barras por turno -->
   <div class="card" style="margin-bottom:20px;">
-    <div class="card-title">Facturación por turno — comparativa cajas</div>
+    <div class="card-title">FacturaciÃ³n por turno â comparativa cajas</div>
     <div id="arqueo-turno-bars"></div>
   </div>
 
   <!-- Resumen semana/contexto -->
   <div class="card">
-    <div class="card-title">Contexto — media del mismo día de semana</div>
+    <div class="card-title">Contexto â media del mismo dÃ­a de semana</div>
     <div id="arqueo-context"></div>
   </div>
 </div>
 
 <!-- INCENTIVOS -->
 <div id="incentivos" class="tab">
-  <div class="section-title">🏆 Seguimiento de incentivos <span>Previsión vs Real vs Objetivo</span></div>
+  <div class="section-title">ð Seguimiento de incentivos <span>PrevisiÃ³n vs Real vs Objetivo</span></div>
 
   <!-- Objetivo anual -->
   <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;" id="inc-kpis"></div>
@@ -1429,7 +1431,7 @@ function renderEBITDA() {
 
   <!-- Tabla mensual prev vs real -->
   <div class="card" style="margin-bottom:20px;">
-    <div class="card-title">Facturación mensual — Previsto vs Real vs Incentivo</div>
+    <div class="card-title">FacturaciÃ³n mensual â Previsto vs Real vs Incentivo</div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
@@ -1447,7 +1449,7 @@ function renderEBITDA() {
     </div>
   </div>
 
-  <!-- Gráfico barras mensual -->
+  <!-- GrÃ¡fico barras mensual -->
   <div class="card">
     <div class="card-title">Previsto vs Real mensual</div>
     <div id="inc-chart"></div>
@@ -1457,9 +1459,9 @@ function renderEBITDA() {
 <script>
 // ===== ARQUEO DATA =====
 // Build from daily data + caja data
-const CAJA1_DATA = [{"fecha":"2026-01-02","dia":"vie","turno":"Mañana","subtotal":89.25},{"fecha":"2026-01-02","dia":"vie","turno":"Mediodia","subtotal":90.65},{"fecha":"2026-01-03","dia":"sáb","turno":"Mañana","subtotal":106.05},{"fecha":"2026-01-03","dia":"sáb","turno":"Mediodia","subtotal":5.15},{"fecha":"2026-01-04","dia":"dom","turno":"Mañana","subtotal":58.4},{"fecha":"2026-01-04","dia":"dom","turno":"Mediodia","subtotal":17.7},{"fecha":"2026-01-07","dia":"mié","turno":"Mañana","subtotal":58.35},{"fecha":"2026-01-07","dia":"mié","turno":"Mediodia","subtotal":127.75},{"fecha":"2026-01-08","dia":"jue","turno":"Mañana","subtotal":80.31},{"fecha":"2026-01-08","dia":"jue","turno":"Mediodia","subtotal":148.48},{"fecha":"2026-01-08","dia":"jue","turno":"Noche","subtotal":39.63},{"fecha":"2026-01-09","dia":"vie","turno":"Mañana","subtotal":123.26},{"fecha":"2026-01-09","dia":"vie","turno":"Mediodia","subtotal":210.75},{"fecha":"2026-01-09","dia":"vie","turno":"Noche","subtotal":652.09},{"fecha":"2026-01-10","dia":"sáb","turno":"Mañana","subtotal":130.85},{"fecha":"2026-01-10","dia":"sáb","turno":"Mediodia","subtotal":1168.21},{"fecha":"2026-01-10","dia":"sáb","turno":"Noche","subtotal":1131.23},{"fecha":"2026-01-11","dia":"dom","turno":"Mañana","subtotal":95.79},{"fecha":"2026-01-11","dia":"dom","turno":"Mediodia","subtotal":758.85},{"fecha":"2026-01-14","dia":"mié","turno":"Mañana","subtotal":218.08},{"fecha":"2026-01-14","dia":"mié","turno":"Mediodia","subtotal":212.53},{"fecha":"2026-01-14","dia":"mié","turno":"Noche","subtotal":103.28},{"fecha":"2026-01-15","dia":"jue","turno":"Mañana","subtotal":125.54},{"fecha":"2026-01-15","dia":"jue","turno":"Mediodia","subtotal":469.56},{"fecha":"2026-01-15","dia":"jue","turno":"Noche","subtotal":210.6},{"fecha":"2026-01-16","dia":"vie","turno":"Mañana","subtotal":107.89},{"fecha":"2026-01-16","dia":"vie","turno":"Mediodia","subtotal":209.32},{"fecha":"2026-01-16","dia":"vie","turno":"Noche","subtotal":933.73},{"fecha":"2026-01-17","dia":"sáb","turno":"Mañana","subtotal":85.19},{"fecha":"2026-01-17","dia":"sáb","turno":"Mediodia","subtotal":460.75},{"fecha":"2026-01-17","dia":"sáb","turno":"Noche","subtotal":455.55},{"fecha":"2026-01-18","dia":"dom","turno":"Mañana","subtotal":157.7},{"fecha":"2026-01-18","dia":"dom","turno":"Mediodia","subtotal":965.87},{"fecha":"2026-01-21","dia":"mié","turno":"Mañana","subtotal":201.31},{"fecha":"2026-01-21","dia":"mié","turno":"Mediodia","subtotal":344.81},{"fecha":"2026-01-21","dia":"mié","turno":"Noche","subtotal":208.73},{"fecha":"2026-01-22","dia":"jue","turno":"Mañana","subtotal":150.96},{"fecha":"2026-01-22","dia":"jue","turno":"Mediodia","subtotal":624.94},{"fecha":"2026-01-22","dia":"jue","turno":"Noche","subtotal":92.68},{"fecha":"2026-01-23","dia":"vie","turno":"Mañana","subtotal":137.45},{"fecha":"2026-01-23","dia":"vie","turno":"Mediodia","subtotal":250.45},{"fecha":"2026-01-23","dia":"vie","turno":"Noche","subtotal":812.96},{"fecha":"2026-01-24","dia":"sáb","turno":"Mañana","subtotal":233.58},{"fecha":"2026-01-24","dia":"sáb","turno":"Mediodia","subtotal":685.5},{"fecha":"2026-01-24","dia":"sáb","turno":"Noche","subtotal":668.82},{"fecha":"2026-01-25","dia":"dom","turno":"Mañana","subtotal":283.69},{"fecha":"2026-01-25","dia":"dom","turno":"Mediodia","subtotal":1524.29},{"fecha":"2026-01-28","dia":"mié","turno":"Mañana","subtotal":161.14},{"fecha":"2026-01-28","dia":"mié","turno":"Mediodia","subtotal":233.54},{"fecha":"2026-01-28","dia":"mié","turno":"Noche","subtotal":125.41},{"fecha":"2026-01-29","dia":"jue","turno":"Mañana","subtotal":186.89},{"fecha":"2026-01-29","dia":"jue","turno":"Mediodia","subtotal":868.48},{"fecha":"2026-01-29","dia":"jue","turno":"Noche","subtotal":289.96},{"fecha":"2026-01-30","dia":"vie","turno":"Mañana","subtotal":109.96},{"fecha":"2026-01-30","dia":"vie","turno":"Mediodia","subtotal":477.46},{"fecha":"2026-01-30","dia":"vie","turno":"Noche","subtotal":1400.91},{"fecha":"2026-01-31","dia":"sáb","turno":"Mañana","subtotal":129.5},{"fecha":"2026-01-31","dia":"sáb","turno":"Mediodia","subtotal":1084.27},{"fecha":"2026-01-31","dia":"sáb","turno":"Noche","subtotal":721.14},{"fecha":"2026-02-01","dia":"dom","turno":"Mañana","subtotal":218.07},{"fecha":"2026-02-01","dia":"dom","turno":"Mediodia","subtotal":875.83},{"fecha":"2026-02-04","dia":"mié","turno":"Mañana","subtotal":119.49},{"fecha":"2026-02-04","dia":"mié","turno":"Mediodia","subtotal":244.93},{"fecha":"2026-02-04","dia":"mié","turno":"Noche","subtotal":182.91},{"fecha":"2026-02-05","dia":"jue","turno":"Mañana","subtotal":142.64},{"fecha":"2026-02-05","dia":"jue","turno":"Mediodia","subtotal":373.61},{"fecha":"2026-02-05","dia":"jue","turno":"Noche","subtotal":701.17},{"fecha":"2026-02-06","dia":"vie","turno":"Mañana","subtotal":126.59},{"fecha":"2026-02-06","dia":"vie","turno":"Mediodia","subtotal":501.9},{"fecha":"2026-02-06","dia":"vie","turno":"Noche","subtotal":1328.73},{"fecha":"2026-02-07","dia":"sáb","turno":"Mañana","subtotal":266.87},{"fecha":"2026-02-07","dia":"sáb","turno":"Mediodia","subtotal":2389.89},{"fecha":"2026-02-07","dia":"sáb","turno":"Noche","subtotal":1250.82},{"fecha":"2026-02-08","dia":"dom","turno":"Mañana","subtotal":289.88},{"fecha":"2026-02-08","dia":"dom","turno":"Mediodia","subtotal":1830.82},{"fecha":"2026-02-11","dia":"mié","turno":"Mañana","subtotal":167.31},{"fecha":"2026-02-11","dia":"mié","turno":"Mediodia","subtotal":358.44},{"fecha":"2026-02-11","dia":"mié","turno":"Noche","subtotal":602.65},{"fecha":"2026-02-12","dia":"jue","turno":"Mañana","subtotal":118.64},{"fecha":"2026-02-12","dia":"jue","turno":"Mediodia","subtotal":206.56},{"fecha":"2026-02-12","dia":"jue","turno":"Noche","subtotal":293.31},{"fecha":"2026-02-13","dia":"vie","turno":"Mañana","subtotal":225.33},{"fecha":"2026-02-13","dia":"vie","turno":"Mediodia","subtotal":378.39},{"fecha":"2026-02-13","dia":"vie","turno":"Noche","subtotal":501.77},{"fecha":"2026-02-14","dia":"sáb","turno":"Mañana","subtotal":169.26},{"fecha":"2026-02-14","dia":"sáb","turno":"Mediodia","subtotal":1474.64},{"fecha":"2026-02-14","dia":"sáb","turno":"Noche","subtotal":1898.82},{"fecha":"2026-02-15","dia":"dom","turno":"Mañana","subtotal":216.71},{"fecha":"2026-02-15","dia":"dom","turno":"Mediodia","subtotal":1342.64},{"fecha":"2026-02-18","dia":"mié","turno":"Mañana","subtotal":130.72},{"fecha":"2026-02-18","dia":"mié","turno":"Mediodia","subtotal":399.24},{"fecha":"2026-02-18","dia":"mié","turno":"Noche","subtotal":240.46},{"fecha":"2026-02-19","dia":"jue","turno":"Mañana","subtotal":122.81},{"fecha":"2026-02-19","dia":"jue","turno":"Mediodia","subtotal":572.43},{"fecha":"2026-02-19","dia":"jue","turno":"Noche","subtotal":97.45},{"fecha":"2026-02-20","dia":"vie","turno":"Mañana","subtotal":100.61},{"fecha":"2026-02-20","dia":"vie","turno":"Mediodia","subtotal":355.25},{"fecha":"2026-02-20","dia":"vie","turno":"Noche","subtotal":804.16},{"fecha":"2026-02-21","dia":"sáb","turno":"Mañana","subtotal":168.76},{"fecha":"2026-02-21","dia":"sáb","turno":"Mediodia","subtotal":1685.16},{"fecha":"2026-02-21","dia":"sáb","turno":"Noche","subtotal":1330.53},{"fecha":"2026-02-22","dia":"dom","turno":"Mañana","subtotal":223.91},{"fecha":"2026-02-22","dia":"dom","turno":"Mediodia","subtotal":1961.4}];
+const CAJA1_DATA = [{"fecha":"2026-01-02","dia":"vie","turno":"MaÃ±ana","subtotal":89.25},{"fecha":"2026-01-02","dia":"vie","turno":"Mediodia","subtotal":90.65},{"fecha":"2026-01-03","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":106.05},{"fecha":"2026-01-03","dia":"sÃ¡b","turno":"Mediodia","subtotal":5.15},{"fecha":"2026-01-04","dia":"dom","turno":"MaÃ±ana","subtotal":58.4},{"fecha":"2026-01-04","dia":"dom","turno":"Mediodia","subtotal":17.7},{"fecha":"2026-01-07","dia":"miÃ©","turno":"MaÃ±ana","subtotal":58.35},{"fecha":"2026-01-07","dia":"miÃ©","turno":"Mediodia","subtotal":127.75},{"fecha":"2026-01-08","dia":"jue","turno":"MaÃ±ana","subtotal":80.31},{"fecha":"2026-01-08","dia":"jue","turno":"Mediodia","subtotal":148.48},{"fecha":"2026-01-08","dia":"jue","turno":"Noche","subtotal":39.63},{"fecha":"2026-01-09","dia":"vie","turno":"MaÃ±ana","subtotal":123.26},{"fecha":"2026-01-09","dia":"vie","turno":"Mediodia","subtotal":210.75},{"fecha":"2026-01-09","dia":"vie","turno":"Noche","subtotal":652.09},{"fecha":"2026-01-10","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":130.85},{"fecha":"2026-01-10","dia":"sÃ¡b","turno":"Mediodia","subtotal":1168.21},{"fecha":"2026-01-10","dia":"sÃ¡b","turno":"Noche","subtotal":1131.23},{"fecha":"2026-01-11","dia":"dom","turno":"MaÃ±ana","subtotal":95.79},{"fecha":"2026-01-11","dia":"dom","turno":"Mediodia","subtotal":758.85},{"fecha":"2026-01-14","dia":"miÃ©","turno":"MaÃ±ana","subtotal":218.08},{"fecha":"2026-01-14","dia":"miÃ©","turno":"Mediodia","subtotal":212.53},{"fecha":"2026-01-14","dia":"miÃ©","turno":"Noche","subtotal":103.28},{"fecha":"2026-01-15","dia":"jue","turno":"MaÃ±ana","subtotal":125.54},{"fecha":"2026-01-15","dia":"jue","turno":"Mediodia","subtotal":469.56},{"fecha":"2026-01-15","dia":"jue","turno":"Noche","subtotal":210.6},{"fecha":"2026-01-16","dia":"vie","turno":"MaÃ±ana","subtotal":107.89},{"fecha":"2026-01-16","dia":"vie","turno":"Mediodia","subtotal":209.32},{"fecha":"2026-01-16","dia":"vie","turno":"Noche","subtotal":933.73},{"fecha":"2026-01-17","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":85.19},{"fecha":"2026-01-17","dia":"sÃ¡b","turno":"Mediodia","subtotal":460.75},{"fecha":"2026-01-17","dia":"sÃ¡b","turno":"Noche","subtotal":455.55},{"fecha":"2026-01-18","dia":"dom","turno":"MaÃ±ana","subtotal":157.7},{"fecha":"2026-01-18","dia":"dom","turno":"Mediodia","subtotal":965.87},{"fecha":"2026-01-21","dia":"miÃ©","turno":"MaÃ±ana","subtotal":201.31},{"fecha":"2026-01-21","dia":"miÃ©","turno":"Mediodia","subtotal":344.81},{"fecha":"2026-01-21","dia":"miÃ©","turno":"Noche","subtotal":208.73},{"fecha":"2026-01-22","dia":"jue","turno":"MaÃ±ana","subtotal":150.96},{"fecha":"2026-01-22","dia":"jue","turno":"Mediodia","subtotal":624.94},{"fecha":"2026-01-22","dia":"jue","turno":"Noche","subtotal":92.68},{"fecha":"2026-01-23","dia":"vie","turno":"MaÃ±ana","subtotal":137.45},{"fecha":"2026-01-23","dia":"vie","turno":"Mediodia","subtotal":250.45},{"fecha":"2026-01-23","dia":"vie","turno":"Noche","subtotal":812.96},{"fecha":"2026-01-24","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":233.58},{"fecha":"2026-01-24","dia":"sÃ¡b","turno":"Mediodia","subtotal":685.5},{"fecha":"2026-01-24","dia":"sÃ¡b","turno":"Noche","subtotal":668.82},{"fecha":"2026-01-25","dia":"dom","turno":"MaÃ±ana","subtotal":283.69},{"fecha":"2026-01-25","dia":"dom","turno":"Mediodia","subtotal":1524.29},{"fecha":"2026-01-28","dia":"miÃ©","turno":"MaÃ±ana","subtotal":161.14},{"fecha":"2026-01-28","dia":"miÃ©","turno":"Mediodia","subtotal":233.54},{"fecha":"2026-01-28","dia":"miÃ©","turno":"Noche","subtotal":125.41},{"fecha":"2026-01-29","dia":"jue","turno":"MaÃ±ana","subtotal":186.89},{"fecha":"2026-01-29","dia":"jue","turno":"Mediodia","subtotal":868.48},{"fecha":"2026-01-29","dia":"jue","turno":"Noche","subtotal":289.96},{"fecha":"2026-01-30","dia":"vie","turno":"MaÃ±ana","subtotal":109.96},{"fecha":"2026-01-30","dia":"vie","turno":"Mediodia","subtotal":477.46},{"fecha":"2026-01-30","dia":"vie","turno":"Noche","subtotal":1400.91},{"fecha":"2026-01-31","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":129.5},{"fecha":"2026-01-31","dia":"sÃ¡b","turno":"Mediodia","subtotal":1084.27},{"fecha":"2026-01-31","dia":"sÃ¡b","turno":"Noche","subtotal":721.14},{"fecha":"2026-02-01","dia":"dom","turno":"MaÃ±ana","subtotal":218.07},{"fecha":"2026-02-01","dia":"dom","turno":"Mediodia","subtotal":875.83},{"fecha":"2026-02-04","dia":"miÃ©","turno":"MaÃ±ana","subtotal":119.49},{"fecha":"2026-02-04","dia":"miÃ©","turno":"Mediodia","subtotal":244.93},{"fecha":"2026-02-04","dia":"miÃ©","turno":"Noche","subtotal":182.91},{"fecha":"2026-02-05","dia":"jue","turno":"MaÃ±ana","subtotal":142.64},{"fecha":"2026-02-05","dia":"jue","turno":"Mediodia","subtotal":373.61},{"fecha":"2026-02-05","dia":"jue","turno":"Noche","subtotal":701.17},{"fecha":"2026-02-06","dia":"vie","turno":"MaÃ±ana","subtotal":126.59},{"fecha":"2026-02-06","dia":"vie","turno":"Mediodia","subtotal":501.9},{"fecha":"2026-02-06","dia":"vie","turno":"Noche","subtotal":1328.73},{"fecha":"2026-02-07","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":266.87},{"fecha":"2026-02-07","dia":"sÃ¡b","turno":"Mediodia","subtotal":2389.89},{"fecha":"2026-02-07","dia":"sÃ¡b","turno":"Noche","subtotal":1250.82},{"fecha":"2026-02-08","dia":"dom","turno":"MaÃ±ana","subtotal":289.88},{"fecha":"2026-02-08","dia":"dom","turno":"Mediodia","subtotal":1830.82},{"fecha":"2026-02-11","dia":"miÃ©","turno":"MaÃ±ana","subtotal":167.31},{"fecha":"2026-02-11","dia":"miÃ©","turno":"Mediodia","subtotal":358.44},{"fecha":"2026-02-11","dia":"miÃ©","turno":"Noche","subtotal":602.65},{"fecha":"2026-02-12","dia":"jue","turno":"MaÃ±ana","subtotal":118.64},{"fecha":"2026-02-12","dia":"jue","turno":"Mediodia","subtotal":206.56},{"fecha":"2026-02-12","dia":"jue","turno":"Noche","subtotal":293.31},{"fecha":"2026-02-13","dia":"vie","turno":"MaÃ±ana","subtotal":225.33},{"fecha":"2026-02-13","dia":"vie","turno":"Mediodia","subtotal":378.39},{"fecha":"2026-02-13","dia":"vie","turno":"Noche","subtotal":501.77},{"fecha":"2026-02-14","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":169.26},{"fecha":"2026-02-14","dia":"sÃ¡b","turno":"Mediodia","subtotal":1474.64},{"fecha":"2026-02-14","dia":"sÃ¡b","turno":"Noche","subtotal":1898.82},{"fecha":"2026-02-15","dia":"dom","turno":"MaÃ±ana","subtotal":216.71},{"fecha":"2026-02-15","dia":"dom","turno":"Mediodia","subtotal":1342.64},{"fecha":"2026-02-18","dia":"miÃ©","turno":"MaÃ±ana","subtotal":130.72},{"fecha":"2026-02-18","dia":"miÃ©","turno":"Mediodia","subtotal":399.24},{"fecha":"2026-02-18","dia":"miÃ©","turno":"Noche","subtotal":240.46},{"fecha":"2026-02-19","dia":"jue","turno":"MaÃ±ana","subtotal":122.81},{"fecha":"2026-02-19","dia":"jue","turno":"Mediodia","subtotal":572.43},{"fecha":"2026-02-19","dia":"jue","turno":"Noche","subtotal":97.45},{"fecha":"2026-02-20","dia":"vie","turno":"MaÃ±ana","subtotal":100.61},{"fecha":"2026-02-20","dia":"vie","turno":"Mediodia","subtotal":355.25},{"fecha":"2026-02-20","dia":"vie","turno":"Noche","subtotal":804.16},{"fecha":"2026-02-21","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":168.76},{"fecha":"2026-02-21","dia":"sÃ¡b","turno":"Mediodia","subtotal":1685.16},{"fecha":"2026-02-21","dia":"sÃ¡b","turno":"Noche","subtotal":1330.53},{"fecha":"2026-02-22","dia":"dom","turno":"MaÃ±ana","subtotal":223.91},{"fecha":"2026-02-22","dia":"dom","turno":"Mediodia","subtotal":1961.4}];
 
-const CAJA2_DATA = [{"fecha":"2026-01-02","dia":"vie","turno":"Mañana","subtotal":92.73},{"fecha":"2026-01-02","dia":"vie","turno":"Mediodia","subtotal":612},{"fecha":"2026-01-02","dia":"vie","turno":"Noche","subtotal":727.68},{"fecha":"2026-01-03","dia":"sáb","turno":"Mañana","subtotal":74.14},{"fecha":"2026-01-03","dia":"sáb","turno":"Mediodia","subtotal":1054.32},{"fecha":"2026-01-03","dia":"sáb","turno":"Noche","subtotal":382.82},{"fecha":"2026-01-04","dia":"dom","turno":"Mañana","subtotal":47.41},{"fecha":"2026-01-04","dia":"dom","turno":"Mediodia","subtotal":816.14},{"fecha":"2026-01-07","dia":"mié","turno":"Mediodia","subtotal":215.77},{"fecha":"2026-01-07","dia":"mié","turno":"Noche","subtotal":159.98},{"fecha":"2026-01-08","dia":"jue","turno":"Mediodia","subtotal":404.91},{"fecha":"2026-01-09","dia":"vie","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-09","dia":"vie","turno":"Noche","subtotal":0},{"fecha":"2026-01-10","dia":"sáb","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-10","dia":"sáb","turno":"Noche","subtotal":0},{"fecha":"2026-01-11","dia":"dom","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-14","dia":"mié","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-14","dia":"mié","turno":"Noche","subtotal":0},{"fecha":"2026-01-15","dia":"jue","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-15","dia":"jue","turno":"Noche","subtotal":0},{"fecha":"2026-01-16","dia":"vie","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-16","dia":"vie","turno":"Noche","subtotal":0},{"fecha":"2026-01-17","dia":"sáb","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-17","dia":"sáb","turno":"Noche","subtotal":0},{"fecha":"2026-01-18","dia":"dom","turno":"Mediodia","subtotal":0},{"fecha":"2026-02-07","dia":"sáb","turno":"Mediodia","subtotal":0},{"fecha":"2026-02-07","dia":"sáb","turno":"Noche","subtotal":0}];
+const CAJA2_DATA = [{"fecha":"2026-01-02","dia":"vie","turno":"MaÃ±ana","subtotal":92.73},{"fecha":"2026-01-02","dia":"vie","turno":"Mediodia","subtotal":612},{"fecha":"2026-01-02","dia":"vie","turno":"Noche","subtotal":727.68},{"fecha":"2026-01-03","dia":"sÃ¡b","turno":"MaÃ±ana","subtotal":74.14},{"fecha":"2026-01-03","dia":"sÃ¡b","turno":"Mediodia","subtotal":1054.32},{"fecha":"2026-01-03","dia":"sÃ¡b","turno":"Noche","subtotal":382.82},{"fecha":"2026-01-04","dia":"dom","turno":"MaÃ±ana","subtotal":47.41},{"fecha":"2026-01-04","dia":"dom","turno":"Mediodia","subtotal":816.14},{"fecha":"2026-01-07","dia":"miÃ©","turno":"Mediodia","subtotal":215.77},{"fecha":"2026-01-07","dia":"miÃ©","turno":"Noche","subtotal":159.98},{"fecha":"2026-01-08","dia":"jue","turno":"Mediodia","subtotal":404.91},{"fecha":"2026-01-09","dia":"vie","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-09","dia":"vie","turno":"Noche","subtotal":0},{"fecha":"2026-01-10","dia":"sÃ¡b","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-10","dia":"sÃ¡b","turno":"Noche","subtotal":0},{"fecha":"2026-01-11","dia":"dom","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-14","dia":"miÃ©","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-14","dia":"miÃ©","turno":"Noche","subtotal":0},{"fecha":"2026-01-15","dia":"jue","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-15","dia":"jue","turno":"Noche","subtotal":0},{"fecha":"2026-01-16","dia":"vie","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-16","dia":"vie","turno":"Noche","subtotal":0},{"fecha":"2026-01-17","dia":"sÃ¡b","turno":"Mediodia","subtotal":0},{"fecha":"2026-01-17","dia":"sÃ¡b","turno":"Noche","subtotal":0},{"fecha":"2026-01-18","dia":"dom","turno":"Mediodia","subtotal":0},{"fecha":"2026-02-07","dia":"sÃ¡b","turno":"Mediodia","subtotal":0},{"fecha":"2026-02-07","dia":"sÃ¡b","turno":"Noche","subtotal":0}];
 
 // Build daily dict from DATA.daily
 function getArqueoDates() {
@@ -1486,68 +1488,68 @@ function renderArqueo() {
   const pctCosteCol = dayData.pctCoste > 0.45 ? 'red' : dayData.pctCoste > 0.35 ? '' : 'green';
   document.getElementById('arqueo-kpis').innerHTML = `
     <div class="kpi ${pctCosteCol}">
-      <label>Total día</label>
-      <div class="val">${fmtN(dayData.total)} €</div>
+      <label>Total dÃ­a</label>
+      <div class="val">${fmtN(dayData.total)} â¬</div>
       <div class="sub">${dayData.evento||'Sin evento'}</div>
     </div>
     <div class="kpi">
       <label>Previsto</label>
-      <div class="val">${fmtN(dayData.previsto)} €</div>
-      <div class="sub ${dayData.total>=dayData.previsto?'up':'dn'}">${dayData.total>=dayData.previsto?'▲ Supera previsión':'▼ Por debajo'}</div>
+      <div class="val">${fmtN(dayData.previsto)} â¬</div>
+      <div class="sub ${dayData.total>=dayData.previsto?'up':'dn'}">${dayData.total>=dayData.previsto?'â² Supera previsiÃ³n':'â¼ Por debajo'}</div>
     </div>
     <div class="kpi">
       <label>Coste personal</label>
-      <div class="val">${fmtN(dayData.coste)} €</div>
+      <div class="val">${fmtN(dayData.coste)} â¬</div>
       <div class="sub">${(dayData.pctCoste*100).toFixed(1)}% s/ventas</div>
     </div>
     <div class="kpi ${pctCosteCol}">
-      <label>Margen día</label>
-      <div class="val">${fmtN(dayData.total-dayData.coste)} €</div>
+      <label>Margen dÃ­a</label>
+      <div class="val">${fmtN(dayData.total-dayData.coste)} â¬</div>
       <div class="sub">${((1-dayData.pctCoste)*100).toFixed(1)}% margen bruto</div>
     </div>`;
 
   // Caja 1 turnos
   const c1day = CAJA1_DATA.filter(r=>r.fecha===fecha);
-  const turnosC1 = ['Mañana','Mediodia','Noche'];
+  const turnosC1 = ['MaÃ±ana','Mediodia','Noche'];
   document.getElementById('arqueo-c1').innerHTML = c1day.length ? turnosC1.map(t=>{
     const row = c1day.find(r=>r.turno===t);
     if(!row) return '';
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:13px;color:var(--text2);">${t==='Mediodia'?'Mediodía':t}</span>
-      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(row.subtotal)} €</span>
+      <span style="font-size:13px;color:var(--text2);">${t==='Mediodia'?'MediodÃ­a':t}</span>
+      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(row.subtotal)} â¬</span>
     </div>`;
   }).join('') + `<div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:600;">
     <span>Total Caja 1</span>
-    <span class="mono" style="color:var(--accent2);">${fmtN(c1day.reduce((s,r)=>s+r.subtotal,0))} €</span>
+    <span class="mono" style="color:var(--accent2);">${fmtN(c1day.reduce((s,r)=>s+r.subtotal,0))} â¬</span>
   </div>` : `<div style="color:var(--text2);font-size:13px;padding:16px 0;">Sin datos para esta fecha</div>`;
 
   // Caja 2 turnos
   const c2day = CAJA2_DATA.filter(r=>r.fecha===fecha);
-  const mañana = dayData.manana - (c1day.find(r=>r.turno==='Mañana')?.subtotal||0);
+  const maÃ±ana = dayData.manana - (c1day.find(r=>r.turno==='MaÃ±ana')?.subtotal||0);
   const mediodia = dayData.mediodia - (c1day.find(r=>r.turno==='Mediodia')?.subtotal||0);
   const noche = dayData.noche - (c1day.find(r=>r.turno==='Noche')?.subtotal||0);
   document.getElementById('arqueo-c2').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:13px;color:var(--text2);">Mañana</span>
-      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(Math.max(mañana,0))} €</span>
+      <span style="font-size:13px;color:var(--text2);">MaÃ±ana</span>
+      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(Math.max(maÃ±ana,0))} â¬</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:13px;color:var(--text2);">Mediodía</span>
-      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(Math.max(mediodia,0))} €</span>
+      <span style="font-size:13px;color:var(--text2);">MediodÃ­a</span>
+      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(Math.max(mediodia,0))} â¬</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
       <span style="font-size:13px;color:var(--text2);">Noche</span>
-      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(Math.max(noche,0))} €</span>
+      <span class="mono" style="font-size:15px;font-weight:600;">${fmtN(Math.max(noche,0))} â¬</span>
     </div>
     <div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:600;">
       <span>Total Caja 2</span>
-      <span class="mono" style="color:var(--accent2);">${fmtN(Math.max(mañana,0)+Math.max(mediodia,0)+Math.max(noche,0))} €</span>
+      <span class="mono" style="color:var(--accent2);">${fmtN(Math.max(maÃ±ana,0)+Math.max(mediodia,0)+Math.max(noche,0))} â¬</span>
     </div>`;
 
   // Turno bars
   const turnos = [
-    {label:'Mañana',   val:dayData.manana,   col:'var(--green)'},
-    {label:'Mediodía', val:dayData.mediodia, col:'var(--accent)'},
+    {label:'MaÃ±ana',   val:dayData.manana,   col:'var(--green)'},
+    {label:'MediodÃ­a', val:dayData.mediodia, col:'var(--accent)'},
     {label:'Noche',    val:dayData.noche,    col:'var(--blue)'},
   ];
   const maxT = Math.max(...turnos.map(t=>t.val), 1);
@@ -1557,16 +1559,16 @@ function renderArqueo() {
       <div style="flex:1;">
         <div class="bar-wrap" style="height:28px;">
           <div class="bar-fill" style="width:${(t.val/maxT*100).toFixed(1)}%;background:${t.col};">
-            ${t.val>0?`<span class="bar-val">${fmtN(t.val)} €</span>`:''}
+            ${t.val>0?`<span class="bar-val">${fmtN(t.val)} â¬</span>`:''}
           </div>
         </div>
       </div>
     </div>`).join('') +
     `<div style="font-size:12px;color:var(--text2);margin-top:8px;">
-      Turno más fuerte: <strong>${turnos.sort((a,b)=>b.val-a.val)[0].label}</strong> con ${fmtN(turnos[0].val)} €
+      Turno mÃ¡s fuerte: <strong>${turnos.sort((a,b)=>b.val-a.val)[0].label}</strong> con ${fmtN(turnos[0].val)} â¬
     </div>`;
 
-  // Context — same day of week average
+  // Context â same day of week average
   const diaSemana = dayData.dia;
   const sameDays = DATA.daily.filter(d=>d.dia===diaSemana && d.fecha!==fecha);
   const avg = sameDays.length ? sameDays.reduce((s,d)=>s+d.total,0)/sameDays.length : 0;
@@ -1576,22 +1578,22 @@ function renderArqueo() {
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
       <div style="text-align:center;padding:14px;background:var(--surface2);border-radius:8px;">
         <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Media ${diaSemana}</div>
-        <div class="mono" style="font-size:18px;font-weight:600;">${fmtN(avg)} €</div>
+        <div class="mono" style="font-size:18px;font-weight:600;">${fmtN(avg)} â¬</div>
       </div>
       <div style="text-align:center;padding:14px;background:var(--surface2);border-radius:8px;">
         <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Mejor ${diaSemana}</div>
-        <div class="mono" style="font-size:18px;font-weight:600;color:var(--green);">${fmtN(maxDay)} €</div>
+        <div class="mono" style="font-size:18px;font-weight:600;color:var(--green);">${fmtN(maxDay)} â¬</div>
       </div>
       <div style="text-align:center;padding:14px;background:var(--surface2);border-radius:8px;">
-        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Este día</div>
-        <div class="mono" style="font-size:18px;font-weight:600;color:${dayData.total>=avg?'var(--green)':'var(--red)'};">${fmtN(dayData.total)} €</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Este dÃ­a</div>
+        <div class="mono" style="font-size:18px;font-weight:600;color:${dayData.total>=avg?'var(--green)':'var(--red)'};">${fmtN(dayData.total)} â¬</div>
       </div>
     </div>
     <div style="font-size:12px;color:var(--text2);">
       ${dayData.total >= avg
-        ? `✅ Por encima de la media del ${diaSemana} (+${fmtN(dayData.total-avg)} €, +${((dayData.total/avg-1)*100).toFixed(1)}%)`
-        : `⚠️ Por debajo de la media del ${diaSemana} (${fmtN(dayData.total-avg)} €, ${((dayData.total/avg-1)*100).toFixed(1)}%)`}
-      · ${sameDays.length} ${diaSemana}s en el período
+        ? `â Por encima de la media del ${diaSemana} (+${fmtN(dayData.total-avg)} â¬, +${((dayData.total/avg-1)*100).toFixed(1)}%)`
+        : `â ï¸ Por debajo de la media del ${diaSemana} (${fmtN(dayData.total-avg)} â¬, ${((dayData.total/avg-1)*100).toFixed(1)}%)`}
+      Â· ${sameDays.length} ${diaSemana}s en el perÃ­odo
     </div>`;
 }
 
@@ -1599,9 +1601,9 @@ function renderArqueo() {
 const INCENTIVOS = {
   objetivo: 23053.73+23174.22+22086.75+32475.91+30243.02+34847.97+33469.86+44763.52+28781.45+28678.45+35275.32+37441.84,
   meses: [
-    {mes:'Enero',     prev:23053.73, real:26444.12, incentivo:282.27,  dias:22, comentario:'Real ✓'},
-    {mes:'Febrero',   prev:23174.22, real:26991.51, incentivo:381.07,  dias:16, comentario:'Real ✓'},
-    {mes:'Marzo',     prev:22086.75, real:20240.31, incentivo:0,       dias:15, comentario:'Real ✓'},
+    {mes:'Enero',     prev:23053.73, real:26444.12, incentivo:282.27,  dias:22, comentario:'Real â'},
+    {mes:'Febrero',   prev:23174.22, real:26991.51, incentivo:381.07,  dias:16, comentario:'Real â'},
+    {mes:'Marzo',     prev:22086.75, real:20240.31, incentivo:0,       dias:15, comentario:'Real â'},
     {mes:'Abril',     prev:32475.91, real:7169.12,  incentivo:null,    dias:4,  comentario:'Parcial'},
     {mes:'Mayo',      prev:30243.02, real:0,        incentivo:null,    dias:0,  comentario:'Previsto'},
     {mes:'Junio',     prev:34847.97, real:0,        incentivo:null,    dias:0,  comentario:'Previsto'},
@@ -1630,44 +1632,44 @@ function renderIncentivos() {
   document.getElementById('inc-kpis').innerHTML = `
     <div class="kpi green">
       <label>Facturado hasta hoy</label>
-      <div class="val">${fmtN(totalReal)} €</div>
-      <div class="sub">${pctCumpl}% de la previsión</div>
-      <span class="badge ok">Ene–Abr</span>
+      <div class="val">${fmtN(totalReal)} â¬</div>
+      <div class="sub">${pctCumpl}% de la previsiÃ³n</div>
+      <span class="badge ok">EneâAbr</span>
     </div>
     <div class="kpi red">
-      <label>Para alcanzar previsión</label>
-      <div class="val">${fmtN(pendiente)} €</div>
+      <label>Para alcanzar previsiÃ³n</label>
+      <div class="val">${fmtN(pendiente)} â¬</div>
       <div class="sub">Quedan ${mesesPend} meses</div>
-      <span class="badge warn">Media nec: ${fmtN(mediaNec)} €/mes</span>
+      <span class="badge warn">Media nec: ${fmtN(mediaNec)} â¬/mes</span>
     </div>
     <div class="kpi" style="border-top:3px solid var(--green);border-radius:12px;">
       <label>Incentivos cobrados</label>
-      <div class="val" style="color:var(--green);">${fmtN(incCobrado)} €</div>
-      <div class="sub">Ene + Feb · 10% s/exceso</div>
-      <span class="badge ok">Fórmula activa</span>
+      <div class="val" style="color:var(--green);">${fmtN(incCobrado)} â¬</div>
+      <div class="sub">Ene + Feb Â· 10% s/exceso</div>
+      <span class="badge ok">FÃ³rmula activa</span>
     </div>`;
 
   // Progress bar
   document.getElementById('inc-progress').innerHTML = `
     <div style="margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:8px;">
-        <span>0 €</span>
-        <span style="color:var(--accent);font-weight:600;">Previsión: ${fmtN(INCENTIVOS.objetivo)} €</span>
+        <span>0 â¬</span>
+        <span style="color:var(--accent);font-weight:600;">PrevisiÃ³n: ${fmtN(INCENTIVOS.objetivo)} â¬</span>
       </div>
       <div style="width:100%;height:32px;background:var(--surface2);border-radius:8px;overflow:hidden;">
         <div style="height:100%;width:${Math.min(pct,100).toFixed(1)}%;background:var(--green);border-radius:8px;display:flex;align-items:center;padding-left:12px;">
-          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:white;white-space:nowrap;">${fmtN(totalReal)} € — ${pct.toFixed(1)}%</span>
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:white;white-space:nowrap;">${fmtN(totalReal)} â¬ â ${pct.toFixed(1)}%</span>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:8px;">
-        <span style="color:var(--green);">▬ Facturado: ${fmtN(totalReal)} €</span>
-        <span style="color:var(--red);">Pendiente: ${fmtN(pendiente)} €</span>
+        <span style="color:var(--green);">â¬ Facturado: ${fmtN(totalReal)} â¬</span>
+        <span style="color:var(--red);">Pendiente: ${fmtN(pendiente)} â¬</span>
       </div>
     </div>
     <div style="margin-top:12px;padding:12px 14px;background:rgba(39,133,90,0.06);border-radius:8px;border-left:3px solid var(--green);font-size:12px;">
-      💰 Incentivos cobrados hasta ahora: <strong style="color:var(--green);">${fmtN(incCobrado)} €</strong>
-      · Marzo sin incentivo (no llegó al objetivo)
-      · Media mensual necesaria para el resto: <strong>${fmtN(mediaNec)} €/mes</strong>
+      ð° Incentivos cobrados hasta ahora: <strong style="color:var(--green);">${fmtN(incCobrado)} â¬</strong>
+      Â· Marzo sin incentivo (no llegÃ³ al objetivo)
+      Â· Media mensual necesaria para el resto: <strong>${fmtN(mediaNec)} â¬/mes</strong>
     </div>`;
 
   // Table
@@ -1677,46 +1679,46 @@ function renderIncentivos() {
     const desv     = m.real > 0 ? m.real - m.prev : null;
     const isParcial = m.comentario === 'Parcial';
     const isFuture  = m.real === 0;
-    const isReal    = m.comentario === 'Real ✓';
+    const isReal    = m.comentario === 'Real â';
 
     const estado = isFuture
-      ? `<span style="color:var(--text2);font-size:12px;">📅 Prev.</span>`
-      : isParcial ? `<span style="color:var(--accent);font-size:12px;">⏳ Parcial</span>`
-      : m.real >= m.prev ? `<span style="color:var(--green);font-size:12px;">✅ Super.</span>`
-      : `<span style="color:var(--red);font-size:12px;">⚠️ Bajo</span>`;
+      ? `<span style="color:var(--text2);font-size:12px;">ð Prev.</span>`
+      : isParcial ? `<span style="color:var(--accent);font-size:12px;">â³ Parcial</span>`
+      : m.real >= m.prev ? `<span style="color:var(--green);font-size:12px;">â Super.</span>`
+      : `<span style="color:var(--red);font-size:12px;">â ï¸ Bajo</span>`;
 
     const incCell = m.incentivo === null
-      ? `<span style="color:var(--text2);">—</span>`
+      ? `<span style="color:var(--text2);">â</span>`
       : m.incentivo > 0
-        ? `<strong style="color:var(--green);">${fmtN(m.incentivo)} €</strong>`
-        : `<span style="color:var(--text3);">0,00 €</span>`;
+        ? `<strong style="color:var(--green);">${fmtN(m.incentivo)} â¬</strong>`
+        : `<span style="color:var(--text3);">0,00 â¬</span>`;
 
     return `<tr style="${isFuture?'opacity:0.5':''}">
       <td style="font-weight:${m.real>0?'600':'400'};">${m.mes}</td>
-      <td class="mono" style="text-align:right;">${fmtN(m.prev)} €</td>
+      <td class="mono" style="text-align:right;">${fmtN(m.prev)} â¬</td>
       <td class="mono" style="text-align:right;${m.real>0?'color:var(--accent2);font-weight:600;':'color:var(--text2)'}">
-        ${m.real>0?fmtN(m.real)+' €':'—'}
+        ${m.real>0?fmtN(m.real)+' â¬':'â'}
       </td>
       <td class="mono" style="text-align:right;${desv!==null?(desv>=0?'color:var(--green)':'color:var(--red)'):''}">
-        ${desv!==null?(desv>=0?'+':'')+fmtN(desv)+' €':'—'}
+        ${desv!==null?(desv>=0?'+':'')+fmtN(desv)+' â¬':'â'}
       </td>
       <td class="mono" style="text-align:right;${cumpl!==null&&parseFloat(cumpl)<80?'color:var(--red);font-weight:600;':''}">
-        ${cumpl!==null?cumpl+'%':'—'}
+        ${cumpl!==null?cumpl+'%':'â'}
       </td>
       <td class="mono" style="text-align:right;${pendMes>0&&!isReal?'color:var(--red);font-weight:600;':'color:var(--text3);'}">
-        ${!isReal&&pendMes>0?fmtN(pendMes)+' €':'—'}
+        ${!isReal&&pendMes>0?fmtN(pendMes)+' â¬':'â'}
       </td>
       <td class="mono" style="text-align:right;">${incCell}</td>
       <td style="text-align:center;">${estado}</td>
     </tr>`;
   }).join('') + `<tr style="background:rgba(184,134,11,0.06);font-weight:700;">
     <td>TOTAL</td>
-    <td class="mono" style="text-align:right;">${fmtN(totalPrev)} €</td>
-    <td class="mono" style="text-align:right;color:var(--accent2);">${fmtN(totalReal)} €</td>
-    <td class="mono" style="text-align:right;color:var(--red);">${fmtN(totalReal-totalPrev)} €</td>
+    <td class="mono" style="text-align:right;">${fmtN(totalPrev)} â¬</td>
+    <td class="mono" style="text-align:right;color:var(--accent2);">${fmtN(totalReal)} â¬</td>
+    <td class="mono" style="text-align:right;color:var(--red);">${fmtN(totalReal-totalPrev)} â¬</td>
     <td class="mono" style="text-align:right;">${pctCumpl}%</td>
-    <td class="mono" style="text-align:right;color:var(--red);">${fmtN(pendiente)} €</td>
-    <td class="mono" style="text-align:right;color:var(--green);font-weight:700;">${fmtN(incCobrado)} €</td>
+    <td class="mono" style="text-align:right;color:var(--red);">${fmtN(pendiente)} â¬</td>
+    <td class="mono" style="text-align:right;color:var(--green);font-weight:700;">${fmtN(incCobrado)} â¬</td>
     <td></td>
   </tr>`;
 
@@ -1726,11 +1728,11 @@ function renderIncentivos() {
     const wP  = (m.prev/maxV*100).toFixed(1);
     const wR  = m.real>0 ? (m.real/maxV*100).toFixed(1) : 0;
     const colR = m.real>=m.prev?'var(--green)':m.real>0?'var(--red)':'transparent';
-    const inc  = m.incentivo > 0 ? ` 🏆 ${fmtN(m.incentivo)} €` : '';
+    const inc  = m.incentivo > 0 ? ` ð ${fmtN(m.incentivo)} â¬` : '';
     return `<div style="margin-bottom:10px;">
       <div style="font-size:11px;color:var(--text2);margin-bottom:3px;display:flex;justify-content:space-between;">
         <span>${m.mes}${inc}</span>
-        <span class="mono">${m.real>0?fmtN(m.real)+' €':'prev: '+fmtN(m.prev)+' €'}</span>
+        <span class="mono">${m.real>0?fmtN(m.real)+' â¬':'prev: '+fmtN(m.prev)+' â¬'}</span>
       </div>
       <div class="bar-wrap" style="height:16px;margin-bottom:2px;">
         <div class="bar-fill" style="width:${wP}%;background:var(--surface2);border:1px solid var(--border);"></div>
@@ -1740,11 +1742,164 @@ function renderIncentivos() {
       </div>`:''}
     </div>`;
   }).join('') + `<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;">
-    <span style="color:var(--text3)">▬ Previsto</span>
-    <span style="color:var(--green)">▬ Real (superado)</span>
-    <span style="color:var(--red)">▬ Real (por debajo)</span>
+    <span style="color:var(--text3)">â¬ Previsto</span>
+    <span style="color:var(--green)">â¬ Real (superado)</span>
+    <span style="color:var(--red)">â¬ Real (por debajo)</span>
   </div>`;
 }
+
+
+// ═══════════ HORARIOS WHATSAPP PARSER ═══════════
+const TARIFAS = {'Sonia':16,'Lourdes':10,'Jonh':7.25,'Alejandra':6.39,'Mireia M.':17.13,'Mireia':17.13,'Rubi':5.17,'Rubi':5.17,'Brigitte':8,'Genesis':8,'Adria':8,'Aina':6};
+let waData = null;
+
+function parseTime(s){if(!s)return null;const c=s.trim().replace(';',':').replace(',','.');const p=c.split(':');return parseFloat(p[0])+(p[1]?parseFloat(p[1])/60:0);}
+function calcHours(f,t){let a=parseTime(f),b=parseTime(t);if(a===null||b===null)return 0;if(b<a)b+=12;return Math.round((b-a)*100)/100;}
+function detectTurno(s){const t=s.toLowerCase();if(t.includes('manana')||t.includes('mañana'))return 'manana';if(t.includes('mediodia')||t.includes('mediodía')||t.includes('medio'))return 'mediodia';if(t.includes('noche'))return 'noche';return null;}
+function detectDate(s){const m=s.match(/(w+)s+(d{1,2})/i);return m?{dia:m[1],num:parseInt(m[2])}:null;}
+function findEmployee(line){const names=Object.keys(TARIFAS);for(const n of names){if(line.toLowerCase().startsWith(n.toLowerCase()))return n;}const m=line.match(/^([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+(?:s+[A-ZÁÉÍÓÚÜÑ].?)?)/);return m?m[1]:null;}
+function parseHoursLine(line){const m=line.match(/(?:des+)?(d{1,2}(?:[;:,]d{2})?)s+as+(d{1,2}(?:[;:,]d{2})?)/i);if(m)return{from:m[1],to:m[2],hours:calcHours(m[1],m[2])};return null;}
+
+function parseWA(){
+  const raw=document.getElementById('waInput').value.trim();
+  if(!raw)return;
+  const lines=raw.split(/
+/).map(l=>l.trim()).filter(l=>l);
+  const result={};const dates=[];
+  let curTurno=null,curDate=null;
+  for(const line of lines){
+    const turno=detectTurno(line);
+    if(turno){curTurno=turno;const d=detectDate(line);if(d){curDate=d;if(!dates.find(x=>x.num===d.num))dates.push(d);}continue;}
+    if(!curTurno)continue;
+    const emp=findEmployee(line);if(!emp)continue;
+    const td=parseHoursLine(line);if(!td||td.hours<=0)continue;
+    if(!result[emp])result[emp]={manana:0,mediodia:0,noche:0};
+    result[emp][curTurno]+=td.hours;
+  }
+  if(!Object.keys(result).length){alert('No se detectaron datos. Revisa el formato.');return;}
+  waData={employees:result,dates};
+  renderWAResult();
+}
+
+function renderWAResult(){
+  const {employees,dates}=waData;
+  document.getElementById('waResult').style.display='block';
+  const dateStr=dates.map(d=>d.dia+' '+d.num).join(', ');
+  document.getElementById('waDateLabel').textContent=dateStr;
+  const cols=['#d4a853','#5db87a','#5b8fd4','#e05c4a','#9b7fd4','#4db8b8','#e0a050','#b0b870'];
+  const rows=Object.entries(employees).sort((a,b)=>(b[1].manana+b[1].mediodia+b[1].noche)-(a[1].manana+a[1].mediodia+a[1].noche));
+  const totalH=rows.reduce((s,[,d])=>s+d.manana+d.mediodia+d.noche,0);
+  const totalC=rows.reduce((s,[n,d])=>s+(d.manana+d.mediodia+d.noche)*(TARIFAS[n]||8),0);
+  document.getElementById('waKpis').innerHTML=
+    '<div class="kpi green"><label>Total horas</label><div class="val">'+totalH.toFixed(1)+'h</div><div class="sub">'+rows.length+' empleados</div></div>'+
+    '<div class="kpi"><label>Coste estimado</label><div class="val">'+fmtN(totalC)+' &euro;</div></div>'+
+    '<div class="kpi blue"><label>Mas horas</label><div class="val" style="font-size:18px;">'+rows[0][0]+'</div><div class="sub">'+(rows[0][1].manana+rows[0][1].mediodia+rows[0][1].noche).toFixed(1)+'h</div></div>'+
+    '<div class="kpi"><label>Media</label><div class="val">'+(totalH/rows.length).toFixed(1)+'h</div></div>';
+  const maxH=Math.max(...rows.map(([,d])=>d.manana+d.mediodia+d.noche));
+  document.getElementById('waTable').innerHTML=rows.map(([name,d],i)=>{
+    const tot=d.manana+d.mediodia+d.noche;const tar=TARIFAS[name]||8;
+    const f=h=>h>0?'<span style="color:var(--green);font-weight:600;">'+h.toFixed(1)+'h</span>':'<span style="color:var(--text3)">-</span>';
+    return'<tr><td style="font-weight:600;color:'+cols[i%cols.length]+'">'+name+'</td><td style="text-align:center" class="mono">'+f(d.manana)+'</td><td style="text-align:center" class="mono">'+f(d.mediodia)+'</td><td style="text-align:center" class="mono">'+f(d.noche)+'</td><td style="text-align:right" class="mono">'+tot.toFixed(1)+'h</td><td style="text-align:right" class="mono">'+fmtN(tot*tar)+' &euro;</td></tr>';
+  }).join('');
+  document.getElementById('waBars').innerHTML=rows.map(([name,d],i)=>{
+    const tot=d.manana+d.mediodia+d.noche;const col=cols[i%cols.length];
+    const wM=maxH>0?(d.manana/maxH*100).toFixed(1):0;const wMd=maxH>0?(d.mediodia/maxH*100).toFixed(1):0;const wN=maxH>0?(d.noche/maxH*100).toFixed(1):0;
+    return'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="font-weight:600;color:'+col+'">'+name+'</span><span class="mono" style="color:'+col+'">'+tot.toFixed(1)+'h</span></div><div style="display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--surface2);">'+(d.manana>0?'<div style="width:'+wM+'%;background:var(--green);opacity:.8;"></div>':'')+(d.mediodia>0?'<div style="width:'+wMd+'%;background:var(--accent);opacity:.8;"></div>':'')+(d.noche>0?'<div style="width:'+wN+'%;background:var(--blue);opacity:.8;"></div>':'')+'</div></div>';
+  }).join('')+'<div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--text2);"><span>- <span style="color:var(--green)">Manana</span></span><span>- <span style="color:var(--accent)">Mediodia</span></span><span>- <span style="color:var(--blue)">Noche</span></span></div>';
+  document.getElementById('waResult').scrollIntoView({behavior:'smooth'});
+}
+
+function exportCSV(){
+  if(!waData)return;
+  const{employees,dates}=waData;const ds=dates.map(d=>d.dia+' '+d.num).join(', ');
+  let csv='Empleado,Manana,Mediodia,Noche,Total,Tarifa,Coste,Fecha
+';
+  Object.entries(employees).forEach(([n,d])=>{const t=d.manana+d.mediodia+d.noche;const tar=TARIFAS[n]||8;csv+=n+','+d.manana.toFixed(2)+','+d.mediodia.toFixed(2)+','+d.noche.toFixed(2)+','+t.toFixed(2)+','+tar+','+(t*tar).toFixed(2)+',"'+ds+'"
+';});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='horarios.csv';a.click();
+}
+
+window.addEventListener('load',()=>{const s=localStorage.getItem('waScriptUrl');if(s)document.getElementById('waScriptUrl').value=s;});
+
+async function testConnection(){
+  const url=document.getElementById('waScriptUrl').value.trim();
+  if(!url){alert('Pega la URL primero');return;}
+  const m=document.getElementById('waTestMsg');m.style.display='block';m.style.color='var(--text2)';m.textContent='Probando...';
+  try{await fetch(url,{method:'GET',mode:'no-cors'});m.style.color='var(--green)';m.textContent='Conexion OK';}
+  catch(e){m.style.color='var(--red)';m.textContent='Error: '+e.message;}
+}
+
+async function syncToSheets(){
+  if(!waData){alert('Procesa un mensaje primero');return;}
+  const url=document.getElementById('waScriptUrl').value.trim();
+  if(!url){alert('Pon la URL del Apps Script');return;}
+  const msg=document.getElementById('waSyncMsg');msg.style.display='block';msg.style.background='rgba(39,133,90,.1)';msg.style.color='var(--green)';msg.style.border='1px solid rgba(39,133,90,.3)';msg.style.borderRadius='8px';msg.textContent='Enviando a Google Sheets...';
+  const{employees,dates}=waData;
+  const fecha=new Date().toISOString().split('T')[0];const dia=dates[0]?.dia||'';
+  const emp={};Object.entries(employees).forEach(([n,d])=>{emp[n]={manana:d.manana||0,mediodia:d.mediodia||0,noche:d.noche||0,tarifa:TARIFAS[n]||8};});
+  try{
+    await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({fecha,dia,employees:emp})});
+    msg.textContent='Google Sheets actualizado correctamente';
+    localStorage.setItem('waScriptUrl',url);
+  }catch(e){msg.style.background='rgba(192,57,43,.1)';msg.style.color='var(--red)';msg.textContent='Error: '+e.message;}
+}
 </script>
+
+<!-- HORARIOS -->
+<div id="horarios" class="tab">
+  <div class="section-title">Importar Horarios desde WhatsApp <span>Pega el mensaje y actualiza automaticamente</span></div>
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-title">Pega aqui el mensaje de WhatsApp</div>
+    <textarea id="waInput" placeholder="Ejemplo:
+Jueves 16 noche
+Lourdes de 7 a 9:30
+Jonh de 7 a 11
+
+Jueves 16 manana
+Lourdes de 12:30 a 4
+Sonia de 10 a 4" style="width:100%;height:180px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;line-height:1.6;margin-top:8px;"></textarea>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+      <button onclick="parseWA()" style="padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;">Procesar mensaje</button>
+      <button onclick="document.getElementById('waInput').value='';document.getElementById('waResult').style.display='none'" style="padding:9px 18px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Limpiar</button>
+    </div>
+  </div>
+  <div id="waResult" style="display:none;">
+    <div class="section-title">Horarios procesados <span id="waDateLabel"></span></div>
+    <div id="waKpis" class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;"></div>
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">Horas por empleado y turno</div>
+      <div class="tbl-wrap">
+        <table><thead><tr>
+          <th>Empleado</th><th style="text-align:center">Manana</th><th style="text-align:center">Mediodia</th><th style="text-align:center">Noche</th><th style="text-align:right">Total horas</th><th style="text-align:right">Coste est.</th>
+        </tr></thead><tbody id="waTable"></tbody></table>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">Distribucion de horas</div>
+      <div id="waBars"></div>
+    </div>
+    <div class="card" style="background:rgba(39,133,90,.04);border-color:rgba(39,133,90,.2);">
+      <div class="card-title" style="color:var(--green);">Guardar en Google Sheets automaticamente</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Actualiza la hoja <strong>"Horarios Personal"</strong> de tu Excel en Google Drive al instante.</div>
+      <div id="waUrlConfig" style="margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">URL del Apps Script</div>
+        <div style="display:flex;gap:8px;">
+          <input id="waScriptUrl" type="text" placeholder="https://script.google.com/macros/s/..."
+            style="flex:1;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;"
+            value="https://script.google.com/a/macros/romahosteleria.com/s/AKfycbx__MQpRqBmXMvP8fakMH_H-gbfo6x1PE8GMmh12M52SYmJkE4YWdNe9VKkLc7eGHE/exec"
+            oninput="localStorage.setItem('waScriptUrl',this.value)">
+          <button onclick="testConnection()" style="padding:8px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;">Probar</button>
+        </div>
+        <div id="waTestMsg" style="font-size:11px;margin-top:6px;display:none;"></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="syncToSheets()" style="padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;">Actualizar Google Sheets</button>
+        <button onclick="exportCSV()" style="padding:9px 18px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Descargar CSV</button>
+      </div>
+      <div id="waSyncMsg" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+      <div id="waCopyMsg" style="display:none;color:var(--green);font-size:12px;margin-top:8px;">Datos copiados</div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
