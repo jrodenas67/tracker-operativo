@@ -1,0 +1,35 @@
+name: Actualizacion Diaria Dashboard
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependencias
+        run: pip install requests openpyxl
+      - name: Actualizar datos
+        env:
+          GOOGLE_DRIVE_FILE_ID: ${{ secrets.GOOGLE_DRIVE_FILE_ID }}
+          TARGET_HTML: index.html
+        run: python fetch_data.py
+      - name: Commit
+        run: |
+          git config user.name "Dashboard Bot"
+          git config user.email "bot@taperia-caldes.local"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Sin cambios."
+          else
+            git commit -m "Actualizacion automatica $(date -u '+%Y-%m-%d')"
+            git push
+          fi
