@@ -1,0 +1,388 @@
+#!/usr/bin/env python3
+"""
+fetch_data.py — Descarga el Excel desde Google Drive y actualiza index.html
+
+Estructura esperada del Excel (se detectan automáticamente por nombre de columna):
+  Hoja "Diario"   → fecha | mañana | mediodía | noche | previsto | coste | evento
+  Hoja "Personal" → nombre | €/hora | horas | total | pct | costeMa | costeMd | costeNo
+  Hoja "Eventos"  → mes | fecha | evento | tipo | mult | prev | real | estado
+  Hoja "Productos"→ producto | familia | uds | importe | pct
+
+Variables de entorno:
+  GOOGLE_DRIVE_FILE_ID → ID del archivo en Google Drive
+  TARGET_HTML          → Ruta al HTML (default: index.html)
+"""
+
+import os, sys, re, json
+from pathlib import Path
+from datetime import datetime
+
+# ── Dependencias ─────────────────────────────────────────────────────────────
+def _pip(pkg):
+    os.system(f"{sys.executable} -m pip install {pkg} -q")
+
+try: import requests
+except ImportError: _pip("requests"); import requests
+
+try: import openpyxl
+except ImportError: _pip("openpyxl"); import openpyxl
+
+# ── Config ────────────────────────────────────────────────────────────────────
+FILE_ID    = os.environ.get("GOOGLE_DRIVE_FILE_ID", "")
+ROOT       = Path(__file__).parent
+XLSX_PATH  = ROOT / "source.xlsx"
+HTML_PATH  = ROOT / os.environ.get("TARGET_HTML", "index.html")
+
+DIAS_ES = {"Monday":"lun","Tuesday":"mar","Wednesday":"mié",
+           "Thursday":"jue","Friday":"vie","Saturday":"sáb","Sunday":"dom"}
+MESES   = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+           "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+def flt(v, d=0.0):
+    if v is None: return d
+    if isinstance(v, (int, float)): return float(v)
+    try: return float(str(v).replace(",",".").replace("€","").strip())
+    except: return d
+
+def parse_date(v):
+    if isinstance(v, datetime): return v.date()
+    if hasattr(v, "date"): return v.date()
+    if isinstance(v, str):
+        for fmt in ("%Y-%m-%d","%d/%m/%Y","%d-%m-%Y","%m/%d/%Y","%d/%m/%y"):
+            try: return datetime.strptime(v.strip(), fmt).date()
+            except: pass
+    return None
+
+def get_headers(sheet):
+    for row in sheet.iter_rows(min_row=1, max_row=5, values_only=True):
+        h = [str(c or "").strip().lower() for c in row]
+        if sum(1 for x in h if x) >= 3: return h
+    return []
+
+def ci(hdrs, *kws):
+    """Column index: first header matching any keyword."""
+    for kw in kws:
+        for i,h in enumerate(hdrs):
+            if kw in h: return i
+    return None
+
+def find_sheet(wb, *keys):
+    for k in keys:
+        for n in wb.sheetnames:
+            if k in n.lower(): return wb[n]
+    return None
+
+# ── Download ──────────────────────────────────────────────────────────────────
+def download():
+    if not FILE_ID:
+        print("⚠  GOOGLE_DRIVE_FILE_ID no configurado — conservando datos actuales.")
+        return False
+    url = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
+    print(f"⬇  Descargando Excel desde Drive…")
+    s = requests.Session()
+    r = s.get(url, stream=True, allow_redirects=True, timeout=30)
+    for k, v in r.cookies.items():
+        if k.startswith("download_warning"):
+            r = s.get(f"{url}&confirm={v}", stream=True, timeout=30)
+            break
+    if r.status_code != 200:
+        print(f"✗  HTTP {r.status_code}"); return False
+    with open(XLSX_PATH, "wb") as f:
+        for chunk in r.iter_content(32768): f.write(chunk)
+    print(f"✓  {XLSX_PATH.stat().st_size//1024} KB guardados")
+    return True
+
+# ── Parsers ───────────────────────────────────────────────────────────────────
+def parse_diario(wb):
+    sheet = find_sheet(wb, "diario","daily","factur","datos","venta")
+    if not sheet: sheet = wb.active
+    hdrs = get_headers(sheet)
+    if not hdrs: return []
+
+    C = {
+        "fecha":   ci(hdrs,"fecha","date","día","dia"),
+        "man":     ci(hdrs,"mañana","manana","morning","m1","mañ"),
+        "mid":     ci(hdrs,"mediodía","mediodia","noon","lunch","med"),
+        "noch":    ci(hdrs,"noche","night","evening","noch"),
+        "total":   ci(hdrs,"total","real","factur"),
+        "prev":    ci(hdrs,"previsto","forecast","objetivo","prev"),
+        "coste":   ci(hdrs,"coste","cost","personal","salari"),
+        "evento":  ci(hdrs,"evento","event","nota","observ"),
+    }
+
+    records = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if all(c is None for c in row): continue
+        d = parse_date(row[C["fecha"]]) if C["fecha"] is not None else None
+        if d is None: continue
+        man   = flt(row[C["man"]])   if C["man"]   is not None else 0
+        mid   = flt(row[C["mid"]])   if C["mid"]   is not None else 0
+        noch  = flt(row[C["noch"]])  if C["noch"]  is not None else 0
+        tot_r = flt(row[C["total"]]) if C["total"] is not None else 0
+        total = tot_r if tot_r > 0 else round(man+mid+noch, 2)
+        if total <= 0: continue
+        prev  = flt(row[C["prev"]])  if C["prev"]  is not None else 0
+        coste = flt(row[C["coste"]]) if C["coste"] is not None else 0
+        ev    = str(row[C["evento"]] or "").strip() if C["evento"] is not None else ""
+        records.append({
+            "fecha":    d.strftime("%Y-%m-%d"),
+            "dia":      DIAS_ES.get(d.strftime("%A"), "?"),
+            "mes":      d.month,
+            "manana":   round(man,2),
+            "mediodia": round(mid,2),
+            "noche":    round(noch,2),
+            "total":    round(total,2),
+            "previsto": round(prev,2),
+            "coste":    round(coste,2),
+            "pctCoste": round(coste/total,4) if total>0 else 0,
+            "evento":   ev,
+        })
+    records.sort(key=lambda r: r["fecha"])
+    print(f"  ✓ Diario: {len(records)} días")
+    return records
+
+
+def monthly_from_daily(daily, html_text=""):
+    """Calcula resumen mensual. Intenta preservar real2025 del HTML."""
+    # Intentar leer real2025 del HTML existente
+    r25 = {}
+    try:
+        m = re.search(r'"monthly"\s*:\s*(\[[\s\S]*?\])', html_text)
+        if m:
+            prev_monthly = json.loads(m.group(1))
+            for row in prev_monthly:
+                r25[row["mes"]] = row.get("real2025", 0)
+    except: pass
+
+    agg = {}
+    for d in daily:
+        mn = d["mes"]
+        if mn not in agg: agg[mn] = {"dias":0,"total":0,"prev":0,"coste":0}
+        agg[mn]["dias"]  += 1
+        agg[mn]["total"] += d["total"]
+        agg[mn]["prev"]  += d["previsto"]
+        agg[mn]["coste"] += d["coste"]
+
+    result = []
+    for i, mes in enumerate(MESES, 1):
+        a = agg.get(i, {})
+        total = a.get("total", 0)
+        coste = a.get("coste", 0)
+        result.append({
+            "mes":      mes,
+            "real2026": round(total, 2),
+            "prev2026": round(a.get("prev", 0), 2),
+            "real2025": r25.get(mes, 0),
+            "dias":     a.get("dias", 0),
+            "pctCoste": round(coste/total, 4) if total > 0 else 0,
+        })
+    return result
+
+
+def parse_employees(wb, key="personal"):
+    sheet = find_sheet(wb, key, "empleado", "equipo", "staff", "costes")
+    if not sheet: return [], []
+    hdrs = get_headers(sheet)
+    C = {
+        "nombre": ci(hdrs,"nombre","empleado","name","trabajador"),
+        "euroh":  ci(hdrs,"€/hora","euro","tarifa","rate","hora"),
+        "horas":  ci(hdrs,"horas","hours","h"),
+        "total":  ci(hdrs,"total","coste","importe"),
+        "pct":    ci(hdrs,"pct","%","porcentaje"),
+        "ma":     ci(hdrs,"mañana","manana","ma"),
+        "mid":    ci(hdrs,"mediodía","mediodia","mid","md"),
+        "no":     ci(hdrs,"noche","no"),
+    }
+    emps = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if all(c is None for c in row): continue
+        nombre = str(row[C["nombre"]] or "").strip() if C["nombre"] is not None else ""
+        if not nombre or nombre.lower() in ("total","suma","totales"): continue
+        total = flt(row[C["total"]]) if C["total"] is not None else 0
+        if total <= 0: continue
+        emps.append({
+            "nombre":   nombre,
+            "euroHora": flt(row[C["euroh"]]) if C["euroh"] is not None else 0,
+            "horas":    flt(row[C["horas"]]) if C["horas"] is not None else 0,
+            "total":    round(total,2),
+            "pct":      flt(row[C["pct"]])  if C["pct"]  is not None else 0,
+            "costeMa":  flt(row[C["ma"]])   if C["ma"]   is not None else 0,
+            "costeMd":  flt(row[C["mid"]])  if C["mid"]  is not None else 0,
+            "costeNo":  flt(row[C["no"]])   if C["no"]   is not None else 0,
+        })
+    tot = sum(e["total"] for e in emps)
+    for e in emps:
+        if e["pct"] == 0 and tot > 0: e["pct"] = round(e["total"]/tot, 4)
+    print(f"  ✓ Personal: {len(emps)} empleados")
+    return emps, []
+
+
+def parse_events(wb):
+    sheet = find_sheet(wb, "event","evento","acto","agenda")
+    if not sheet: return []
+    hdrs = get_headers(sheet)
+    C = {
+        "mes":    ci(hdrs,"mes","month"),
+        "fecha":  ci(hdrs,"fecha","date","día"),
+        "evento": ci(hdrs,"evento","event","nombre","descripción","desc"),
+        "tipo":   ci(hdrs,"tipo","type","categ"),
+        "mult":   ci(hdrs,"mult","factor","multiplicador"),
+        "prev":   ci(hdrs,"previsto","forecast","objetivo"),
+        "real":   ci(hdrs,"real","total","importe"),
+        "estado": ci(hdrs,"estado","status","state"),
+    }
+    evs = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if all(c is None for c in row): continue
+        ev = str(row[C["evento"]] or "").strip() if C["evento"] is not None else ""
+        if not ev: continue
+        fd = parse_date(row[C["fecha"]]) if C["fecha"] is not None else None
+        evs.append({
+            "mes":    str(row[C["mes"]] or "").strip() if C["mes"] is not None else "",
+            "fecha":  fd.strftime("%Y-%m-%d") if fd else str(row[C["fecha"]] or ""),
+            "evento": ev,
+            "tipo":   str(row[C["tipo"]] or "").strip() if C["tipo"] is not None else "",
+            "mult":   flt(row[C["mult"]], 1.0) if C["mult"] is not None else 1.0,
+            "prev":   flt(row[C["prev"]]) if C["prev"] is not None else 0,
+            "real":   flt(row[C["real"]]) if C["real"] is not None else 0,
+            "estado": str(row[C["estado"]] or "").strip() if C["estado"] is not None else "",
+        })
+    print(f"  ✓ Eventos: {len(evs)}")
+    return evs
+
+
+def parse_products(wb):
+    sheet = find_sheet(wb, "prod","mix","carta","venta","articulo")
+    if not sheet: return [], []
+    hdrs = get_headers(sheet)
+    C = {
+        "prod": ci(hdrs,"producto","product","artículo","item","nombre","descrip"),
+        "fam":  ci(hdrs,"familia","family","categ","tipo","grupo"),
+        "uds":  ci(hdrs,"uds","unidades","qty","cantidad","cant"),
+        "imp":  ci(hdrs,"importe","total","€","ventas","venta"),
+        "pct":  ci(hdrs,"pct","%","porcentaje"),
+    }
+    prods = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if all(c is None for c in row): continue
+        p = str(row[C["prod"]] or "").strip() if C["prod"] is not None else ""
+        if not p: continue
+        imp = flt(row[C["imp"]]) if C["imp"] is not None else 0
+        if imp <= 0: continue
+        prods.append({
+            "producto": p,
+            "familia":  str(row[C["fam"]] or "Sin familia").strip() if C["fam"] is not None else "Sin familia",
+            "uds":      int(flt(row[C["uds"]])) if C["uds"] is not None else 0,
+            "importe":  round(imp,2),
+            "pct":      flt(row[C["pct"]]) if C["pct"] is not None else 0,
+        })
+    if not prods: return [], []
+    prods.sort(key=lambda p: p["importe"], reverse=True)
+    tot = sum(p["importe"] for p in prods)
+    for p in prods:
+        if p["pct"] == 0 and tot > 0: p["pct"] = round(p["importe"]/tot, 4)
+
+    fam_map = {}
+    for p in prods:
+        f = p["familia"]
+        if f not in fam_map: fam_map[f] = {"uds":0,"importe":0}
+        fam_map[f]["uds"]    += p["uds"]
+        fam_map[f]["importe"] += p["importe"]
+    families = sorted(
+        [{"familia":f,"uds":v["uds"],"importe":round(v["importe"],2),
+          "pct":round(v["importe"]/tot,4)} for f,v in fam_map.items()],
+        key=lambda x: x["importe"], reverse=True
+    )
+    print(f"  ✓ Productos: {len(prods)} → top30, {len(families)} familias")
+    return prods[:30], families
+
+
+# ── Inject into HTML ──────────────────────────────────────────────────────────
+def compact(obj):
+    return json.dumps(obj, ensure_ascii=False, separators=(",",":"))
+
+def inject(html, key, value_str):
+    """Reemplaza 'const KEY = {…};' en el HTML."""
+    # Regex que captura desde 'const KEY = ' hasta el siguiente ';' en línea de nivel 0
+    pattern = rf'(const\s+{re.escape(key)}\s*=\s*)\{{[\s\S]*?\}};'
+    new_html, n = re.subn(pattern, rf'\g<1>{value_str};', html, count=1)
+    if n: print(f"  ✓ Actualizado: {key}")
+    else: print(f"  ⚠  No encontrado en HTML: {key} (se conserva el existente)")
+    return new_html
+
+def update_header(html, n_dias, last_date):
+    try:
+        d = datetime.strptime(last_date, "%Y-%m-%d")
+        fecha_fmt = d.strftime("%-d %b %Y")
+    except: fecha_fmt = last_date
+    new_meta = f"Tracker Operativo 2026 · {n_dias} días · Actualizado {fecha_fmt}"
+    return re.sub(
+        r"Tracker Operativo 2026 · \d+ días · Actualizado [^<\"']+",
+        new_meta, html, count=1
+    )
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+def main():
+    if not HTML_PATH.exists():
+        print(f"✗ No existe {HTML_PATH}"); sys.exit(1)
+
+    html = HTML_PATH.read_text(encoding="utf-8")
+    print(f"📄 HTML cargado: {len(html)//1024} KB")
+
+    ok = download()
+    if not ok or not XLSX_PATH.exists():
+        print("ℹ Sin Excel — actualizando solo timestamp.")
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        html = update_header(html, html.count('"fecha"'), today)
+        HTML_PATH.write_text(html, encoding="utf-8")
+        return
+
+    print("📊 Procesando Excel…")
+    wb = openpyxl.load_workbook(XLSX_PATH, read_only=True, data_only=True)
+    print(f"  Hojas: {wb.sheetnames}")
+
+    # --- Diario ---
+    daily = parse_diario(wb)
+    if daily:
+        monthly = monthly_from_daily(daily, html)
+        emps, emps_mes = parse_employees(wb)
+        events = parse_events(wb)
+
+        data_obj = {
+            "daily":        daily,
+            "monthly":      monthly,
+            "employees":    emps if emps else json.loads(
+                re.search(r'"employees"\s*:\s*(\[[\s\S]*?\])', html).group(1)
+                if re.search(r'"employees"\s*:\s*\[', html) else "[]"
+            ),
+            "employeesMes": emps_mes if emps_mes else json.loads(
+                re.search(r'"employeesMes"\s*:\s*(\[[\s\S]*?\])', html).group(1)
+                if re.search(r'"employeesMes"\s*:\s*\[', html) else "[]"
+            ),
+            "events": events if events else json.loads(
+                re.search(r'"events"\s*:\s*(\[[\s\S]*?\])', html).group(1)
+                if re.search(r'"events"\s*:\s*\[', html) else "[]"
+            ),
+        }
+        html = inject(html, "DATA", compact(data_obj))
+
+    # --- Productos ---
+    top_prod, families = parse_products(wb)
+    if top_prod:
+        html = inject(html, "PM", compact({"topProd": top_prod, "families": families}))
+
+    wb.close()
+    XLSX_PATH.unlink(missing_ok=True)
+
+    # --- Header ---
+    if daily:
+        html = update_header(html, len(daily), daily[-1]["fecha"])
+
+    HTML_PATH.write_text(html, encoding="utf-8")
+    print(f"🎉 Dashboard actualizado correctamente → {HTML_PATH.name}")
+
+
+if __name__ == "__main__":
+    main()

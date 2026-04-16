@@ -1,0 +1,14 @@
+[build]
+  publish = "."
+  command = "echo 'Static site — no build needed'"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+    X-Frame-Options = "SAMEORIGIN"
+
+[[headers]]
+  for = "/data.js"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
