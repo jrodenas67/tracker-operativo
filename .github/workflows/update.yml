@@ -19,6 +19,14 @@ jobs:
         run: pip install requests openpyxl
       - name: Actualizar datos
         env:
+          # Microsoft Graph / OneDrive (prioritario)
+          MS_TENANT_ID:       ${{ secrets.MS_TENANT_ID }}
+          MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_SECRET:   ${{ secrets.MS_CLIENT_SECRET }}
+          ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
+          ONEDRIVE_USER:      ${{ secrets.ONEDRIVE_USER }}
+          ONEDRIVE_FILE_PATH: ${{ secrets.ONEDRIVE_FILE_PATH }}
+          # Google Drive (legacy fallback)
           GOOGLE_DRIVE_FILE_ID: ${{ secrets.GOOGLE_DRIVE_FILE_ID }}
           TARGET_HTML: index.html
         run: python fetch_data.py

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-fetch_data.py — Descarga el Excel desde Google Drive y actualiza index.html
+fetch_data.py — Descarga el Excel desde OneDrive/SharePoint (Microsoft Graph)
+               y actualiza index.html. Mantiene compatibilidad con Google Drive
+               como fallback legacy.
 
 Estructura esperada del Excel (se detectan automáticamente por nombre de columna):
   Hoja "Diario"   → fecha | mañana | mediodía | noche | previsto | coste | evento
@@ -8,12 +10,23 @@ Estructura esperada del Excel (se detectan automáticamente por nombre de column
   Hoja "Eventos"  → mes | fecha | evento | tipo | mult | prev | real | estado
   Hoja "Productos"→ producto | familia | uds | importe | pct
 
-Variables de entorno:
+Variables de entorno (OneDrive/SharePoint vía Microsoft Graph — prioritario):
+  MS_TENANT_ID         → Azure AD tenant ID
+  MS_CLIENT_ID         → App (client) ID
+  MS_CLIENT_SECRET     → Client secret
+  ONEDRIVE_SHARE_URL   → URL compartida del Excel (recomendado)
+  — o alternativamente —
+  ONEDRIVE_USER        → UPN del propietario (ej. juan@company.onmicrosoft.com)
+  ONEDRIVE_FILE_PATH   → Ruta relativa al archivo desde la raíz del drive
+
+Variables de entorno (Google Drive — legacy, fallback):
   GOOGLE_DRIVE_FILE_ID → ID del archivo en Google Drive
-  TARGET_HTML          → Ruta al HTML (default: index.html)
+
+Configuración:
+  TARGET_HTML → Ruta al HTML (default: index.html)
 """
 
-import os, sys, re, json
+import os, sys, re, json, base64
 from pathlib import Path
 from datetime import datetime
 
@@ -28,7 +41,17 @@ try: import openpyxl
 except ImportError: _pip("openpyxl"); import openpyxl
 
 # ── Config ────────────────────────────────────────────────────────────────────
+# Microsoft Graph (prioritario)
+MS_TENANT_ID       = os.environ.get("MS_TENANT_ID", "")
+MS_CLIENT_ID       = os.environ.get("MS_CLIENT_ID", "")
+MS_CLIENT_SECRET   = os.environ.get("MS_CLIENT_SECRET", "")
+ONEDRIVE_SHARE_URL = os.environ.get("ONEDRIVE_SHARE_URL", "")
+ONEDRIVE_USER      = os.environ.get("ONEDRIVE_USER", "")
+ONEDRIVE_FILE_PATH = os.environ.get("ONEDRIVE_FILE_PATH", "")
+
+# Google Drive (legacy)
 FILE_ID    = os.environ.get("GOOGLE_DRIVE_FILE_ID", "")
+
 ROOT       = Path(__file__).parent
 XLSX_PATH  = ROOT / "source.xlsx"
 HTML_PATH  = ROOT / os.environ.get("TARGET_HTML", "index.html")
@@ -73,13 +96,68 @@ def find_sheet(wb, *keys):
             if k in n.lower(): return wb[n]
     return None
 
-# ── Download ──────────────────────────────────────────────────────────────────
-def download():
+# ── Download: Microsoft Graph (OneDrive/SharePoint) ───────────────────────────
+def _graph_token():
+    """OAuth2 client credentials flow → access token."""
+    url = f"https://login.microsoftonline.com/{MS_TENANT_ID}/oauth2/v2.0/token"
+    data = {
+        "client_id":     MS_CLIENT_ID,
+        "client_secret": MS_CLIENT_SECRET,
+        "scope":         "https://graph.microsoft.com/.default",
+        "grant_type":    "client_credentials",
+    }
+    r = requests.post(url, data=data, timeout=30)
+    r.raise_for_status()
+    return r.json()["access_token"]
+
+def _encode_share_url(share_url):
+    """Codifica URL compartida al formato u!<base64url-sin-padding> que Graph requiere."""
+    b64 = base64.urlsafe_b64encode(share_url.encode()).decode().rstrip("=")
+    return "u!" + b64
+
+def download_onedrive():
+    if not (MS_TENANT_ID and MS_CLIENT_ID and MS_CLIENT_SECRET):
+        return False
+    if not (ONEDRIVE_SHARE_URL or (ONEDRIVE_USER and ONEDRIVE_FILE_PATH)):
+        return False
+
+    print("🔐  Autenticando con Microsoft Graph…")
+    try:
+        token = _graph_token()
+    except Exception as e:
+        print(f"✗  Error al obtener token: {e}")
+        return False
+    headers = {"Authorization": f"Bearer {token}"}
+
+    if ONEDRIVE_SHARE_URL:
+        enc = _encode_share_url(ONEDRIVE_SHARE_URL)
+        graph_url = f"https://graph.microsoft.com/v1.0/shares/{enc}/driveItem/content"
+        print("⬇  Descargando Excel desde OneDrive (via share URL)…")
+    else:
+        # Construir ruta: /users/{user}/drive/root:/{path}:/content
+        path = ONEDRIVE_FILE_PATH.lstrip("/")
+        graph_url = (
+            f"https://graph.microsoft.com/v1.0/users/{ONEDRIVE_USER}"
+            f"/drive/root:/{path}:/content"
+        )
+        print(f"⬇  Descargando Excel desde OneDrive (user={ONEDRIVE_USER})…")
+
+    r = requests.get(graph_url, headers=headers, stream=True,
+                     allow_redirects=True, timeout=60)
+    if r.status_code != 200:
+        print(f"✗  HTTP {r.status_code}: {r.text[:300]}")
+        return False
+    with open(XLSX_PATH, "wb") as f:
+        for chunk in r.iter_content(32768): f.write(chunk)
+    print(f"✓  {XLSX_PATH.stat().st_size//1024} KB guardados")
+    return True
+
+# ── Download: Google Drive (legacy fallback) ─────────────────────────────────
+def download_gdrive():
     if not FILE_ID:
-        print("⚠  GOOGLE_DRIVE_FILE_ID no configurado — conservando datos actuales.")
         return False
     url = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
-    print(f"⬇  Descargando Excel desde Drive…")
+    print(f"⬇  Descargando Excel desde Drive (legacy)…")
     s = requests.Session()
     r = s.get(url, stream=True, allow_redirects=True, timeout=30)
     for k, v in r.cookies.items():
@@ -92,6 +170,15 @@ def download():
         for chunk in r.iter_content(32768): f.write(chunk)
     print(f"✓  {XLSX_PATH.stat().st_size//1024} KB guardados")
     return True
+
+def download():
+    """Intenta OneDrive primero, luego Google Drive como fallback."""
+    if download_onedrive():
+        return True
+    if download_gdrive():
+        return True
+    print("⚠  Sin credenciales válidas (ni OneDrive ni Drive) — conservando datos actuales.")
+    return False
 
 # ── Parsers ───────────────────────────────────────────────────────────────────
 def parse_diario(wb):
@@ -304,7 +391,6 @@ def compact(obj):
 
 def inject(html, key, value_str):
     """Reemplaza 'const KEY = {…};' en el HTML."""
-    # Regex que captura desde 'const KEY = ' hasta el siguiente ';' en línea de nivel 0
     pattern = rf'(const\s+{re.escape(key)}\s*=\s*)\{{[\s\S]*?\}};'
     new_html, n = re.subn(pattern, rf'\g<1>{value_str};', html, count=1)
     if n: print(f"  ✓ Actualizado: {key}")
