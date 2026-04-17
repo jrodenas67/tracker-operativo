@@ -11,6 +11,7 @@ Variables de entorno necesarias:
 
 from __future__ import annotations
 import base64
+import copy
 import datetime
 import io
 import os
@@ -119,33 +120,53 @@ def _formula_template(ws, row: int) -> dict[int, str]:
     return tpl
 
 
+def _copy_style(src_cell, dst_cell) -> None:
+    """Copia el estilo visual completo de una celda a otra (fuente, relleno,
+    bordes, alineacion, proteccion, formato numerico). No copia el value."""
+    if src_cell.has_style:
+        dst_cell.font = copy.copy(src_cell.font)
+        dst_cell.fill = copy.copy(src_cell.fill)
+        dst_cell.border = copy.copy(src_cell.border)
+        dst_cell.alignment = copy.copy(src_cell.alignment)
+        dst_cell.protection = copy.copy(src_cell.protection)
+    dst_cell.number_format = src_cell.number_format
+
+
 def apply_turnos(ws, turnos: list[Turno]) -> tuple[list[Turno], list[Turno]]:
     """Aplica los turnos a la hoja. Devuelve (applied, skipped)."""
     existing = _existing_fecha_turno(ws)
-    # plantilla de formulas: cogemos de la fila 5 (primera con datos)
-    tpl = _formula_template(ws, 5)
+    tpl_row = 5  # fila plantilla con formato y formulas de referencia
+    tpl = _formula_template(ws, tpl_row)
     applied: list[Turno] = []
     skipped: list[Turno] = []
     next_row = _last_data_row(ws) + 1
+
+    # Alturas de fila y estilos de fila: copiamos la altura de la fila plantilla
+    tpl_height = ws.row_dimensions[tpl_row].height
 
     for t in turnos:
         if t.key() in existing:
             skipped.append(t)
             continue
-        # Escribimos valores en cols A, C, D, E, F
+        # 1) Copiamos el estilo celda-a-celda desde la fila plantilla
+        for col in range(1, ws.max_column + 1):
+            _copy_style(ws.cell(tpl_row, col), ws.cell(next_row, col))
+        # 2) Altura de fila
+        if tpl_height is not None:
+            ws.row_dimensions[next_row].height = tpl_height
+        # 3) Valores literales en cols A, C, D, E, F (sobreescriben el formato
+        #    donde haga falta, pero _copy_style ya puso number_format; aqui
+        #    solo ajustamos para valores que requieren un formato especifico)
         ws.cell(next_row, 1).value = datetime.datetime.combine(t.fecha, datetime.time(0, 0))
-        ws.cell(next_row, 1).number_format = "yyyy-mm-dd"
         ws.cell(next_row, 3).value = t.turno
         ws.cell(next_row, 4).value = t.nombre
         ws.cell(next_row, 5).value = t.entrada
-        ws.cell(next_row, 5).number_format = "hh:mm:ss"
         ws.cell(next_row, 6).value = t.salida
-        ws.cell(next_row, 6).number_format = "hh:mm:ss"
-        # Copiamos formulas de la plantilla ajustando referencias
+        # 4) Formulas de la plantilla ajustando referencias a la fila nueva
         for col, formula in tpl.items():
             if col in (1, 3, 4, 5, 6):
                 continue  # cols con valor literal
-            ws.cell(next_row, col).value = Translator(formula, origin=f"A5").translate_formula(f"A{next_row}")
+            ws.cell(next_row, col).value = Translator(formula, origin=f"A{tpl_row}").translate_formula(f"A{next_row}")
         applied.append(t)
         # No añadimos key a `existing`: el batch puede meter varios turnos del
         # mismo (fecha, turno) par (ej. Lourdes y Jonh el mismo Miércoles mañana).
