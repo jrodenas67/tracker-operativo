@@ -347,6 +347,7 @@
     <button data-icon="🧾" onclick="showTab('arqueo',this)">Arqueo</button>
     <button data-icon="🏆" onclick="showTab('incentivos',this)">Incentivos</button>
     <button data-icon="🔮" onclick="showTab('prevision',this)">Previsión</button>
+    <button data-icon="⚙️" onclick="showTab('productividad',this)">Productividad</button>
 
     <button data-icon="📲" onclick="showTab('horarios',this)" style="background:rgba(39,133,90,.12);color:#27855a;font-weight:600;">Horarios</button>
   </nav>
@@ -1989,6 +1990,410 @@ function renderPrevision() {
     };
   }
   document.addEventListener('DOMContentLoaded', renderPrevision);
+})();
+</script>
+
+<!-- PRODUCTIVIDAD -->
+<div id="productividad" class="tab">
+  <style>
+    /* ── Estilos locales pestaña Productividad ─────────────────────── */
+    #productividad .prd-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+    @media (max-width:768px){ #productividad .prd-kpis { grid-template-columns:repeat(2,1fr); } }
+    #productividad .prd-kpi { background:var(--surface,#fff); border:1px solid var(--border,#e5e7eb); border-radius:10px; padding:14px; }
+    #productividad .prd-kpi .lbl { font-size:11px; color:var(--text3,#9ca3af); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+    #productividad .prd-kpi .val { font-size:22px; font-weight:700; color:var(--text,#1f2937); }
+    #productividad .prd-kpi .sub { font-size:11px; color:var(--text2,#6b7280); margin-top:4px; }
+    #productividad .prd-form { display:grid; grid-template-columns:repeat(8,1fr); gap:8px; margin-bottom:12px; }
+    @media (max-width:1024px){ #productividad .prd-form { grid-template-columns:repeat(4,1fr); } }
+    @media (max-width:640px){ #productividad .prd-form { grid-template-columns:repeat(2,1fr); } }
+    #productividad .prd-form input, #productividad .prd-form select {
+      padding:8px 10px; background:var(--surface2,#f9fafb); border:1px solid var(--border,#e5e7eb);
+      border-radius:6px; font-size:13px; font-family:inherit; color:var(--text,#1f2937); width:100%;
+    }
+    #productividad .prd-tbl { width:100%; border-collapse:collapse; font-size:13px; }
+    #productividad .prd-tbl th { background:#f5f5f5; padding:8px; text-align:left; border-bottom:2px solid #ddd; font-weight:600; font-size:12px; }
+    #productividad .prd-tbl td { padding:6px 8px; border-bottom:1px solid #eee; }
+    #productividad .prd-tbl td input, #productividad .prd-tbl td select {
+      width:100%; padding:4px 6px; background:transparent; border:1px solid transparent; border-radius:4px; font-size:13px; font-family:inherit;
+    }
+    #productividad .prd-tbl td input:focus, #productividad .prd-tbl td select:focus { border-color:#27855a; background:#fff; outline:none; }
+    #productividad .prd-tbl td.num { text-align:right; font-variant-numeric:tabular-nums; }
+    #productividad .sem {
+      display:inline-block; min-width:78px; padding:4px 10px; border-radius:12px; font-size:12px;
+      font-weight:700; text-align:center; color:#fff;
+    }
+    #productividad .sem-rojo { background:#c0392b; }
+    #productividad .sem-ama  { background:#f39c12; }
+    #productividad .sem-ver  { background:#27ae60; }
+    #productividad .sem-opt  { background:#16a085; box-shadow:0 0 0 2px rgba(22,160,133,.25); }
+    #productividad .prd-btn {
+      padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:600;
+      font-family:inherit; font-size:13px;
+    }
+    #productividad .prd-btn-primary { background:#27855a; color:#fff; }
+    #productividad .prd-btn-sec { background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; }
+    #productividad .prd-btn-del { background:transparent; color:#c0392b; padding:4px 8px; font-size:16px; }
+  </style>
+
+  <div class="section-title">Productividad y Rentabilidad por Turno <span>Control operativo y toma de decisiones</span></div>
+
+  <!-- ── Resumen global ────────────────────────────────────────────── -->
+  <div class="prd-kpis">
+    <div class="prd-kpi"><div class="lbl">Total Ventas</div><div class="val" id="prdKpiVentas">0 €</div><div class="sub" id="prdKpiDias">0 turnos</div></div>
+    <div class="prd-kpi"><div class="lbl">Total Coste Personal</div><div class="val" id="prdKpiCoste">0 €</div><div class="sub" id="prdKpiPct">0 % de ventas</div></div>
+    <div class="prd-kpi"><div class="lbl">Ratio Global Rentabilidad</div><div class="val" id="prdKpiRatio">0.0x</div><div class="sub" id="prdKpiRatioLbl">—</div></div>
+    <div class="prd-kpi"><div class="lbl">Ticket Medio Global</div><div class="val" id="prdKpiTicket">0 €</div><div class="sub" id="prdKpiClientes">0 clientes</div></div>
+  </div>
+
+  <!-- ── Análisis avanzado ─────────────────────────────────────────── -->
+  <div class="prd-kpis">
+    <div class="prd-kpi"><div class="lbl">Mejor turno</div><div class="val" id="prdMejorTurno" style="font-size:16px">—</div><div class="sub" id="prdMejorTurnoRatio">—</div></div>
+    <div class="prd-kpi"><div class="lbl">Peor turno</div><div class="val" id="prdPeorTurno" style="font-size:16px">—</div><div class="sub" id="prdPeorTurnoRatio">—</div></div>
+    <div class="prd-kpi"><div class="lbl">Día más rentable</div><div class="val" id="prdMejorDia" style="font-size:16px">—</div><div class="sub" id="prdMejorDiaRatio">—</div></div>
+    <div class="prd-kpi"><div class="lbl">Día menos rentable</div><div class="val" id="prdPeorDia" style="font-size:16px">—</div><div class="sub" id="prdPeorDiaRatio">—</div></div>
+  </div>
+
+  <!-- ── Filtros ───────────────────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Filtros</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <select id="prdFiltDia" class="prd-btn-sec" style="padding:8px 12px;">
+        <option value="">Todos los días</option>
+        <option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option>
+        <option>Viernes</option><option>Sábado</option><option>Domingo</option>
+      </select>
+      <select id="prdFiltTurno" class="prd-btn-sec" style="padding:8px 12px;">
+        <option value="">Todos los turnos</option>
+        <option>Mañana</option><option>Mediodía</option><option>Noche</option>
+      </select>
+      <input id="prdFiltDesde" type="date" class="prd-btn-sec" style="padding:8px 12px;" title="Desde">
+      <input id="prdFiltHasta" type="date" class="prd-btn-sec" style="padding:8px 12px;" title="Hasta">
+      <button class="prd-btn prd-btn-sec" onclick="prdLimpiarFiltros()">Limpiar</button>
+    </div>
+  </div>
+
+  <!-- ── Formulario de alta ────────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Añadir turno</div>
+    <div class="prd-form">
+      <input id="prdFFecha"  type="date"  placeholder="Fecha">
+      <input id="prdFDia"    type="text"  placeholder="Día" readonly style="background:#eee;color:#555;">
+      <select id="prdFTurno"><option value="">Turno…</option><option>Mañana</option><option>Mediodía</option><option>Noche</option></select>
+      <input id="prdFVentas"   type="number" step="0.01" placeholder="Ventas €">
+      <input id="prdFClientes" type="number" step="1"   placeholder="Nº clientes">
+      <input id="prdFHC"       type="number" step="0.25" placeholder="Horas camareros">
+      <input id="prdFHK"       type="number" step="0.25" placeholder="Horas cocina">
+      <input id="prdFCoste"    type="number" step="0.01" placeholder="Coste personal €">
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="prd-btn prd-btn-primary" onclick="prdAdd()">+ Añadir turno</button>
+      <button class="prd-btn prd-btn-sec"     onclick="prdExportCSV()">⬇ Exportar CSV</button>
+      <button class="prd-btn prd-btn-sec"     onclick="prdExportXLS()">⬇ Exportar Excel</button>
+      <button class="prd-btn prd-btn-sec"     onclick="prdImportCSV()">⬆ Importar CSV</button>
+      <input id="prdFileInput" type="file" accept=".csv" style="display:none" onchange="prdHandleImport(event)">
+      <button class="prd-btn prd-btn-sec" style="color:#c0392b" onclick="prdLimpiarTodo()">🗑 Borrar todo</button>
+    </div>
+  </div>
+
+  <!-- ── Tabla principal ───────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">Registros <span id="prdCount" style="color:#9ca3af;font-weight:400;">(0)</span></div>
+    <div style="overflow:auto;max-height:640px;">
+      <table class="prd-tbl" id="prdTbl">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Día</th><th>Turno</th>
+            <th style="text-align:right">Ventas €</th>
+            <th style="text-align:right">Clientes</th>
+            <th style="text-align:right">H. cam.</th>
+            <th style="text-align:right">H. coc.</th>
+            <th style="text-align:right">Coste €</th>
+            <th style="text-align:right">Prod. cam.</th>
+            <th style="text-align:right">Prod. coc.</th>
+            <th style="text-align:right">Ticket</th>
+            <th style="text-align:right">Ratio</th>
+            <th style="text-align:center">Semáforo</th>
+            <th>Decisión</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="prdTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   PRODUCTIVIDAD POR TURNO — Lógica
+   Datos persistidos en localStorage bajo la clave "prd_data_v1"
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  const KEY = "prd_data_v1";
+  const DIAS_SEM = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  // ────────────────────────────────────────────────────────────────
+  //   Estado
+  // ────────────────────────────────────────────────────────────────
+  let prd = JSON.parse(localStorage.getItem(KEY) || "[]");
+  const save = () => localStorage.setItem(KEY, JSON.stringify(prd));
+
+  // ────────────────────────────────────────────────────────────────
+  //   Utilidades
+  // ────────────────────────────────────────────────────────────────
+  const fmtE = v => (v||0).toLocaleString('es-ES',{maximumFractionDigits:2}) + ' €';
+  const fmtN = v => (v||0).toLocaleString('es-ES',{maximumFractionDigits:2});
+  const diaDe = fecha => {
+    if (!fecha) return '';
+    const d = new Date(fecha + 'T00:00:00');
+    return isNaN(d) ? '' : DIAS_SEM[d.getDay()];
+  };
+  // Cálculos derivados
+  const calc = r => {
+    const v = +r.ventas||0, c = +r.coste||0, cl = +r.clientes||0;
+    const hc = +r.horasCam||0, hk = +r.horasCoc||0;
+    return {
+      prodCam: hc > 0 ? v / hc : 0,
+      prodCoc: hk > 0 ? v / hk : 0,
+      ticket:  cl > 0 ? v / cl : 0,
+      ratio:   c  > 0 ? v / c  : 0,
+    };
+  };
+  // Semáforo según ratio
+  const semaforo = ratio => {
+    if (ratio >= 3.5) return { clase:'sem-opt',  label:'ÓPTIMO',  decision:'Potenciar turno' };
+    if (ratio >  3)   return { clase:'sem-ver',  label:'RENTABLE', decision:'Turno rentable' };
+    if (ratio >= 2.5) return { clase:'sem-ama',  label:'AJUSTAR',  decision:'Optimizar costes o subir ticket medio' };
+    return { clase:'sem-rojo', label:'NO RENT.', decision:'Reducir personal o replantear turno' };
+  };
+
+  // ────────────────────────────────────────────────────────────────
+  //   Render
+  // ────────────────────────────────────────────────────────────────
+  function aplicarFiltros(rows){
+    const fD = document.getElementById('prdFiltDia').value;
+    const fT = document.getElementById('prdFiltTurno').value;
+    const fFrom = document.getElementById('prdFiltDesde').value;
+    const fTo   = document.getElementById('prdFiltHasta').value;
+    return rows.filter(r => {
+      if (fD && r.dia !== fD) return false;
+      if (fT && r.turno !== fT) return false;
+      if (fFrom && r.fecha < fFrom) return false;
+      if (fTo   && r.fecha > fTo)   return false;
+      return true;
+    });
+  }
+
+  function render(){
+    const tbody = document.getElementById('prdTbody');
+    if (!tbody) return;
+    const rows = aplicarFiltros(prd);
+    document.getElementById('prdCount').textContent = `(${rows.length})`;
+
+    tbody.innerHTML = rows.map((r,idx) => {
+      const realIdx = prd.indexOf(r);
+      const k = calc(r);
+      const s = semaforo(k.ratio);
+      return `<tr>
+        <td><input type="date"   value="${r.fecha||''}" onchange="prdEdit(${realIdx},'fecha',this.value)"></td>
+        <td>${r.dia||'—'}</td>
+        <td>
+          <select onchange="prdEdit(${realIdx},'turno',this.value)">
+            <option value="">—</option>
+            ${['Mañana','Mediodía','Noche'].map(t=>`<option ${r.turno===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </td>
+        <td class="num"><input type="number" step="0.01" value="${r.ventas   ??''}" onchange="prdEdit(${realIdx},'ventas',this.value)"></td>
+        <td class="num"><input type="number" step="1"    value="${r.clientes ??''}" onchange="prdEdit(${realIdx},'clientes',this.value)"></td>
+        <td class="num"><input type="number" step="0.25" value="${r.horasCam ??''}" onchange="prdEdit(${realIdx},'horasCam',this.value)"></td>
+        <td class="num"><input type="number" step="0.25" value="${r.horasCoc ??''}" onchange="prdEdit(${realIdx},'horasCoc',this.value)"></td>
+        <td class="num"><input type="number" step="0.01" value="${r.coste    ??''}" onchange="prdEdit(${realIdx},'coste',this.value)"></td>
+        <td class="num">${fmtE(k.prodCam)}</td>
+        <td class="num">${fmtE(k.prodCoc)}</td>
+        <td class="num">${fmtE(k.ticket)}</td>
+        <td class="num"><b>${fmtN(k.ratio)}x</b></td>
+        <td style="text-align:center"><span class="sem ${s.clase}">${s.label}</span></td>
+        <td style="font-size:12px">${s.decision}</td>
+        <td><button class="prd-btn prd-btn-del" onclick="prdDel(${realIdx})" title="Eliminar">×</button></td>
+      </tr>`;
+    }).join('');
+
+    renderResumen(rows);
+  }
+
+  function renderResumen(rows){
+    const tot = rows.reduce((a,r)=>{
+      const k = calc(r);
+      a.v += +r.ventas||0;
+      a.c += +r.coste||0;
+      a.cl+= +r.clientes||0;
+      return a;
+    }, {v:0,c:0,cl:0});
+    const ratio = tot.c>0 ? tot.v/tot.c : 0;
+    const ticket= tot.cl>0? tot.v/tot.cl : 0;
+    document.getElementById('prdKpiVentas').textContent   = fmtE(tot.v);
+    document.getElementById('prdKpiDias').textContent     = rows.length + ' turnos';
+    document.getElementById('prdKpiCoste').textContent    = fmtE(tot.c);
+    document.getElementById('prdKpiPct').textContent      = (tot.v>0 ? (tot.c/tot.v*100).toFixed(1):0) + ' % de ventas';
+    document.getElementById('prdKpiRatio').textContent    = fmtN(ratio) + 'x';
+    document.getElementById('prdKpiRatioLbl').textContent = semaforo(ratio).label;
+    document.getElementById('prdKpiTicket').textContent   = fmtE(ticket);
+    document.getElementById('prdKpiClientes').textContent = tot.cl + ' clientes';
+
+    // Mejor / peor turno (por ratio promedio)
+    const aggTurno = {}, aggDia = {};
+    rows.forEach(r => {
+      const k = calc(r);
+      if (r.turno){
+        aggTurno[r.turno] = aggTurno[r.turno] || {v:0,c:0};
+        aggTurno[r.turno].v += +r.ventas||0; aggTurno[r.turno].c += +r.coste||0;
+      }
+      if (r.dia){
+        aggDia[r.dia] = aggDia[r.dia] || {v:0,c:0};
+        aggDia[r.dia].v += +r.ventas||0; aggDia[r.dia].c += +r.coste||0;
+      }
+    });
+    const rankTurno = Object.entries(aggTurno).map(([k,v])=>({k, r: v.c>0? v.v/v.c : 0})).filter(x=>x.r>0).sort((a,b)=>b.r-a.r);
+    const rankDia   = Object.entries(aggDia).map(([k,v])=>({k, r: v.c>0? v.v/v.c : 0})).filter(x=>x.r>0).sort((a,b)=>b.r-a.r);
+    const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent = v; };
+    set('prdMejorTurno',      rankTurno[0]?.k || '—');
+    set('prdMejorTurnoRatio', rankTurno[0] ? fmtN(rankTurno[0].r)+'x · '+semaforo(rankTurno[0].r).label : '—');
+    set('prdPeorTurno',       rankTurno[rankTurno.length-1]?.k || '—');
+    set('prdPeorTurnoRatio',  rankTurno.length ? fmtN(rankTurno[rankTurno.length-1].r)+'x · '+semaforo(rankTurno[rankTurno.length-1].r).label : '—');
+    set('prdMejorDia',        rankDia[0]?.k || '—');
+    set('prdMejorDiaRatio',   rankDia[0] ? fmtN(rankDia[0].r)+'x · '+semaforo(rankDia[0].r).label : '—');
+    set('prdPeorDia',         rankDia[rankDia.length-1]?.k || '—');
+    set('prdPeorDiaRatio',    rankDia.length ? fmtN(rankDia[rankDia.length-1].r)+'x · '+semaforo(rankDia[rankDia.length-1].r).label : '—');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  //   Acciones públicas
+  // ────────────────────────────────────────────────────────────────
+  window.prdAdd = function(){
+    const g = id => document.getElementById(id).value;
+    const fecha = g('prdFFecha');
+    const nuevo = {
+      fecha,
+      dia:     diaDe(fecha),
+      turno:   g('prdFTurno'),
+      ventas:  +g('prdFVentas')  || 0,
+      clientes:+g('prdFClientes')|| 0,
+      horasCam:+g('prdFHC')      || 0,
+      horasCoc:+g('prdFHK')      || 0,
+      coste:   +g('prdFCoste')   || 0,
+    };
+    if (!nuevo.fecha || !nuevo.turno) { alert('Indica al menos fecha y turno'); return; }
+    prd.push(nuevo); save(); render();
+    ['prdFFecha','prdFDia','prdFTurno','prdFVentas','prdFClientes','prdFHC','prdFHK','prdFCoste']
+      .forEach(id => document.getElementById(id).value = '');
+  };
+
+  window.prdEdit = function(idx, campo, valor){
+    if (!prd[idx]) return;
+    if (['ventas','clientes','horasCam','horasCoc','coste'].includes(campo)) valor = +valor || 0;
+    prd[idx][campo] = valor;
+    if (campo === 'fecha') prd[idx].dia = diaDe(valor);
+    save(); render();
+  };
+
+  window.prdDel = function(idx){
+    if (!confirm('¿Eliminar este registro?')) return;
+    prd.splice(idx,1); save(); render();
+  };
+
+  window.prdLimpiarTodo = function(){
+    if (!confirm('¿Borrar TODOS los registros de productividad? Esta acción no se puede deshacer.')) return;
+    prd = []; save(); render();
+  };
+
+  window.prdLimpiarFiltros = function(){
+    ['prdFiltDia','prdFiltTurno','prdFiltDesde','prdFiltHasta'].forEach(id=>document.getElementById(id).value='');
+    render();
+  };
+
+  // ────────────────────────────────────────────────────────────────
+  //   Export / Import
+  // ────────────────────────────────────────────────────────────────
+  function toCSV(rows){
+    const head = ['Fecha','Día','Turno','Ventas','Clientes','HorasCam','HorasCoc','Coste','ProdCam','ProdCoc','Ticket','Ratio','Semáforo','Decisión'];
+    const lines = [head.join(';')];
+    rows.forEach(r => {
+      const k = calc(r); const s = semaforo(k.ratio);
+      lines.push([r.fecha,r.dia,r.turno,r.ventas,r.clientes,r.horasCam,r.horasCoc,r.coste,
+                  k.prodCam.toFixed(2),k.prodCoc.toFixed(2),k.ticket.toFixed(2),k.ratio.toFixed(2),
+                  s.label,s.decision].map(v=>`"${(v??'').toString().replace(/"/g,'""')}"`).join(';'));
+    });
+    return '\ufeff' + lines.join('\n');
+  }
+  window.prdExportCSV = function(){
+    const blob = new Blob([toCSV(aplicarFiltros(prd))], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `productividad_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  };
+  // Excel vía HTML Table (.xls compatible con Excel)
+  window.prdExportXLS = function(){
+    const rows = aplicarFiltros(prd);
+    const head = '<tr>' + ['Fecha','Día','Turno','Ventas','Clientes','HorasCam','HorasCoc','Coste','ProdCam','ProdCoc','Ticket','Ratio','Semáforo','Decisión']
+      .map(h=>`<th>${h}</th>`).join('') + '</tr>';
+    const body = rows.map(r=>{
+      const k = calc(r); const s = semaforo(k.ratio);
+      return '<tr>' + [r.fecha,r.dia,r.turno,r.ventas,r.clientes,r.horasCam,r.horasCoc,r.coste,
+        k.prodCam.toFixed(2),k.prodCoc.toFixed(2),k.ticket.toFixed(2),k.ratio.toFixed(2),s.label,s.decision]
+        .map(v=>`<td>${v??''}</td>`).join('') + '</tr>';
+    }).join('');
+    const html = `<html><head><meta charset="UTF-8"></head><body><table border="1">${head}${body}</table></body></html>`;
+    const blob = new Blob([html], {type:'application/vnd.ms-excel'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `productividad_${new Date().toISOString().slice(0,10)}.xls`;
+    a.click();
+  };
+  window.prdImportCSV = function(){ document.getElementById('prdFileInput').click(); };
+  window.prdHandleImport = function(ev){
+    const file = ev.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const txt = e.target.result.replace(/^\ufeff/,'');
+      const lines = txt.split(/\r?\n/).filter(l=>l.trim());
+      if (lines.length < 2) return alert('CSV vacío o sin datos');
+      for (let i=1; i<lines.length; i++){
+        const cols = lines[i].split(/;|,/).map(c=>c.replace(/^"|"$/g,'').replace(/""/g,'"'));
+        const fecha = cols[0]; if (!fecha) continue;
+        prd.push({
+          fecha, dia: cols[1] || diaDe(fecha), turno: cols[2],
+          ventas:+cols[3]||0, clientes:+cols[4]||0,
+          horasCam:+cols[5]||0, horasCoc:+cols[6]||0, coste:+cols[7]||0
+        });
+      }
+      save(); render();
+      ev.target.value = '';
+    };
+    reader.readAsText(file, 'UTF-8');
+  };
+
+  // ────────────────────────────────────────────────────────────────
+  //   Bindings
+  // ────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const ff = document.getElementById('prdFFecha');
+    if (ff) ff.addEventListener('change', e => {
+      document.getElementById('prdFDia').value = diaDe(e.target.value);
+    });
+    ['prdFiltDia','prdFiltTurno','prdFiltDesde','prdFiltHasta'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.addEventListener('change', render);
+    });
+    render();
+  });
+
+  // Volver a renderizar al abrir la pestaña
+  const prevShow = window.showTab;
+  if (typeof prevShow === 'function') {
+    window.showTab = function(id, btn){
+      prevShow(id, btn);
+      if (id === 'productividad') render();
+    };
+  }
 })();
 </script>
 
