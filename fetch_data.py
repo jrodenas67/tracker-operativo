@@ -373,8 +373,13 @@ def build_prevision(daily_cur, historico_prev, events, pax_map, weeks=8):
     def _equiv(fecha_cur_str):
         d = datetime.strptime(fecha_cur_str, "%Y-%m-%d").date()
         name = _norm(evt_en_cur.get(fecha_cur_str,""))
+        # 1) Evento → evento (puede cruzar días de la semana)
         if name and name in ev_prev:
             return ev_prev[name], "evento"
+        # 2) Cerrado los lunes (0) y martes (1) salvo evento
+        if d.weekday() in (0, 1):
+            return None, "cerrado"
+        # 3) Mismo día de la semana, mismo mes, día más cercano
         cand = []
         for k in hprev:
             dk = datetime.strptime(k, "%Y-%m-%d").date()
@@ -383,12 +388,6 @@ def build_prevision(daily_cur, historico_prev, events, pax_map, weeks=8):
         if cand:
             cand.sort()
             return cand[0][1], "dia_semana"
-        try:
-            fb = d.replace(year=d.year - 1).strftime("%Y-%m-%d")
-            if fb in hprev:
-                return fb, "fecha"
-        except ValueError:
-            pass
         return None, None
 
     filas = []
@@ -408,6 +407,10 @@ def build_prevision(daily_cur, historico_prev, events, pax_map, weeks=8):
         pm = ref.get("manana", 0); pd = ref.get("mediodia", 0); pn = ref.get("noche", 0)
         pt = round(pm + pd + pn, 2)
         real = dcur.get(fcur, {})
+        rm = real.get("manana", 0); rd = real.get("mediodia", 0); rn = real.get("noche", 0)
+        rt = real.get("total", 0)
+        def _d(a,b): return round(a-b, 2)
+        def _p(a,b): return round((a-b)/b, 4) if b > 0 else 0
         filas.append({
             "fechaCur":  fcur,
             "dia":       DIAS_ES.get(d.strftime("%A"), "?"),
@@ -424,10 +427,15 @@ def build_prevision(daily_cur, historico_prev, events, pax_map, weeks=8):
                 "noche":    _carga(pn, "noche"),
             },
             "real": {
-                "manana":   real.get("manana",   0),
-                "mediodia": real.get("mediodia", 0),
-                "noche":    real.get("noche",    0),
-                "total":    real.get("total",    0),
+                "manana":   rm, "mediodia": rd, "noche": rn, "total": rt,
+            },
+            "diff": {
+                "manana":   _d(rm, pm), "mediodia": _d(rd, pd),
+                "noche":    _d(rn, pn), "total":    _d(rt, pt),
+            },
+            "pct": {
+                "manana":   _p(rm, pm), "mediodia": _p(rd, pd),
+                "noche":    _p(rn, pn), "total":    _p(rt, pt),
             },
             "cerrado":  bool(real),
         })
