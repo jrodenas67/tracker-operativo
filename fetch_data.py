@@ -181,9 +181,19 @@ def download():
     return False
 
 # ── Parsers ───────────────────────────────────────────────────────────────────
-def parse_diario(wb):
-    sheet = find_sheet(wb, "diario","daily","factur","datos","venta")
-    if not sheet: sheet = wb.active
+def parse_diario(wb, year=None):
+    if year is None:
+        year = datetime.now().year
+    sheet = None
+    for n in wb.sheetnames:
+        nl = n.lower()
+        if str(year) in n and ("factur" in nl or "diario" in nl):
+            sheet = wb[n]
+            break
+    if sheet is None:
+        sheet = find_sheet(wb, "diario","daily","factur","datos","venta")
+    if sheet is None:
+        sheet = wb.active
     hdrs = get_headers(sheet)
     if not hdrs: return []
 
@@ -203,6 +213,7 @@ def parse_diario(wb):
         if all(c is None for c in row): continue
         d = parse_date(row[C["fecha"]]) if C["fecha"] is not None else None
         if d is None: continue
+        if d.year != year: continue
         man   = flt(row[C["man"]])   if C["man"]   is not None else 0
         mid   = flt(row[C["mid"]])   if C["mid"]   is not None else 0
         noch  = flt(row[C["noch"]])  if C["noch"]  is not None else 0
@@ -226,21 +237,240 @@ def parse_diario(wb):
             "evento":   ev,
         })
     records.sort(key=lambda r: r["fecha"])
-    print(f"  ✓ Diario: {len(records)} días")
+    print(f"  ✓ Diario {year}: {len(records)} días")
     return records
 
 
-def monthly_from_daily(daily, html_text=""):
-    """Calcula resumen mensual. Intenta preservar real2025 del HTML."""
-    # Intentar leer real2025 del HTML existente
+def parse_historico(wb, year):
+    """Devuelve list de dicts por fecha del año historico (por defecto 2025)."""
+    sheet = None
+    for n in wb.sheetnames:
+        nl = n.lower()
+        if str(year) in n and ("factur" in nl or "diario" in nl):
+            sheet = wb[n]; break
+    if sheet is None: return []
+    hdrs = get_headers(sheet)
+    if not hdrs: return []
+    C = {
+        "fecha":   ci(hdrs,"fecha","date","día","dia"),
+        "man":     ci(hdrs,"mañana","manana","morning"),
+        "mid":     ci(hdrs,"mediodía","mediodia","noon","lunch"),
+        "noch":    ci(hdrs,"noche","night","evening"),
+        "total":   ci(hdrs,"total","real","factur"),
+        "evento":  ci(hdrs,"evento","event","nota"),
+    }
+    out = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if all(c is None for c in row): continue
+        d = parse_date(row[C["fecha"]]) if C["fecha"] is not None else None
+        if d is None or d.year != year: continue
+        man  = flt(row[C["man"]])   if C["man"]   is not None else 0
+        mid  = flt(row[C["mid"]])   if C["mid"]   is not None else 0
+        noch = flt(row[C["noch"]])  if C["noch"]  is not None else 0
+        totr = flt(row[C["total"]]) if C["total"] is not None else 0
+        total = totr if totr > 0 else round(man+mid+noch, 2)
+        ev = str(row[C["evento"]] or "").strip() if C["evento"] is not None else ""
+        out.append({
+            "fecha":    d.strftime("%Y-%m-%d"),
+            "mes":      d.month,
+            "manana":   round(man,2),
+            "mediodia": round(mid,2),
+            "noche":    round(noch,2),
+            "total":    round(total,2),
+            "evento":   ev,
+        })
+    out.sort(key=lambda r: r["fecha"])
+    print(f"  ✓ Histórico {year}: {len(out)} días")
+    return out
+
+
+def parse_caja(wb):
+    """Suma pax de Caja 1 + Caja 2 por (fecha, turno).
+    Devuelve dict {(fecha_str, turno_letra): pax_total}."""
+    TURNO_NORM = {"mañana":"M", "manana":"M", "mediodía":"D", "mediodia":"D",
+                  "noche":"N", "tarde":"T"}
+    pax = {}
+    for cname in ("caja 1","caja 2","caja1","caja2"):
+        sheet = None
+        for n in wb.sheetnames:
+            if n.lower().replace(" ","") == cname.replace(" ",""):
+                sheet = wb[n]; break
+        if sheet is None: continue
+        hdrs = get_headers(sheet)
+        if not hdrs: continue
+        Cf = ci(hdrs,"fecha","date","día","dia")
+        Ct = ci(hdrs,"turno","shift")
+        Cp = ci(hdrs,"comensal","pax","cubierto","cliente")
+        if Cf is None or Ct is None or Cp is None:
+            print(f"  ⚠ {sheet.title}: encabezados no reconocidos")
+            continue
+        n_filas = 0
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            if all(c is None for c in row): continue
+            d = parse_date(row[Cf])
+            if d is None: continue
+            t_raw = str(row[Ct] or "").strip().lower()
+            t = TURNO_NORM.get(t_raw)
+            if t is None: continue
+            p = int(flt(row[Cp]))
+            if p <= 0: continue
+            key = (d.strftime("%Y-%m-%d"), t)
+            pax[key] = pax.get(key, 0) + p
+            n_filas += 1
+        print(f"  ✓ {sheet.title}: {n_filas} filas")
+    return pax
+
+
+def build_prevision(daily_cur, historico_prev, events, pax_map, weeks=8):
+    """Construye el data-structure de la pestaña Previsión.
+    daily_cur       : lista de dicts del año actual (2026)
+    historico_prev  : lista de dicts del año anterior (2025)
+    events          : lista de dicts de la hoja Eventos
+    pax_map         : dict {(fecha, turno): pax} de Caja 1+2
+    weeks           : ventana desde el lunes de esta semana
+    """
+    from datetime import timedelta
+    hoy = datetime.now().date()
+    lunes_esta_sem = hoy - timedelta(days=hoy.weekday())
+    fin = lunes_esta_sem + timedelta(days=weeks*7 - 1)
+
+    hprev = {r["fecha"]: r for r in historico_prev}
+    dcur  = {r["fecha"]: r for r in daily_cur}
+
+    def _norm(s): return str(s or "").strip().lower()
+    ev_prev = {}; ev_cur = {}
+    for e in events:
+        f = e.get("fecha","")
+        if not f or len(f) < 10 or "-" not in f: continue
+        y = f[:4]
+        name = _norm(e.get("evento",""))
+        if not name: continue
+        if y == "2025": ev_prev[name] = f
+        elif y == "2026": ev_cur.setdefault(name, []).append(f)
+    evt_en_cur = {}
+    for name, fechas in ev_cur.items():
+        for f in fechas:
+            evt_en_cur[f] = name
+
+    def _percentiles(values):
+        v = sorted(x for x in values if x > 0)
+        if not v: return (0, 0)
+        n = len(v)
+        return (v[min(int(n*0.33), n-1)], v[min(int(n*0.66), n-1)])
+    umbrales = {
+        "manana":   _percentiles([r["manana"]   for r in historico_prev]),
+        "mediodia": _percentiles([r["mediodia"] for r in historico_prev]),
+        "noche":    _percentiles([r["noche"]    for r in historico_prev]),
+    }
+    def _carga(val, turno):
+        p33, p66 = umbrales.get(turno, (0,0))
+        if val >= p66 and p66 > 0: return "ALTA"
+        if val >= p33 and p33 > 0: return "MEDIA"
+        return "BAJA"
+
+    def _equiv(fecha_cur_str):
+        d = datetime.strptime(fecha_cur_str, "%Y-%m-%d").date()
+        name = _norm(evt_en_cur.get(fecha_cur_str,""))
+        if name and name in ev_prev:
+            return ev_prev[name], "evento"
+        cand = []
+        for k in hprev:
+            dk = datetime.strptime(k, "%Y-%m-%d").date()
+            if dk.month == d.month and dk.weekday() == d.weekday():
+                cand.append((abs(dk.day - d.day), k))
+        if cand:
+            cand.sort()
+            return cand[0][1], "dia_semana"
+        try:
+            fb = d.replace(year=d.year - 1).strftime("%Y-%m-%d")
+            if fb in hprev:
+                return fb, "fecha"
+        except ValueError:
+            pass
+        return None, None
+
+    filas = []
+    n_dias = (fin - lunes_esta_sem).days + 1
+    for i in range(n_dias):
+        d = lunes_esta_sem + timedelta(days=i)
+        fcur = d.strftime("%Y-%m-%d")
+        evtcur = evt_en_cur.get(fcur, "")
+        fprev, metodo = _equiv(fcur)
+        ref = hprev.get(fprev, {}) if fprev else {}
+        evtprev = ref.get("evento","")
+        pax_prev = 0
+        if fprev:
+            pax_prev = (pax_map.get((fprev,"M"),0)
+                      + pax_map.get((fprev,"D"),0)
+                      + pax_map.get((fprev,"N"),0))
+        pm = ref.get("manana", 0); pd = ref.get("mediodia", 0); pn = ref.get("noche", 0)
+        pt = round(pm + pd + pn, 2)
+        real = dcur.get(fcur, {})
+        filas.append({
+            "fechaCur":  fcur,
+            "dia":       DIAS_ES.get(d.strftime("%A"), "?"),
+            "evtCur":    evtcur,
+            "fechaPrev": fprev or "",
+            "evtPrev":   evtprev,
+            "metodo":    metodo or "",
+            "prev":      { "manana": round(pm,2), "mediodia": round(pd,2),
+                           "noche": round(pn,2), "total": pt },
+            "paxPrev":   pax_prev,
+            "carga": {
+                "manana":   _carga(pm, "manana"),
+                "mediodia": _carga(pd, "mediodia"),
+                "noche":    _carga(pn, "noche"),
+            },
+            "real": {
+                "manana":   real.get("manana",   0),
+                "mediodia": real.get("mediodia", 0),
+                "noche":    real.get("noche",    0),
+                "total":    real.get("total",    0),
+            },
+            "cerrado":  bool(real),
+        })
+
+    DOW_NAMES = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"]
+    dow_agg = {i: {"tot":0,"count":0} for i in range(7)}
+    for r in historico_prev:
+        dd = datetime.strptime(r["fecha"], "%Y-%m-%d").date()
+        dow_agg[dd.weekday()]["tot"]   += r["total"]
+        dow_agg[dd.weekday()]["count"] += 1
+    dow = []
+    for i in range(7):
+        c = dow_agg[i]["count"]
+        avg = (dow_agg[i]["tot"] / c) if c else 0
+        dow.append({"dia": DOW_NAMES[i], "avg": round(avg,2), "n": c})
+
+    return {
+        "ventana":  {"inicio": lunes_esta_sem.strftime("%Y-%m-%d"),
+                     "fin":    fin.strftime("%Y-%m-%d"),
+                     "dias":   n_dias},
+        "umbrales": {k: {"p33": round(v[0],2), "p66": round(v[1],2)}
+                     for k,v in umbrales.items()},
+        "filas":    filas,
+        "dow":      dow,
+    }
+
+
+def monthly_from_daily(daily, historico_prev=None, html_text=""):
+    """Calcula resumen mensual usando histórico parseado si se pasa;
+    si no, cae al regex del HTML previo (compatibilidad hacia atrás)."""
     r25 = {}
-    try:
-        m = re.search(r'"monthly"\s*:\s*(\[[\s\S]*?\])', html_text)
-        if m:
-            prev_monthly = json.loads(m.group(1))
-            for row in prev_monthly:
-                r25[row["mes"]] = row.get("real2025", 0)
-    except: pass
+    if historico_prev:
+        for r in historico_prev:
+            r25.setdefault(r["mes"], 0)
+            r25[r["mes"]] += r["total"]
+    else:
+        try:
+            m = re.search(r'"monthly"\s*:\s*(\[[\s\S]*?\])', html_text)
+            if m:
+                prev_monthly = json.loads(m.group(1))
+                MES_TO_NUM = {n:i for i,n in enumerate(MESES, 1)}
+                for row in prev_monthly:
+                    mn = MES_TO_NUM.get(row.get("mes",""))
+                    if mn: r25[mn] = row.get("real2025", 0)
+        except: pass
 
     agg = {}
     for d in daily:
@@ -260,7 +490,7 @@ def monthly_from_daily(daily, html_text=""):
             "mes":      mes,
             "real2026": round(total, 2),
             "prev2026": round(a.get("prev", 0), 2),
-            "real2025": r25.get(mes, 0),
+            "real2025": round(r25.get(i, 0), 2),
             "dias":     a.get("dias", 0),
             "pctCoste": round(coste/total, 4) if total > 0 else 0,
         })
@@ -429,10 +659,15 @@ def main():
     wb = openpyxl.load_workbook(XLSX_PATH, read_only=True, data_only=True)
     print(f"  Hojas: {wb.sheetnames}")
 
-    # --- Diario ---
-    daily = parse_diario(wb)
+    year_cur  = datetime.now().year
+    year_prev = year_cur - 1
+
+    # --- Diario (año actual) + Histórico (año anterior) ---
+    daily = parse_diario(wb, year=year_cur)
+    historico = parse_historico(wb, year=year_prev)
+
     if daily:
-        monthly = monthly_from_daily(daily, html)
+        monthly = monthly_from_daily(daily, historico_prev=historico, html_text=html)
         emps, emps_mes = parse_employees(wb)
         events = parse_events(wb)
 
@@ -453,6 +688,11 @@ def main():
             ),
         }
         html = inject(html, "DATA", compact(data_obj))
+
+        # --- Previsión (semana actual + 7 semanas) ---
+        pax_map = parse_caja(wb)
+        prevision = build_prevision(daily, historico, events, pax_map, weeks=8)
+        html = inject(html, "PREVISION", compact(prevision))
 
     # --- Productos ---
     top_prod, families = parse_products(wb)

@@ -346,7 +346,8 @@
     <button data-icon="📈" onclick="showTab('ebitda',this)">P&L EBITDA</button>
     <button data-icon="🧾" onclick="showTab('arqueo',this)">Arqueo</button>
     <button data-icon="🏆" onclick="showTab('incentivos',this)">Incentivos</button>
-  
+    <button data-icon="🔮" onclick="showTab('prevision',this)">Previsión</button>
+
     <button data-icon="📲" onclick="showTab('horarios',this)" style="background:rgba(39,133,90,.12);color:#27855a;font-weight:600;">Horarios</button>
   </nav>
 </header>
@@ -1837,6 +1838,134 @@ async function syncToSheets(){
     localStorage.setItem('waScriptUrl',url);
   }catch(e){msg.style.background='rgba(192,57,43,.1)';msg.style.color='var(--red)';msg.textContent='Error: '+e.message;}
 }
+</script>
+
+<!-- PREVISION -->
+<div id="prevision" class="tab">
+  <div class="section-title">🔮 Previsión de carga <span id="prevRango">— semana actual + 7 semanas</span></div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-title">Próximos días</div>
+    <div style="overflow:auto;max-height:680px;">
+      <table id="tblPrevision" style="width:100%;border-collapse:collapse;font-size:.9em;">
+        <thead style="position:sticky;top:0;background:#f5f5f5;">
+          <tr>
+            <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Fecha</th>
+            <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Día</th>
+            <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Evento 2026</th>
+            <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Ref. 2025</th>
+            <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Evento 2025</th>
+            <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Mañana</th>
+            <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Mediodía</th>
+            <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Noche</th>
+            <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Total</th>
+            <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Pax 2025</th>
+            <th style="text-align:center;padding:6px;border-bottom:2px solid #ddd">Carga</th>
+            <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Real 2026</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="card">
+      <div class="card-title">Resumen por día de semana (histórico 2025)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.9em;">
+        <thead><tr>
+          <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Día</th>
+          <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Facturación media</th>
+          <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">Nº muestras</th>
+        </tr></thead>
+        <tbody id="tblDOW"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Umbrales de carga (percentiles histórico 2025)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.9em;">
+        <thead><tr>
+          <th style="text-align:left;padding:6px;border-bottom:2px solid #ddd">Turno</th>
+          <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">MEDIA (≥ P33)</th>
+          <th style="text-align:right;padding:6px;border-bottom:2px solid #ddd">ALTA (≥ P66)</th>
+        </tr></thead>
+        <tbody id="tblUmbrales"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const PREVISION = {};
+
+function renderPrevision() {
+  if (!window.PREVISION || !PREVISION.filas) return;
+  const rango = document.getElementById('prevRango');
+  if (rango && PREVISION.ventana) {
+    rango.textContent = `— ${PREVISION.ventana.inicio} → ${PREVISION.ventana.fin} (${PREVISION.ventana.dias} días)`;
+  }
+  const cargaTag = (c) => {
+    const color = c==='ALTA' ? '#c0392b' : c==='MEDIA' ? '#f39c12' : '#27ae60';
+    return `<span style="background:${color};color:#fff;padding:2px 8px;border-radius:10px;font-size:.85em;display:inline-block">${c}</span>`;
+  };
+  const fmt = v => (v && Number(v) > 0) ? Number(v).toLocaleString('es-ES',{maximumFractionDigits:0})+' €' : '—';
+  const tbody = document.querySelector('#tblPrevision tbody');
+  if (tbody) {
+    tbody.innerHTML = PREVISION.filas.map(r => {
+      const real = r.cerrado
+        ? `<b>${fmt(r.real.total)}</b>`
+        : '<span style="color:#999">—</span>';
+      const cargaMax = (r.carga.noche==='ALTA'||r.carga.mediodia==='ALTA'||r.carga.manana==='ALTA') ? 'ALTA'
+                     : (r.carga.noche==='MEDIA'||r.carga.mediodia==='MEDIA'||r.carga.manana==='MEDIA') ? 'MEDIA' : 'BAJA';
+      return `<tr style="border-bottom:1px solid #eee">
+        <td style="padding:6px">${r.fechaCur}</td>
+        <td style="padding:6px">${r.dia}</td>
+        <td style="padding:6px;color:${r.evtCur?'#c0392b':'#999'}">${r.evtCur || '—'}</td>
+        <td style="padding:6px;font-size:.85em;color:#666">${r.fechaPrev || '—'}</td>
+        <td style="padding:6px;font-size:.85em;color:${r.evtPrev?'#8e44ad':'#999'}">${r.evtPrev || '—'}</td>
+        <td style="padding:6px;text-align:right">${fmt(r.prev.manana)}</td>
+        <td style="padding:6px;text-align:right">${fmt(r.prev.mediodia)}</td>
+        <td style="padding:6px;text-align:right">${fmt(r.prev.noche)}</td>
+        <td style="padding:6px;text-align:right"><b>${fmt(r.prev.total)}</b></td>
+        <td style="padding:6px;text-align:right">${r.paxPrev || '—'}</td>
+        <td style="padding:6px;text-align:center">${cargaTag(cargaMax)}</td>
+        <td style="padding:6px;text-align:right">${real}</td>
+      </tr>`;
+    }).join('');
+  }
+  const tblDow = document.getElementById('tblDOW');
+  if (tblDow && PREVISION.dow) {
+    tblDow.innerHTML = PREVISION.dow.map(d =>
+      `<tr style="border-bottom:1px solid #eee">
+         <td style="padding:6px">${d.dia}</td>
+         <td style="padding:6px;text-align:right">${fmt(d.avg)}</td>
+         <td style="padding:6px;text-align:right">${d.n}</td>
+       </tr>`
+    ).join('');
+  }
+  const tblUm = document.getElementById('tblUmbrales');
+  if (tblUm && PREVISION.umbrales) {
+    const nombre = {manana:'Mañana', mediodia:'Mediodía', noche:'Noche'};
+    tblUm.innerHTML = Object.entries(PREVISION.umbrales).map(([k,v]) =>
+      `<tr style="border-bottom:1px solid #eee">
+         <td style="padding:6px">${nombre[k]||k}</td>
+         <td style="padding:6px;text-align:right">${fmt(v.p33)}</td>
+         <td style="padding:6px;text-align:right">${fmt(v.p66)}</td>
+       </tr>`
+    ).join('');
+  }
+}
+
+(function(){
+  const prev = window.showTab;
+  if (typeof prev === 'function') {
+    window.showTab = function(id, btn) {
+      prev(id, btn);
+      if (id === 'prevision') renderPrevision();
+    };
+  }
+  document.addEventListener('DOMContentLoaded', renderPrevision);
+})();
 </script>
 
 <!-- HORARIOS -->
