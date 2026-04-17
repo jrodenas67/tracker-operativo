@@ -290,12 +290,14 @@ def parse_caja(wb):
     TURNO_NORM = {"mañana":"M", "manana":"M", "mediodía":"D", "mediodia":"D",
                   "noche":"N", "tarde":"T"}
     pax = {}
-    for cname in ("caja 1","caja 2","caja1","caja2"):
-        sheet = None
-        for n in wb.sheetnames:
-            if n.lower().replace(" ","") == cname.replace(" ",""):
-                sheet = wb[n]; break
-        if sheet is None: continue
+    # Deduplicar: buscar hojas cuyo nombre normalizado sea "caja1" o "caja2"
+    targets = {"caja1", "caja2"}
+    procesadas = set()
+    for n in wb.sheetnames:
+        norm = n.lower().replace(" ","")
+        if norm not in targets or norm in procesadas: continue
+        procesadas.add(norm)
+        sheet = wb[n]
         hdrs = get_headers(sheet)
         if not hdrs: continue
         Cf = ci(hdrs,"fecha","date","día","dia")
