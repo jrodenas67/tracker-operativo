@@ -1992,11 +1992,15 @@ function renderPrevision() {
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button class="prd-btn prd-btn-primary" onclick="prdAdd()">+ Añadir turno</button>
+      <button class="prd-btn prd-btn-primary" style="background:#2c3e50" onclick="prdImportarExcel()">📥 Importar desde Excel</button>
       <button class="prd-btn prd-btn-sec"     onclick="prdExportCSV()">⬇ Exportar CSV</button>
       <button class="prd-btn prd-btn-sec"     onclick="prdExportXLS()">⬇ Exportar Excel</button>
       <button class="prd-btn prd-btn-sec"     onclick="prdImportCSV()">⬆ Importar CSV</button>
       <input id="prdFileInput" type="file" accept=".csv" style="display:none" onchange="prdHandleImport(event)">
       <button class="prd-btn prd-btn-sec" style="color:#c0392b" onclick="prdLimpiarTodo()">🗑 Borrar todo</button>
+    </div>
+    <div style="font-size:12px;color:#6b7280;margin-top:8px;">
+      <b>📥 Importar desde Excel</b>: prioriza las hojas <b>Caja 1</b> y <b>Caja 2</b> (ventas, nº clientes y coste personal reales por turno) y lee la hoja <b>Horarios Personal</b> si existe para rellenar Horas camareros/cocina. Si falta algún campo, se deja en 0 para que lo completes manualmente.
     </div>
   </div>
 
@@ -2254,6 +2258,91 @@ function renderPrevision() {
     a.download = `productividad_${new Date().toISOString().slice(0,10)}.xls`;
     a.click();
   };
+  // Import desde el Excel: usa DATA.caja (real, por turno) + DATA.horariosPersonal si existen
+  // y cae a DATA.daily (prorrateo de coste) como fallback.
+  window.prdImportarExcel = function(){
+    if (typeof DATA === 'undefined' || !DATA) {
+      alert('No hay datos cargados del Excel');
+      return;
+    }
+    const existentes = new Set(prd.map(r => `${r.fecha}|${r.turno}`));
+    let nuevos = 0, fuente = '';
+
+    // Mapa rápido de horas por (fecha, turno)
+    const horasMap = {};
+    (DATA.horariosPersonal || []).forEach(h => {
+      horasMap[`${h.fecha}|${h.turno}`] = { cam: h.horasCam||0, coc: h.horasCoc||0 };
+    });
+
+    // ── Prioridad 1: DATA.caja (Caja 1 + Caja 2 — datos reales por turno) ──
+    if (Array.isArray(DATA.caja) && DATA.caja.length) {
+      fuente = 'Caja 1 + Caja 2';
+      DATA.caja.forEach(c => {
+        if (!c.fecha || !c.turno) return;
+        if (c.ventas <= 0 && c.pax <= 0) return;
+        const clave = `${c.fecha}|${c.turno}`;
+        if (existentes.has(clave)) return;
+        const h = horasMap[clave] || { cam:0, coc:0 };
+        prd.push({
+          fecha:    c.fecha,
+          dia:      diaDe(c.fecha),
+          turno:    c.turno,
+          ventas:   +c.ventas || 0,
+          clientes: +c.pax || 0,
+          horasCam: h.cam,
+          horasCoc: h.coc,
+          coste:    +c.coste || 0,
+        });
+        nuevos++;
+      });
+    }
+    // ── Fallback: DATA.daily con prorrateo ──
+    else if (Array.isArray(DATA.daily) && DATA.daily.length) {
+      fuente = 'Facturación 2026 (prorrateo coste)';
+      const TURNOS = [
+        { campo:'manana',   nombre:'Mañana'   },
+        { campo:'mediodia', nombre:'Mediodía' },
+        { campo:'noche',    nombre:'Noche'    },
+      ];
+      DATA.daily.slice(-60).forEach(d => {
+        const totalDia = (d.manana||0) + (d.mediodia||0) + (d.noche||0);
+        TURNOS.forEach(t => {
+          const ventas = +d[t.campo] || 0;
+          if (ventas <= 0) return;
+          const clave = `${d.fecha}|${t.nombre}`;
+          if (existentes.has(clave)) return;
+          const coste = totalDia > 0 ? (+d.coste||0) * (ventas/totalDia) : 0;
+          const h = horasMap[clave] || { cam:0, coc:0 };
+          prd.push({
+            fecha:    d.fecha,
+            dia:      diaDe(d.fecha),
+            turno:    t.nombre,
+            ventas:   Math.round(ventas*100)/100,
+            clientes: 0,
+            horasCam: h.cam,
+            horasCoc: h.coc,
+            coste:    Math.round(coste*100)/100,
+          });
+          nuevos++;
+        });
+      });
+    } else {
+      alert('No hay datos utilizables en el Excel cargado');
+      return;
+    }
+
+    if (nuevos === 0) {
+      alert('Sin novedades: todos los turnos ya estaban importados.');
+      return;
+    }
+    save(); render();
+    const tieneHoras = Object.keys(horasMap).length > 0;
+    const aviso = tieneHoras
+      ? 'Horas de personal también importadas desde la hoja Horarios.'
+      : 'Horas camareros/cocina quedan en 0 (la hoja Horarios Personal no se encontró o no tiene los campos esperados).';
+    alert(`✓ Importados ${nuevos} turnos desde ${fuente}.\n\n${aviso}`);
+  };
+
   window.prdImportCSV = function(){ document.getElementById('prdFileInput').click(); };
   window.prdHandleImport = function(ev){
     const file = ev.target.files[0]; if (!file) return;

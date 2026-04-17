@@ -285,12 +285,17 @@ def parse_historico(wb, year):
 
 
 def parse_caja(wb):
-    """Suma pax de Caja 1 + Caja 2 por (fecha, turno).
-    Devuelve dict {(fecha_str, turno_letra): pax_total}."""
-    TURNO_NORM = {"mañana":"M", "manana":"M", "mediodía":"D", "mediodia":"D",
-                  "noche":"N", "tarde":"T"}
+    """Agrega datos de Caja 1 + Caja 2 por (fecha, turno).
+    Devuelve (pax_map, caja_detalle):
+      pax_map       : {(fecha_str, turno_letra): pax_total}   ← compatibilidad
+      caja_detalle  : {(fecha_str, turno_nombre): {pax, ventas, coste}}
+    Turno_nombre = "Mañana" | "Mediodía" | "Noche" para usar directo en frontend.
+    """
+    TURNO_NORM   = {"mañana":"M", "manana":"M", "mediodía":"D", "mediodia":"D",
+                    "noche":"N", "tarde":"T"}
+    TURNO_NOMBRE = {"M":"Mañana", "D":"Mediodía", "N":"Noche", "T":"Tarde"}
     pax = {}
-    # Deduplicar: buscar hojas cuyo nombre normalizado sea "caja1" o "caja2"
+    caja = {}
     targets = {"caja1", "caja2"}
     procesadas = set()
     for n in wb.sheetnames:
@@ -303,6 +308,8 @@ def parse_caja(wb):
         Cf = ci(hdrs,"fecha","date","día","dia")
         Ct = ci(hdrs,"turno","shift")
         Cp = ci(hdrs,"comensal","pax","cubierto","cliente")
+        Cv = ci(hdrs,"subtotal","ventas","venta","factur","importe","total")
+        Cc = ci(hdrs,"coste personal","coste","cost personal","cost")
         if Cf is None or Ct is None or Cp is None:
             print(f"  ⚠ {sheet.title}: encabezados no reconocidos")
             continue
@@ -314,13 +321,93 @@ def parse_caja(wb):
             t_raw = str(row[Ct] or "").strip().lower()
             t = TURNO_NORM.get(t_raw)
             if t is None: continue
-            p = int(flt(row[Cp]))
-            if p <= 0: continue
-            key = (d.strftime("%Y-%m-%d"), t)
-            pax[key] = pax.get(key, 0) + p
+            p = int(flt(row[Cp])) if Cp is not None else 0
+            v = flt(row[Cv]) if Cv is not None else 0
+            c_ = flt(row[Cc]) if Cc is not None else 0
+            if p <= 0 and v <= 0: continue
+            fstr = d.strftime("%Y-%m-%d")
+            # pax_map legacy (para previsión)
+            if p > 0:
+                key = (fstr, t)
+                pax[key] = pax.get(key, 0) + p
+            # caja_detalle agregado
+            key2 = (fstr, TURNO_NOMBRE[t])
+            if key2 not in caja:
+                caja[key2] = {"pax":0, "ventas":0.0, "coste":0.0}
+            caja[key2]["pax"]    += p
+            caja[key2]["ventas"] += v
+            caja[key2]["coste"]  += c_
             n_filas += 1
         print(f"  ✓ {sheet.title}: {n_filas} filas")
-    return pax
+    return pax, caja
+
+
+def caja_to_list(caja):
+    """Convierte dict caja_detalle a lista para JSON."""
+    out = []
+    for (fecha, turno), v in caja.items():
+        out.append({
+            "fecha":    fecha,
+            "turno":    turno,
+            "pax":      int(v["pax"]),
+            "ventas":   round(v["ventas"], 2),
+            "coste":    round(v["coste"], 2),
+        })
+    out.sort(key=lambda r: (r["fecha"], r["turno"]))
+    return out
+
+
+def parse_horarios_personal(wb):
+    """Intenta extraer horas de camareros y cocina por (fecha, turno).
+    Busca hojas con nombre que contenga 'horario' o 'horas'.
+    Espera columnas: fecha | turno | (nombre|cargo) + horas.
+    Devuelve dict {(fecha, turno_nombre): {horasCam, horasCoc}}.
+    """
+    TURNO_NORM   = {"mañana":"M", "manana":"M", "mediodía":"D", "mediodia":"D", "noche":"N"}
+    TURNO_NOMBRE = {"M":"Mañana", "D":"Mediodía", "N":"Noche"}
+    CARGO_COCINA = ("cocin", "chef", "ayudante cocina")
+    sheet = None
+    for n in wb.sheetnames:
+        nl = n.lower()
+        if "horario" in nl or "horas" in nl:
+            sheet = wb[n]; break
+    if sheet is None: return {}
+    hdrs = get_headers(sheet)
+    if not hdrs: return {}
+    Cf = ci(hdrs,"fecha","date","día","dia")
+    Ct = ci(hdrs,"turno","shift")
+    Cn = ci(hdrs,"nombre","empleado","trabajador","name")
+    Cg = ci(hdrs,"cargo","puesto","rol","categ","funci")
+    Ch = ci(hdrs,"horas","hours","total horas","total h")
+    if Cf is None or Ct is None or Ch is None:
+        print(f"  ⚠ {sheet.title}: encabezados no reconocidos para horarios")
+        return {}
+    out = {}
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if all(c is None for c in row): continue
+        d = parse_date(row[Cf])
+        if d is None: continue
+        t_raw = str(row[Ct] or "").strip().lower()
+        t = TURNO_NORM.get(t_raw)
+        if t is None: continue
+        h = flt(row[Ch])
+        if h <= 0: continue
+        cargo = (str(row[Cg] or "") if Cg is not None else "").lower()
+        nombre = (str(row[Cn] or "") if Cn is not None else "").lower()
+        es_cocina = any(k in cargo for k in CARGO_COCINA) or any(k in nombre for k in CARGO_COCINA)
+        key = (d.strftime("%Y-%m-%d"), TURNO_NOMBRE[t])
+        if key not in out: out[key] = {"horasCam":0.0, "horasCoc":0.0}
+        if es_cocina: out[key]["horasCoc"] += h
+        else:         out[key]["horasCam"] += h
+    print(f"  ✓ Horarios Personal: {len(out)} turnos con horas")
+    return out
+
+
+def horarios_to_list(h):
+    return [{"fecha":f, "turno":t,
+             "horasCam": round(v["horasCam"],2),
+             "horasCoc": round(v["horasCoc"],2)}
+            for (f,t),v in sorted(h.items())]
 
 
 def build_prevision(daily_cur, historico_prev, events, pax_map, weeks=8):
@@ -681,6 +768,15 @@ def main():
         emps, emps_mes = parse_employees(wb)
         events = parse_events(wb)
 
+        # --- Caja (Caja 1 + Caja 2) por (fecha, turno) ---
+        pax_map, caja_detalle = parse_caja(wb)
+        caja_list = caja_to_list(caja_detalle)
+        print(f"  ✓ Caja agregada: {len(caja_list)} turnos con datos")
+
+        # --- Horas de personal por (fecha, turno) ---
+        horarios = parse_horarios_personal(wb)
+        horarios_list = horarios_to_list(horarios)
+
         data_obj = {
             "daily":        daily,
             "monthly":      monthly,
@@ -696,11 +792,12 @@ def main():
                 re.search(r'"events"\s*:\s*(\[[\s\S]*?\])', html).group(1)
                 if re.search(r'"events"\s*:\s*\[', html) else "[]"
             ),
+            "caja":              caja_list,
+            "horariosPersonal":  horarios_list,
         }
         html = inject(html, "DATA", compact(data_obj))
 
         # --- Previsión (semana actual + 7 semanas) ---
-        pax_map = parse_caja(wb)
         prevision = build_prevision(daily, historico, events, pax_map, weeks=8)
         html = inject(html, "PREVISION", compact(prevision))
 
