@@ -773,6 +773,47 @@ def main():
         caja_list = caja_to_list(caja_detalle)
         print(f"  ✓ Caja agregada: {len(caja_list)} turnos con datos")
 
+        # --- Reconciliación: completar daily con fechas presentes en cajas
+        # pero ausentes en 'Facturación 2026' (hoja resumen desfasada) ---
+        fechas_daily = {d["fecha"] for d in daily}
+        TURNO2KEY = {"Mañana": "manana", "Mediodía": "mediodia", "Noche": "noche"}
+        por_fecha = {}
+        for (fstr, turno_nombre), v in caja_detalle.items():
+            if fstr in fechas_daily:
+                continue
+            if fstr not in por_fecha:
+                por_fecha[fstr] = {"manana": 0, "mediodia": 0, "noche": 0, "coste": 0}
+            k = TURNO2KEY.get(turno_nombre)
+            if k:
+                por_fecha[fstr][k]     += v.get("ventas", 0) or 0
+                por_fecha[fstr]["coste"] += v.get("coste", 0) or 0
+        added = 0
+        for fstr in sorted(por_fecha.keys()):
+            vals = por_fecha[fstr]
+            total = round(vals["manana"] + vals["mediodia"] + vals["noche"], 2)
+            if total <= 0:
+                continue
+            d = datetime.strptime(fstr, "%Y-%m-%d").date()
+            daily.append({
+                "fecha":    fstr,
+                "dia":      DIAS_ES.get(d.strftime("%A"), "?"),
+                "mes":      d.month,
+                "manana":   round(vals["manana"], 2),
+                "mediodia": round(vals["mediodia"], 2),
+                "noche":    round(vals["noche"], 2),
+                "total":    total,
+                "previsto": 0,
+                "coste":    round(vals["coste"], 2),
+                "pctCoste": round(vals["coste"] / total, 4) if total > 0 else 0,
+                "evento":   "",
+            })
+            added += 1
+        if added:
+            daily.sort(key=lambda r: r["fecha"])
+            # recomputar monthly con los nuevos días
+            monthly = monthly_from_daily(daily, historico_prev=historico, html_text=html)
+            print(f"  ✓ Daily reconciliado: +{added} días desde cajas (total {len(daily)})")
+
         # --- Horas de personal por (fecha, turno) ---
         horarios = parse_horarios_personal(wb)
         horarios_list = horarios_to_list(horarios)
