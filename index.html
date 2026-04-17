@@ -349,7 +349,6 @@
     <button data-icon="🔮" onclick="showTab('prevision',this)">Previsión</button>
     <button data-icon="⚙️" onclick="showTab('productividad',this)">Productividad</button>
 
-    <button data-icon="📲" onclick="showTab('horarios',this)" style="background:rgba(39,133,90,.12);color:#27855a;font-weight:600;">Horarios</button>
   </nav>
 </header>
 
@@ -1745,100 +1744,6 @@ function renderIncentivos() {
 }
 
 
-// ═══════════ HORARIOS WHATSAPP PARSER ═══════════
-const TARIFAS = {'Sonia':16,'Lourdes':10,'Jonh':7.25,'Alejandra':6.39,'Mireia M.':17.13,'Mireia':17.13,'Rubi':5.17,'Rubi':5.17,'Brigitte':8,'Genesis':8,'Adria':8,'Aina':6};
-let waData = null;
-
-function parseTime(s){if(!s)return null;const c=s.trim().replace(';',':').replace(',','.');const p=c.split(':');return parseFloat(p[0])+(p[1]?parseFloat(p[1])/60:0);}
-function calcHours(f,t){let a=parseTime(f),b=parseTime(t);if(a===null||b===null)return 0;if(b<a)b+=12;return Math.round((b-a)*100)/100;}
-function detectTurno(s){const t=s.toLowerCase();if(t.includes('manana')||t.includes('mañana'))return 'manana';if(t.includes('mediodia')||t.includes('mediodía')||t.includes('medio'))return 'mediodia';if(t.includes('noche'))return 'noche';return null;}
-function detectDate(s){const m=s.match(/(w+)s+(d{1,2})/i);return m?{dia:m[1],num:parseInt(m[2])}:null;}
-function findEmployee(line){const names=Object.keys(TARIFAS);for(const n of names){if(line.toLowerCase().startsWith(n.toLowerCase()))return n;}const m=line.match(/^([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+(?:s+[A-ZÁÉÍÓÚÜÑ].?)?)/);return m?m[1]:null;}
-function parseHoursLine(line){const m=line.match(/(?:des+)?(d{1,2}(?:[;:,]d{2})?)s+as+(d{1,2}(?:[;:,]d{2})?)/i);if(m)return{from:m[1],to:m[2],hours:calcHours(m[1],m[2])};return null;}
-
-function parseWA(){
-  const raw=document.getElementById('waInput').value.trim();
-  if(!raw)return;
-  const lines=raw.split(/
-/).map(l=>l.trim()).filter(l=>l);
-  const result={};const dates=[];
-  let curTurno=null,curDate=null;
-  for(const line of lines){
-    const turno=detectTurno(line);
-    if(turno){curTurno=turno;const d=detectDate(line);if(d){curDate=d;if(!dates.find(x=>x.num===d.num))dates.push(d);}continue;}
-    if(!curTurno)continue;
-    const emp=findEmployee(line);if(!emp)continue;
-    const td=parseHoursLine(line);if(!td||td.hours<=0)continue;
-    if(!result[emp])result[emp]={manana:0,mediodia:0,noche:0};
-    result[emp][curTurno]+=td.hours;
-  }
-  if(!Object.keys(result).length){alert('No se detectaron datos. Revisa el formato.');return;}
-  waData={employees:result,dates};
-  renderWAResult();
-}
-
-function renderWAResult(){
-  const {employees,dates}=waData;
-  document.getElementById('waResult').style.display='block';
-  const dateStr=dates.map(d=>d.dia+' '+d.num).join(', ');
-  document.getElementById('waDateLabel').textContent=dateStr;
-  const cols=['#d4a853','#5db87a','#5b8fd4','#e05c4a','#9b7fd4','#4db8b8','#e0a050','#b0b870'];
-  const rows=Object.entries(employees).sort((a,b)=>(b[1].manana+b[1].mediodia+b[1].noche)-(a[1].manana+a[1].mediodia+a[1].noche));
-  const totalH=rows.reduce((s,[,d])=>s+d.manana+d.mediodia+d.noche,0);
-  const totalC=rows.reduce((s,[n,d])=>s+(d.manana+d.mediodia+d.noche)*(TARIFAS[n]||8),0);
-  document.getElementById('waKpis').innerHTML=
-    '<div class="kpi green"><label>Total horas</label><div class="val">'+totalH.toFixed(1)+'h</div><div class="sub">'+rows.length+' empleados</div></div>'+
-    '<div class="kpi"><label>Coste estimado</label><div class="val">'+fmtN(totalC)+' &euro;</div></div>'+
-    '<div class="kpi blue"><label>Mas horas</label><div class="val" style="font-size:18px;">'+rows[0][0]+'</div><div class="sub">'+(rows[0][1].manana+rows[0][1].mediodia+rows[0][1].noche).toFixed(1)+'h</div></div>'+
-    '<div class="kpi"><label>Media</label><div class="val">'+(totalH/rows.length).toFixed(1)+'h</div></div>';
-  const maxH=Math.max(...rows.map(([,d])=>d.manana+d.mediodia+d.noche));
-  document.getElementById('waTable').innerHTML=rows.map(([name,d],i)=>{
-    const tot=d.manana+d.mediodia+d.noche;const tar=TARIFAS[name]||8;
-    const f=h=>h>0?'<span style="color:var(--green);font-weight:600;">'+h.toFixed(1)+'h</span>':'<span style="color:var(--text3)">-</span>';
-    return'<tr><td style="font-weight:600;color:'+cols[i%cols.length]+'">'+name+'</td><td style="text-align:center" class="mono">'+f(d.manana)+'</td><td style="text-align:center" class="mono">'+f(d.mediodia)+'</td><td style="text-align:center" class="mono">'+f(d.noche)+'</td><td style="text-align:right" class="mono">'+tot.toFixed(1)+'h</td><td style="text-align:right" class="mono">'+fmtN(tot*tar)+' &euro;</td></tr>';
-  }).join('');
-  document.getElementById('waBars').innerHTML=rows.map(([name,d],i)=>{
-    const tot=d.manana+d.mediodia+d.noche;const col=cols[i%cols.length];
-    const wM=maxH>0?(d.manana/maxH*100).toFixed(1):0;const wMd=maxH>0?(d.mediodia/maxH*100).toFixed(1):0;const wN=maxH>0?(d.noche/maxH*100).toFixed(1):0;
-    return'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="font-weight:600;color:'+col+'">'+name+'</span><span class="mono" style="color:'+col+'">'+tot.toFixed(1)+'h</span></div><div style="display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--surface2);">'+(d.manana>0?'<div style="width:'+wM+'%;background:var(--green);opacity:.8;"></div>':'')+(d.mediodia>0?'<div style="width:'+wMd+'%;background:var(--accent);opacity:.8;"></div>':'')+(d.noche>0?'<div style="width:'+wN+'%;background:var(--blue);opacity:.8;"></div>':'')+'</div></div>';
-  }).join('')+'<div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--text2);"><span>- <span style="color:var(--green)">Manana</span></span><span>- <span style="color:var(--accent)">Mediodia</span></span><span>- <span style="color:var(--blue)">Noche</span></span></div>';
-  document.getElementById('waResult').scrollIntoView({behavior:'smooth'});
-}
-
-function exportCSV(){
-  if(!waData)return;
-  const{employees,dates}=waData;const ds=dates.map(d=>d.dia+' '+d.num).join(', ');
-  let csv='Empleado,Manana,Mediodia,Noche,Total,Tarifa,Coste,Fecha
-';
-  Object.entries(employees).forEach(([n,d])=>{const t=d.manana+d.mediodia+d.noche;const tar=TARIFAS[n]||8;csv+=n+','+d.manana.toFixed(2)+','+d.mediodia.toFixed(2)+','+d.noche.toFixed(2)+','+t.toFixed(2)+','+tar+','+(t*tar).toFixed(2)+',"'+ds+'"
-';});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='horarios.csv';a.click();
-}
-
-window.addEventListener('load',()=>{const s=localStorage.getItem('waScriptUrl');if(s)document.getElementById('waScriptUrl').value=s;});
-
-async function testConnection(){
-  const url=document.getElementById('waScriptUrl').value.trim();
-  if(!url){alert('Pega la URL primero');return;}
-  const m=document.getElementById('waTestMsg');m.style.display='block';m.style.color='var(--text2)';m.textContent='Probando...';
-  try{await fetch(url,{method:'GET',mode:'no-cors'});m.style.color='var(--green)';m.textContent='Conexion OK';}
-  catch(e){m.style.color='var(--red)';m.textContent='Error: '+e.message;}
-}
-
-async function syncToSheets(){
-  if(!waData){alert('Procesa un mensaje primero');return;}
-  const url=document.getElementById('waScriptUrl').value.trim();
-  if(!url){alert('Pon la URL del Apps Script');return;}
-  const msg=document.getElementById('waSyncMsg');msg.style.display='block';msg.style.background='rgba(39,133,90,.1)';msg.style.color='var(--green)';msg.style.border='1px solid rgba(39,133,90,.3)';msg.style.borderRadius='8px';msg.textContent='Enviando a Google Sheets...';
-  const{employees,dates}=waData;
-  const fecha=new Date().toISOString().split('T')[0];const dia=dates[0]?.dia||'';
-  const emp={};Object.entries(employees).forEach(([n,d])=>{emp[n]={manana:d.manana||0,mediodia:d.mediodia||0,noche:d.noche||0,tarifa:TARIFAS[n]||8};});
-  try{
-    await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({fecha,dia,employees:emp})});
-    msg.textContent='Google Sheets actualizado correctamente';
-    localStorage.setItem('waScriptUrl',url);
-  }catch(e){msg.style.background='rgba(192,57,43,.1)';msg.style.color='var(--red)';msg.textContent='Error: '+e.message;}
-}
 </script>
 
 <!-- PREVISION -->
@@ -2397,61 +2302,5 @@ function renderPrevision() {
 })();
 </script>
 
-<!-- HORARIOS -->
-<div id="horarios" class="tab">
-  <div class="section-title">Importar Horarios desde WhatsApp <span>Pega el mensaje y actualiza automaticamente</span></div>
-  <div class="card" style="margin-bottom:20px;">
-    <div class="card-title">Pega aqui el mensaje de WhatsApp</div>
-    <textarea id="waInput" placeholder="Ejemplo:
-Jueves 16 noche
-Lourdes de 7 a 9:30
-Jonh de 7 a 11
-
-Jueves 16 manana
-Lourdes de 12:30 a 4
-Sonia de 10 a 4" style="width:100%;height:180px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;line-height:1.6;margin-top:8px;"></textarea>
-    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-      <button onclick="parseWA()" style="padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;">Procesar mensaje</button>
-      <button onclick="document.getElementById('waInput').value='';document.getElementById('waResult').style.display='none'" style="padding:9px 18px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Limpiar</button>
-    </div>
-  </div>
-  <div id="waResult" style="display:none;">
-    <div class="section-title">Horarios procesados <span id="waDateLabel"></span></div>
-    <div id="waKpis" class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;"></div>
-    <div class="card" style="margin-bottom:20px;">
-      <div class="card-title">Horas por empleado y turno</div>
-      <div class="tbl-wrap">
-        <table><thead><tr>
-          <th>Empleado</th><th style="text-align:center">Manana</th><th style="text-align:center">Mediodia</th><th style="text-align:center">Noche</th><th style="text-align:right">Total horas</th><th style="text-align:right">Coste est.</th>
-        </tr></thead><tbody id="waTable"></tbody></table>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:20px;">
-      <div class="card-title">Distribucion de horas</div>
-      <div id="waBars"></div>
-    </div>
-    <div class="card" style="background:rgba(39,133,90,.04);border-color:rgba(39,133,90,.2);">
-      <div class="card-title" style="color:var(--green);">Guardar en Google Sheets automaticamente</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Actualiza la hoja <strong>"Horarios Personal"</strong> de tu Excel en Google Drive al instante.</div>
-      <div id="waUrlConfig" style="margin-bottom:14px;">
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">URL del Apps Script</div>
-        <div style="display:flex;gap:8px;">
-          <input id="waScriptUrl" type="text" placeholder="https://script.google.com/macros/s/..."
-            style="flex:1;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;"
-            value="https://script.google.com/a/macros/romahosteleria.com/s/AKfycbx__MQpRqBmXMvP8fakMH_H-gbfo6x1PE8GMmh12M52SYmJkE4YWdNe9VKkLc7eGHE/exec"
-            oninput="localStorage.setItem('waScriptUrl',this.value)">
-          <button onclick="testConnection()" style="padding:8px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;">Probar</button>
-        </div>
-        <div id="waTestMsg" style="font-size:11px;margin-top:6px;display:none;"></div>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button onclick="syncToSheets()" style="padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;">Actualizar Google Sheets</button>
-        <button onclick="exportCSV()" style="padding:9px 18px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Descargar CSV</button>
-      </div>
-      <div id="waSyncMsg" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
-      <div id="waCopyMsg" style="display:none;color:var(--green);font-size:12px;margin-top:8px;">Datos copiados</div>
-    </div>
-  </div>
-</div>
 </body>
 </html>
