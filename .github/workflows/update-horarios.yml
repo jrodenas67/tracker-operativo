@@ -1,0 +1,41 @@
+name: Actualizar Horarios Personal
+on:
+  workflow_dispatch:
+    inputs:
+      mensajes:
+        description: "Pega aqui los mensajes de WhatsApp (con timestamps entre corchetes)"
+        required: true
+        type: string
+      dry_run:
+        description: "Modo de prueba: solo muestra lo que haria, no sube cambios"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  update-horarios:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Dependencias
+        run: pip install requests openpyxl
+
+      - name: Aplicar turnos al Excel
+        env:
+          MS_TENANT_ID:       ${{ secrets.MS_TENANT_ID }}
+          MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_SECRET:   ${{ secrets.MS_CLIENT_SECRET }}
+          ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
+          MENSAJES_WHATSAPP:  ${{ inputs.mensajes }}
+          DRY_RUN:            ${{ inputs.dry_run && '1' || '' }}
+        run: python update_horarios.py
