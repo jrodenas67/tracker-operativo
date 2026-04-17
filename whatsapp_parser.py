@@ -32,11 +32,14 @@ DIAS_SEMANA = {
 TURNOS = {"mañana": "Mañana", "manana": "Mañana", "noche": "Noche", "tarde": "Tarde"}
 
 # Timestamp que abre cada bloque: [12/4/26, 8:40:46]
+# Header = exactamente "DiaSemana Numero Turno" (3 tokens), para no depender
+# de que haya newline. GitHub workflow_dispatch input de tipo string es
+# single-line y colapsa saltos de linea al pegar.
 RE_TIMESTAMP = re.compile(
     r"\[(?P<dia>\d{1,2})/(?P<mes>\d{1,2})/(?P<ano>\d{2,4}),\s*"
     r"(?P<h>\d{1,2}):(?P<m>\d{2}):(?P<s>\d{2})\]\s*"
     r"[^:]+:\s*"  # remitente
-    r"(?P<header>[^\n\[]+)"  # cabecera del bloque: "Sábado 11 noche"
+    r"(?P<header>\S+\s+\d{1,2}\s+\S+)"  # "Sábado 11 noche"
 )
 
 # Linea de turno personal: "Nombre de 7 a 22:45" o "Nombre de 7 a 10 y de 12:30 a 3"
