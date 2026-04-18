@@ -53,6 +53,26 @@ def _share_item_url() -> str:
     return f"https://graph.microsoft.com/v1.0/shares/{enc}/driveItem"
 
 
+def print_file_info(token: str) -> None:
+    """Imprime metadatos del driveItem apuntado por ONEDRIVE_SHARE_URL
+    (nombre, fecha ultima edicion, autor). No expone la URL del share."""
+    try:
+        headers = {"Authorization": f"Bearer {token}"}
+        r = requests.get(_share_item_url(), headers=headers, timeout=30)
+        r.raise_for_status()
+        it = r.json()
+        name = it.get("name", "?")
+        size_kb = (it.get("size", 0) or 0) // 1024
+        mod_at = it.get("lastModifiedDateTime", "?")
+        mod_by = (it.get("lastModifiedBy", {}) or {}).get("user", {}).get("displayName", "?")
+        parent = (it.get("parentReference", {}) or {}).get("path", "?")
+        print(f"📁 Fichero OneDrive: {name} ({size_kb} KB)")
+        print(f"   Carpeta: {parent}")
+        print(f"   Ultima edicion: {mod_at} por {mod_by}")
+    except Exception as e:
+        print(f"⚠  No se pudieron leer metadatos del driveItem: {e}")
+
+
 def download_excel(token: str, dst: Path) -> None:
     headers = {"Authorization": f"Bearer {token}"}
     r = requests.get(_share_item_url() + "/content", headers=headers,
@@ -194,6 +214,8 @@ def main() -> int:
 
     print("\n🔐 Autenticando con Microsoft Graph...")
     token = _graph_token()
+
+    print_file_info(token)
 
     local = Path("/tmp/horarios.xlsx")
     print("⬇  Descargando Excel desde OneDrive...")
