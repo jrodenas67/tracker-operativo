@@ -1,43 +1,48 @@
-name: Actualizacion Diaria Dashboard
+name: Actualizar Tracker Operativo
+
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 2 * * *"
   workflow_dispatch:
-permissions:
-  contents: write
+
 jobs:
-  update-dashboard:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Python
-        uses: actions/setup-python@v6
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Dependencias
-        run: pip install requests openpyxl
-      - name: Actualizar datos
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: pip install requests openpyxl --quiet
+
+      - name: Actualizar facturacion (cierres de caja)
         env:
-          # Microsoft Graph / OneDrive (prioritario)
           MS_TENANT_ID:       ${{ secrets.MS_TENANT_ID }}
           MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
           MS_CLIENT_SECRET:   ${{ secrets.MS_CLIENT_SECRET }}
           ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
-          ONEDRIVE_USER:      ${{ secrets.ONEDRIVE_USER }}
-          ONEDRIVE_FILE_PATH: ${{ secrets.ONEDRIVE_FILE_PATH }}
-          # Google Drive (legacy fallback)
-          GOOGLE_DRIVE_FILE_ID: ${{ secrets.GOOGLE_DRIVE_FILE_ID }}
-          TARGET_HTML: index.html
-        run: python fetch_data.py
-      - name: Commit
+        run: python update_facturacion.py
+
+      - name: Generar tracker-operativo.html
+        env:
+          MS_TENANT_ID:       ${{ secrets.MS_TENANT_ID }}
+          MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_SECRET:   ${{ secrets.MS_CLIENT_SECRET }}
+          ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
+        run: python generar_tracker.py
+
+      - name: Copiar HTML a carpeta Netfily
+        run: cp tracker-operativo.html Netfily/tracker-operativo.html
+
+      - name: Deploy a Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          git config user.name "Dashboard Bot"
-          git config user.email "bot@taperia-caldes.local"
-          git add index.html
-          if git diff --cached --quiet; then
-            echo "Sin cambios."
-          else
-            git commit -m "Actualizacion automatica $(date -u '+%Y-%m-%d')"
-            git push
-          fi
+          npm install -g netlify-cli --silent
+          netlify deploy --prod --auth "$NETLIFY_AUTH_TOKEN" --site "$NETLIFY_SITE_ID" --dir Netfily --message "Auto-update $(date +'%d/%m/%Y %H:%M')"
