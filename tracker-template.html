@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La Taperia de Caldes — Tracker Operativo 2026</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   DISEÑO FIJO — no modificar este fichero manualmente.
+   Los datos se inyectan automáticamente por generar_tracker.py
+   ═══════════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px}
+.header{background:#1e3a2f;color:#fff;padding:16px 24px}
+.header-title{font-size:16px;font-weight:700;letter-spacing:.3px}
+.header-sub{font-size:11px;color:#86efac;margin-top:3px}
+.nav{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;overflow-x:auto;padding:0 20px}
+.nav-tab{padding:13px 16px;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;text-transform:uppercase;letter-spacing:.6px;transition:all .15s}
+.nav-tab:hover{color:#1e293b}
+.nav-tab.active{color:#1e3a2f;border-bottom-color:#1e3a2f}
+.page{display:none;padding:20px}
+.page.active{display:block}
+.kpi-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;flex:1;min-width:130px}
+.kpi-val{font-size:22px;font-weight:700;color:#1e3a2f;line-height:1.1}
+.kpi-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.kpi-sub{font-size:11px;color:#64748b;margin-top:3px}
+.kpi.ok .kpi-val{color:#16a34a}
+.kpi.warn .kpi-val{color:#d97706}
+.kpi.bad .kpi-val{color:#dc2626}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.sec{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:14px}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#475569;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f1f5f9}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8fafc;color:#475569;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.tr{text-align:right}.tc{text-align:center}
+.fm{font-variant-numeric:tabular-nums;font-weight:500}
+.fw{font-weight:600}
+.pc{text-align:right;color:#64748b;font-size:11px}
+.pos{color:#16a34a}.neg{color:#dc2626}
+.tbl-wrap{overflow-x:auto}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.bg{background:#dcfce7;color:#15803d}
+.bo{background:#fef3c7;color:#92400e}
+.br{background:#fee2e2;color:#b91c1c}
+.bb{background:#dbeafe;color:#1d4ed8}
+.bgr{background:#f1f5f9;color:#64748b}
+.bar-track{background:#f1f5f9;border-radius:4px;height:8px;overflow:hidden;min-width:50px}
+.bar-fill{height:8px;border-radius:4px}
+.bar-g{background:#86efac}.bar-o{background:#fcd34d}.bar-r{background:#fca5a5}.bar-b{background:#93c5fd}
+.pl-section td{background:#f8fafc;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#475569;padding:6px 10px}
+.pl-sub td{background:#f0fdf4;font-weight:600;color:#15803d}
+.pl-bold td{font-weight:700;font-size:13px}
+.pl-bold.pos-row td{background:#ecfdf5;color:#065f46}
+.pl-bold.neg-row td{background:#fef2f2;color:#dc2626}
+.alert{border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px}
+.alert.info{background:#dbeafe;border-left:3px solid #3b82f6;color:#1e40af}
+.alert.err{background:#fee2e2;border-left:3px solid #ef4444;color:#b91c1c}
+th.mar{background:#fef2f2;color:#b91c1c}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">La Taperia de Caldes &mdash; Tracker Operativo 2026</div>
+  <div class="header-sub" id="header-sub">Cargando...</div>
+</div>
+
+<div class="nav">
+  <div class="nav-tab active"  onclick="showPage('fac',this)">Facturacion</div>
+  <div class="nav-tab"         onclick="showPage('per',this)">Personal</div>
+  <div class="nav-tab"         onclick="showPage('ev',this)">Eventos</div>
+  <div class="nav-tab"         onclick="showPage('al',this)">Alertas</div>
+  <div class="nav-tab"         onclick="showPage('pm',this)">Product Mix</div>
+  <div class="nav-tab"         onclick="showPage('om',this)">Omnes</div>
+  <div class="nav-tab"         onclick="showPage('pl',this)">P&amp;L EBITDA</div>
+</div>
+
+<div id="page-fac" class="page active"></div>
+<div id="page-per" class="page"></div>
+<div id="page-ev"  class="page"></div>
+<div id="page-al"  class="page"></div>
+<div id="page-pm"  class="page"></div>
+<div id="page-om"  class="page"></div>
+<div id="page-pl"  class="page"></div>
+
+<script>
+/* ─── DATOS (reemplazado automáticamente por generar_tracker.py) ─── */
+const DATA = __TRACKER_DATA__;
+/* ─── FIN DATOS ──────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════════
+   FUNCIONES DE UTILIDAD — no modificar
+   ═══════════════════════════════════════════════════════════════════ */
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Formateo numérico estilo español: 26.444 / 1.234,56
+function fmt(v, dec) {
+  dec = dec || 0;
+  if (v === null || v === undefined) return '\u2014';
+  var n = Number(v);
+  if (isNaN(n)) return v !== '' ? String(v) : '\u2014';
+  return n.toLocaleString('de-DE', {minimumFractionDigits: dec, maximumFractionDigits: dec});
+}
+
+function pstr(v, dec) {
+  dec = dec == null ? 1 : dec;
+  return (v >= 0 ? '+' : '') + Number(v).toFixed(dec) + '%';
+}
+
+function pcls(v) { return Number(v) >= 0 ? 'pos' : 'neg'; }
+
+function bar(w, cls) {
+  cls = cls || 'bar-g';
+  return '<div class="bar-track"><div class="bar-fill ' + cls + '" style="width:' + Number(w).toFixed(1) + '%"></div></div>';
+}
+
+function bdg(text, cls) {
+  return '<span class="badge ' + (cls || 'bgr') + '">' + (text || '\u2014') + '</span>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FACTURACIÓN
+   ═══════════════════════════════════════════════════════════════════ */
+function renderFac() {
+  var f = DATA.fac;
+  var mediaOk = (f.total_real / f.total_dias) > 1300;
+  var perOk   = f.pct_personal < 35;
+  var marginPct = (f.margen / f.total_real * 100).toFixed(1);
+  var ppp = f.pct_vs_prev;
+
+  var h = '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_real) + '€</div><div class="kpi-lbl">Facturacion real ' + DATA.meta.periodo + '</div><div class="kpi-sub">' + f.total_dias + ' dias operativos</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_prev) + '€</div><div class="kpi-lbl">Facturacion prevista</div><div class="kpi-sub">' + pstr(ppp) + ' vs previsión</div></div>'
+    + '<div class="kpi ' + (mediaOk ? 'ok' : 'warn') + '"><div class="kpi-val">' + fmt(f.total_real / f.total_dias) + '€</div><div class="kpi-lbl">Media por dia</div><div class="kpi-sub">Objetivo &gt;1.300€/dia</div></div>'
+    + '<div class="kpi ' + (perOk   ? 'ok' : 'warn') + '"><div class="kpi-val">' + f.pct_personal.toFixed(1) + '%</div><div class="kpi-lbl">Coste personal / ventas</div><div class="kpi-sub">Objetivo &lt;35%</div></div>'
+    + '<div class="kpi ok"><div class="kpi-val">' + fmt(f.margen) + '€</div><div class="kpi-lbl">Margen bruto</div><div class="kpi-sub">' + marginPct + '%</div></div>'
+    + '</div>';
+
+  // Tabla mensual
+  h += '<div class="two-col">';
+  h += '<div class="sec"><div class="sec-title">Facturacion mensual</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Mes</th><th class="tr">Real €</th><th class="tr">Previsto €</th><th class="tr">vs Prev.</th><th class="tr">Dias</th><th class="tr">Media/dia</th><th class="tr">% Personal</th></tr></thead><tbody>';
+  var totalCosteM = 0;
+  f.meses.forEach(function(m) {
+    var media = m.dias ? m.real / m.dias : 0;
+    var pcp   = m.real ? m.coste_p / m.real * 100 : 0;
+    totalCosteM += m.coste_p;
+    h += '<tr><td class="fw">' + m.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(m.real)     + '</td>'
+       + '<td class="tr">'     + fmt(m.previsto)  + '</td>'
+       + '<td class="tr ' + pcls(m.dv) + '">' + pstr(m.dv) + '</td>'
+       + '<td class="tc">'     + m.dias           + '</td>'
+       + '<td class="tr">'     + (m.dias ? fmt(media) : '\u2014') + '</td>'
+       + '<td class="tr">'     + pcp.toFixed(1)   + '%</td></tr>';
+  });
+  h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td>'
+     + '<td class="tr fm">'  + fmt(f.total_real) + '</td>'
+     + '<td class="tr">'     + fmt(f.total_prev) + '</td>'
+     + '<td class="tr ' + pcls(ppp) + '">' + pstr(ppp) + '</td>'
+     + '<td class="tc">'     + f.total_dias      + '</td>'
+     + '<td class="tr">'     + fmt(f.total_real / f.total_dias) + '</td>'
+     + '<td class="tr">'     + (totalCosteM / f.total_real * 100).toFixed(1) + '%</td></tr>';
+  h += '</tbody></table></div></div>';
+
+  // Top 10 días
+  h += '<div class="sec"><div class="sec-title">Top 10 dias</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Fecha</th><th>Dia</th><th class="tr">Real €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
+  f.top10.forEach(function(d, i) {
+    var ev = d.evento || '';
+    h += '<tr><td class="tc fw">' + (i+1) + '</td>'
+       + '<td>' + d.fecha + '</td><td>' + d.dia + '</td>'
+       + '<td class="tr fm fw">' + fmt(d.real)     + '</td>'
+       + '<td class="tr">'       + fmt(d.previsto)  + '</td>'
+       + '<td class="tr ' + pcls(d.desv_pct) + '">' + pstr(d.desv_pct) + '</td>'
+       + '<td>' + bdg(ev || '\u2014', ev ? 'bg' : 'bgr') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  // Últimos 15 días
+  h += '<div class="sec"><div class="sec-title">Ultimos 15 dias</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Fecha</th><th>Dia</th><th class="tr">Real €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
+  f.ultimos15.forEach(function(d) {
+    var ev = d.evento || '';
+    h += '<tr><td class="fw">' + d.fecha + '</td><td>' + d.dia + '</td>'
+       + '<td class="tr fm fw">' + fmt(d.real)     + '</td>'
+       + '<td class="tr">'       + fmt(d.previsto)  + '</td>'
+       + '<td class="tr ' + pcls(d.desv_pct) + '">' + pstr(d.desv_pct) + '</td>'
+       + '<td>' + bdg(ev || '\u2014', ev ? 'bg' : 'bgr') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Rendimiento por día de semana
+  h += '<div class="sec"><div class="sec-title">Rendimiento por dia de semana</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Dia</th><th class="tr">Dias</th><th class="tr">Total €</th><th class="tr">Media/dia</th><th class="tr">% Personal</th><th>Volumen</th></tr></thead><tbody>';
+  f.dow.forEach(function(d) {
+    h += '<tr><td class="fw">'  + d.dia  + '</td>'
+       + '<td class="tc">'      + d.dias + '</td>'
+       + '<td class="tr fm">'   + fmt(d.total) + '</td>'
+       + '<td class="tr fm fw">'+ fmt(d.media) + '</td>'
+       + '<td class="tr">'      + d.pct_personal.toFixed(1) + '%</td>'
+       + '<td>'                 + bar(d.bar_w, d.bar_cls)   + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  document.getElementById('page-fac').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PERSONAL
+   ═══════════════════════════════════════════════════════════════════ */
+function renderPer() {
+  var p = DATA.per;
+  var ratioOk  = p.ratio < 35;
+  var costeDOk = p.coste_dia < 400;
+
+  var h = '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(p.total_coste) + '€</div><div class="kpi-lbl">Coste total personal</div><div class="kpi-sub">Fichajes ' + DATA.meta.periodo + '</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + p.n_empleados + '</div><div class="kpi-lbl">Empleados activos</div></div>'
+    + '<div class="kpi ' + (ratioOk  ? 'ok' : 'warn') + '"><div class="kpi-val">' + p.ratio.toFixed(1) + '%</div><div class="kpi-lbl">Ratio coste/ventas</div><div class="kpi-sub">Objetivo &lt;35%</div></div>'
+    + '<div class="kpi ' + (costeDOk ? 'ok' : 'warn') + '"><div class="kpi-val">' + fmt(p.coste_dia) + '€</div><div class="kpi-lbl">Coste medio/dia</div><div class="kpi-sub">Objetivo &lt;400€</div></div>'
+    + '</div>';
+
+  h += '<div class="two-col">';
+
+  // Coste semanal vs ventas
+  h += '<div class="sec"><div class="sec-title">Coste semanal vs ventas</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Semana</th><th class="tr">Coste €</th><th class="tr">Ventas €</th><th class="tr">% Sem.</th><th class="tr">% Acum.</th><th>Ratio</th></tr></thead><tbody>';
+  p.semanas.forEach(function(s) {
+    var rs = s.pct > 100 ? ' style="background:#fff7ed"' : '';
+    h += '<tr' + rs + '><td class="fw">S' + s.sem + '</td>'
+       + '<td class="tr fm">' + fmt(s.coste) + '</td>'
+       + '<td class="tr">'    + fmt(s.ventas) + '</td>'
+       + '<td class="tr fw ' + (s.pct > 100 ? 'br' : '') + '">' + s.pct.toFixed(1) + '%</td>'
+       + '<td class="tr">'   + s.cum_pct.toFixed(1) + '%</td>'
+       + '<td>'               + bar(s.bar_w, s.bar_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Empleados
+  h += '<div class="sec"><div class="sec-title">Empleados ' + DATA.meta.periodo + '</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Empleado</th><th class="tr">Coste €</th><th class="tr">% masa</th><th class="tr">Horas</th><th class="tr">€/h</th><th>Peso</th></tr></thead><tbody>';
+  p.empleados.forEach(function(e) {
+    h += '<tr><td class="fw">' + e.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(e.coste)    + '</td>'
+       + '<td class="tr">'     + e.pct_masa.toFixed(1) + '%</td>'
+       + '<td class="tr">'     + e.horas + 'h</td>'
+       + '<td class="tr">'     + (e.coste_hora != null ? e.coste_hora.toFixed(2) : '\u2014') + '</td>'
+       + '<td>'                + bar(e.bar_w, 'bar-b') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  h += '<div class="two-col">';
+
+  // Coste por mes
+  h += '<div class="sec"><div class="sec-title">Coste por mes</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Mes</th><th class="tr">Coste €</th><th class="tr">Ventas €</th><th class="tr">%</th></tr></thead><tbody>';
+  p.meses.forEach(function(m) {
+    h += '<tr><td class="fw">' + m.nombre + '</td>'
+       + '<td class="tr fm">' + fmt(m.coste)  + '</td>'
+       + '<td class="tr">'    + fmt(m.ventas) + '</td>'
+       + '<td class="tr">'    + m.pct.toFixed(1) + '%</td></tr>';
+  });
+  var totC = p.meses.reduce(function(s,m){return s+m.coste;},0);
+  var totV = p.meses.reduce(function(s,m){return s+m.ventas;},0);
+  h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td>'
+     + '<td class="tr fm">' + fmt(totC) + '</td>'
+     + '<td class="tr">'    + fmt(totV) + '</td>'
+     + '<td class="tr">'    + (totV ? (totC/totV*100).toFixed(1) : '0.0') + '%</td></tr>';
+  h += '</tbody></table></div></div>';
+
+  // Eficiencia por día semana
+  h += '<div class="sec"><div class="sec-title">Eficiencia por dia semana</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Dia</th><th class="tr">Fact. media</th><th class="tr">Coste</th><th class="tr">Ratio</th><th class="tr">Obj.</th><th>Estado</th></tr></thead><tbody>';
+  p.dow_efic.forEach(function(e) {
+    h += '<tr><td class="fw">' + e.dia + '</td>'
+       + '<td class="tr">'    + fmt(e.fact)  + '</td>'
+       + '<td class="tr">'    + fmt(e.coste) + '</td>'
+       + '<td class="tr fw">' + e.ratio.toFixed(1) + '%</td>'
+       + '<td class="tr">'    + e.obj.toFixed(0)   + '%</td>'
+       + '<td>'               + bdg(e.estado, e.est_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  document.getElementById('page-per').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EVENTOS
+   ═══════════════════════════════════════════════════════════════════ */
+function renderEv() {
+  var h = '<div class="sec"><div class="sec-title">Calendario eventos 2026</div><div class="tbl-wrap"><table>'
+    + '<thead><tr><th>Mes</th><th>Evento</th><th>Tipo</th><th class="tc">Mult.</th>'
+    + '<th class="tr">Prev. €</th><th class="tr">Real €</th><th class="tr">Desv. €</th><th class="tr">%</th><th>Estado</th></tr></thead><tbody>';
+  DATA.ev.eventos.forEach(function(ev) {
+    var dpct = ev.desv_pct != null ? ev.desv_pct : null;
+    var dc   = (dpct != null && dpct < 0) ? 'neg' : '';
+    h += '<tr><td>' + ev.mes + '</td>'
+       + '<td class="fw">' + ev.nombre + '</td>'
+       + '<td style="font-size:11px;color:#64748b">' + ev.tipo + '</td>'
+       + '<td class="tc">' + ev.mult + 'x</td>'
+       + '<td class="tr">'    + (ev.prev  != null ? fmt(ev.prev)  : '\u2014') + '</td>'
+       + '<td class="tr fm">' + (ev.real  != null ? fmt(ev.real)  : '\u2014') + '</td>'
+       + '<td class="tr ' + dc + '">' + (ev.desv  != null ? fmt(ev.desv)  : '\u2014') + '</td>'
+       + '<td class="tr ' + dc + '">' + (dpct != null ? pstr(dpct) : '\u2014') + '</td>'
+       + '<td>' + bdg(ev.estado, ev.est_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  document.getElementById('page-ev').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ALERTAS
+   ═══════════════════════════════════════════════════════════════════ */
+function renderAl() {
+  var h = '<div class="two-col">';
+
+  h += '<div class="sec"><div class="sec-title">Alertas operativas</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Prioridad</th><th>Concepto</th><th>Detalle</th></tr></thead><tbody>';
+  DATA.al.alertas.forEach(function(a) {
+    var cls = a.prio.indexOf('URGENTE') >= 0 ? 'br' : 'bo';
+    h += '<tr><td>' + bdg(a.prio, cls) + '</td>'
+       + '<td class="fw">' + a.concepto + '</td>'
+       + '<td style="font-size:11px;color:#64748b">' + a.detalle + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  h += '<div class="sec"><div class="sec-title">KPIs financieros</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Indicador</th><th class="tr">Valor</th><th class="tr">Objetivo</th><th>Estado</th><th>Tendencia</th></tr></thead><tbody>';
+  DATA.al.kpis.forEach(function(k) {
+    h += '<tr><td>' + k.kpi + '</td>'
+       + '<td class="tr fm fw">' + k.val + '</td>'
+       + '<td class="tr" style="color:#64748b">' + k.obj + '</td>'
+       + '<td>' + bdg(k.estado, k.est_cls) + '</td>'
+       + '<td style="font-size:11px;color:#64748b">' + k.tend + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  document.getElementById('page-al').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRODUCT MIX
+   ═══════════════════════════════════════════════════════════════════ */
+function renderPm() {
+  var h = '<div class="two-col">';
+
+  h += '<div class="sec"><div class="sec-title">Top 20 productos</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Producto</th><th class="tr">Unidades</th><th>Volumen</th></tr></thead><tbody>';
+  DATA.pm.top_prods.forEach(function(p) {
+    h += '<tr><td class="tc">' + p.rank + '</td>'
+       + '<td class="fw">'     + p.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(p.uds) + '</td>'
+       + '<td>'                + bar(p.bar_w, 'bar-g') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  var totU = DATA.pm.top_fams.reduce(function(s,f){return s+f.uds;},0);
+  h += '<div class="sec"><div class="sec-title">Familias</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Familia</th><th class="tr">Unidades</th><th class="tr">%</th><th>Peso</th></tr></thead><tbody>';
+  DATA.pm.top_fams.forEach(function(f) {
+    h += '<tr><td class="tc">' + f.rank + '</td>'
+       + '<td class="fw">'     + f.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(f.uds) + '</td>'
+       + '<td class="tr">'     + f.pct.toFixed(1) + '%</td>'
+       + '<td>'                + bar(f.bar_w, 'bar-b') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  document.getElementById('page-pm').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   OMNES
+   ═══════════════════════════════════════════════════════════════════ */
+function renderOm() {
+  var h = '<div class="alert info">Metodologia Omnes: Apertura ≤2.5x (&lt;10 platos) o ≤3x (&gt;9). Ratio D/O ideal 0.85–1.05.</div>';
+  h += '<div class="sec"><div class="sec-title">Análisis precios por subfamilia</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Subfamilia</th><th class="tc">Prods.</th>'
+     + '<th class="tr">P.Min</th><th class="tr">P.Max</th>'
+     + '<th class="tc">Baja</th><th class="tc">Media</th><th class="tc">Alta</th>'
+     + '<th class="tr">Apertura</th><th class="tr">Limite</th><th>Apertura</th>'
+     + '<th class="tr">D/O</th><th>D/O</th></tr></thead><tbody>';
+  DATA.om.omnes.forEach(function(o) {
+    var pmin = o.pmin != null ? fmt(o.pmin, 2) : '\u2014';
+    var pmax = o.pmax != null ? fmt(o.pmax, 2) : '\u2014';
+    h += '<tr><td class="fw">' + o.sf + '</td>'
+       + '<td class="tc">' + (o.np    || '\u2014') + '</td>'
+       + '<td class="tr">' + pmin + '</td>'
+       + '<td class="tr">' + pmax + '</td>'
+       + '<td class="tc">' + (o.baja   || '\u2014') + '</td>'
+       + '<td class="tc">' + (o.media_p|| '\u2014') + '</td>'
+       + '<td class="tc">' + (o.alta   || '\u2014') + '</td>'
+       + '<td class="tr fw">' + (o.aper != null ? o.aper : '\u2014') + '</td>'
+       + '<td class="tr">' + (o.lim    || '\u2014') + '</td>'
+       + '<td>'            + bdg(o.est_ap, o.ap_cls) + '</td>'
+       + '<td class="tr fw">' + (o.ratio_do != null ? o.ratio_do : '\u2014') + '</td>'
+       + '<td>'            + bdg(o.est_do, o.do_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  document.getElementById('page-om').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   P&L EBITDA
+   ═══════════════════════════════════════════════════════════════════ */
+function renderPl() {
+  var pl = DATA.pl;
+  var h  = '';
+
+  if (pl.e_mar < 0) {
+    h += '<div class="alert err">Marzo: EBITDA ' + fmt(pl.e_mar) + '€ ('
+       + pl.ebitda_mar_pct.toFixed(1) + '%). CMV '
+       + pl.cmv_mar_pct.toFixed(1) + '% · Personal '
+       + pl.per_mar_pct.toFixed(1) + '%. Acumulado Ene-Mar: '
+       + fmt(pl.e_acum) + '€.</div>';
+  }
+
+  h += '<div class="kpi-row">'
+     + '<div class="kpi ' + (pl.e_mar  < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_mar)  + '€</div><div class="kpi-lbl">EBITDA Marzo</div><div class="kpi-sub">'   + pl.ebitda_mar_pct.toFixed(1)  + '%</div></div>'
+     + '<div class="kpi ok"><div class="kpi-val">' + fmt(pl.e_feb)  + '€</div><div class="kpi-lbl">EBITDA Febrero</div><div class="kpi-sub">'   + (pl.v_feb ? (pl.e_feb/pl.v_feb*100).toFixed(1) : 0) + '%</div></div>'
+     + '<div class="kpi ' + (pl.e_acum < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_acum) + '€</div><div class="kpi-lbl">EBITDA Acumulado Ene-Mar</div><div class="kpi-sub">' + pl.ebitda_acum_pct.toFixed(1) + '%</div></div>'
+     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_mar)  + '€</div><div class="kpi-lbl">Ventas Marzo</div></div>'
+     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_acum) + '€</div><div class="kpi-lbl">Ventas Acumulado</div><div class="kpi-sub">Ene + Feb + Mar</div></div>'
+     + '</div>';
+
+  h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — Marzo 2026 (mes anterior) vs meses anteriores</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th style="width:220px">Concepto</th>'
+     + '<th class="tr mar">Marzo €</th><th class="tr pc mar">%</th>'
+     + '<th class="tr">Febrero €</th><th class="tr pc">%</th>'
+     + '<th class="tr">Enero €</th><th class="tr pc">%</th>'
+     + '<th class="tr">Acumulado €</th><th class="tr pc">%</th>'
+     + '</tr></thead><tbody>';
+
+  pl.rows.forEach(function(row) {
+    if (row.section) {
+      h += '<tr class="pl-section"><td colspan="9">' + row.label + '</td></tr>';
+      return;
+    }
+    var rowCls = '';
+    if (row.bold) {
+      rowCls = 'pl-bold ' + (row.mar.v < 0 ? 'neg-row' : 'pos-row');
+    } else if (row.subtotal) {
+      rowCls = 'pl-sub';
+    }
+    var lbl = row.bold ? '<strong>' + row.label + '</strong>' : row.label;
+
+    function plCell(mc) {
+      return '<td class="tr fm' + (mc.v < 0 ? ' neg' : '') + '">' + fmt(mc.v) + '</td>'
+           + '<td class="tr pc">' + mc.p.toFixed(1) + '%</td>';
+    }
+
+    h += '<tr' + (rowCls ? ' class="' + rowCls + '"' : '') + '>'
+       + '<td>' + lbl + '</td>'
+       + plCell(row.mar)
+       + plCell(row.feb)
+       + plCell(row.ene)
+       + plCell(row.acum)
+       + '</tr>\n';
+  });
+
+  h += '</tbody></table></div></div>';
+  document.getElementById('page-pl').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INICIALIZACIÓN
+   ═══════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function() {
+  // Header subtitle
+  document.getElementById('header-sub').textContent =
+    'Facturado ' + DATA.meta.periodo + ': ' + fmt(DATA.fac.total_real) + '€'
+    + '  |  ' + DATA.fac.total_dias + ' dias operativos'
+    + '  |  Generado: ' + DATA.meta.generado;
+
+  // Render all pages
+  renderFac();
+  renderPer();
+  renderEv();
+  renderAl();
+  renderPm();
+  renderOm();
+  renderPl();
+});
+</script>
+</body>
+</html>
