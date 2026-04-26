@@ -65,11 +65,11 @@ def print_file_info(token: str) -> None:
         mod_at  = it.get("lastModifiedDateTime", "?")
         mod_by  = (it.get("lastModifiedBy", {}) or {}).get("user", {}).get("displayName", "?")
         parent  = (it.get("parentReference", {}) or {}).get("path", "?")
-        print(f"Fichero OneDrive: {name} ({size_kb} KB)")
+        print(f"\U0001f4c1 Fichero OneDrive: {name} ({size_kb} KB)")
         print(f"   Carpeta: {parent}")
         print(f"   Ultima edicion: {mod_at} por {mod_by}")
     except Exception as e:
-        print(f"No se pudieron leer metadatos: {e}")
+        print(f"\u26a0 No se pudieron leer metadatos del driveItem: {e}")
 
 
 def download_excel(token: str, dst: Path) -> None:
@@ -106,7 +106,7 @@ def upload_excel(token: str, src: Path) -> None:
             timeout=120,
         )
         if r.status_code == 423:
-            print(f"OneDrive bloqueado (423) intento {intento}/{len(esperas)}. Esperando {espera}s...")
+            print(f"\u26a0  OneDrive bloqueado (423) - intento {intento}/{len(esperas)}. Esperando {espera}s...")
             time.sleep(espera)
             continue
         r.raise_for_status()
@@ -151,18 +151,18 @@ def _formula_template(ws, row: int) -> dict[int, str]:
 
 def _copy_style(src_cell, dst_cell) -> None:
     if src_cell.has_style:
-        dst_cell.font        = copy.copy(src_cell.font)
-        dst_cell.fill        = copy.copy(src_cell.fill)
-        dst_cell.border      = copy.copy(src_cell.border)
-        dst_cell.alignment   = copy.copy(src_cell.alignment)
-        dst_cell.protection  = copy.copy(src_cell.protection)
+        dst_cell.font          = copy.copy(src_cell.font)
+        dst_cell.fill          = copy.copy(src_cell.fill)
+        dst_cell.border        = copy.copy(src_cell.border)
+        dst_cell.alignment     = copy.copy(src_cell.alignment)
+        dst_cell.protection    = copy.copy(src_cell.protection)
         dst_cell.number_format = src_cell.number_format
 
 
 def apply_turnos(ws, turnos: list[Turno]) -> tuple[list[Turno], list[Turno]]:
-    existing = _existing_fecha_turno(ws)
-    tpl_row  = 5
-    tpl      = _formula_template(ws, tpl_row)
+    existing   = _existing_fecha_turno(ws)
+    tpl_row    = 5
+    tpl        = _formula_template(ws, tpl_row)
     applied: list[Turno] = []
     skipped: list[Turno] = []
     next_row   = _last_data_row(ws) + 1
@@ -201,7 +201,7 @@ def main() -> int:
         return 2
 
     turnos = parse_mensajes(texto)
-    print(f"Turnos detectados en el mensaje: {len(turnos)}")
+    print(f"\U0001f4e8 Turnos detectados en el mensaje: {len(turnos)}")
     for t in turnos:
         print(f"   {t.fecha} {t.turno:<7} {t.nombre:<12} {t.entrada}-{t.salida}")
 
@@ -209,16 +209,16 @@ def main() -> int:
         print("No hay turnos que aplicar. Revisa el formato.")
         return 0
 
-    print("Autenticando con Microsoft Graph...")
+    print("\n\U0001f510 Autenticando con Microsoft Graph...")
     token = _graph_token()
     print_file_info(token)
 
     local = Path("/tmp/horarios.xlsx")
-    print("Descargando Excel desde OneDrive...")
+    print("\u2b07\ufe0f  Descargando Excel desde OneDrive...")
     download_excel(token, local)
     print(f"   {local.stat().st_size // 1024} KB")
 
-    print(f"Abriendo hoja '{SHEET_NAME}'...")
+    print(f"\n\U0001f4ca Abriendo hoja '{SHEET_NAME}'...")
     wb = load_workbook(local)
     if SHEET_NAME not in wb.sheetnames:
         print(f"ERROR: la hoja '{SHEET_NAME}' no existe. Hojas: {wb.sheetnames}", file=sys.stderr)
@@ -229,27 +229,28 @@ def main() -> int:
 
     applied, skipped = apply_turnos(ws, turnos)
 
-    print(f"Aplicados: {len(applied)}")
+    print(f"\n\u2705 Aplicados: {len(applied)}")
     for t in applied:
         print(f"   + {t.fecha} {t.turno:<7} {t.nombre:<12} {t.entrada}-{t.salida}")
 
     if skipped:
-        print(f"Omitidos (ya existen): {len(skipped)}")
-        for k in sorted({t.key() for t in skipped}):
+        print(f"\n\u23ed Omitidos (ya existen para esa fecha+turno): {len(skipped)}")
+        keys = {t.key() for t in skipped}
+        for k in sorted(keys):
             print(f"   - {k[0]} {k[1]}")
 
     if not applied:
-        print("Nada que subir.")
+        print("\nNada que subir.")
         return 0
 
     if DRY_RUN:
-        print("DRY_RUN=1 -> no subimos el Excel.")
+        print("\n\U0001f9ea DRY_RUN=1 -> no subimos el Excel.")
         return 0
 
     wb.save(local)
-    print(f"Subiendo Excel actualizado a OneDrive ({local.stat().st_size // 1024} KB)...")
+    print(f"\n\u2b06\ufe0f  Subiendo Excel actualizado a OneDrive ({local.stat().st_size // 1024} KB)...")
     upload_excel(token, local)
-    print("OK")
+    print("\U0001f389 OK")
     return 0
 
 
