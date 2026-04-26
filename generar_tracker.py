@@ -22,12 +22,60 @@ except ImportError:
     print("ERROR: Instala openpyxl con: pip install openpyxl")
     sys.exit(1)
 
+try:
+    import requests
+except ImportError:
+    requests = None
+
+# ── Descarga automática desde OneDrive (para GitHub Actions) ─────────────────
+def _download_excel_onedrive(dest_path: str) -> bool:
+    """Descarga el Excel desde OneDrive si están definidas las variables de entorno."""
+    tenant    = os.environ.get("MS_TENANT_ID", "").strip()
+    client_id = os.environ.get("MS_CLIENT_ID", "").strip()
+    secret    = os.environ.get("MS_CLIENT_SECRET", "").strip()
+    share_url = os.environ.get("ONEDRIVE_SHARE_URL", "").strip()
+    if not (tenant and client_id and secret and share_url):
+        return False
+    if requests is None:
+        print("ERROR: pip install requests  (necesario para descarga OneDrive)")
+        return False
+    import base64
+    print("🔐 Autenticando con Microsoft Graph para descarga del Excel...")
+    r = requests.post(
+        f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
+        data={"grant_type": "client_credentials", "client_id": client_id,
+              "client_secret": secret, "scope": "https://graph.microsoft.com/.default"},
+        timeout=30
+    )
+    r.raise_for_status()
+    token = r.json()["access_token"]
+    enc = "u!" + base64.urlsafe_b64encode(share_url.encode()).decode().rstrip("=")
+    print("⬇  Descargando Excel desde OneDrive...")
+    r = requests.get(
+        f"https://graph.microsoft.com/v1.0/shares/{enc}/driveItem/content",
+        headers={"Authorization": f"Bearer {token}"},
+        stream=True, allow_redirects=True, timeout=60
+    )
+    r.raise_for_status()
+    with open(dest_path, "wb") as f:
+        for chunk in r.iter_content(65536):
+            f.write(chunk)
+    print(f"   ✅ Excel descargado: {os.path.getsize(dest_path)//1024} KB → {dest_path}")
+    return True
+
 # ── Localizar archivos ────────────────────────────────────────────────────────
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 if len(sys.argv) > 1:
     EXCEL_PATH = sys.argv[1]
 else:
+    # En GitHub Actions: intentar descarga automática si hay env vars de OneDrive
+    auto_dest = os.path.join(SCRIPT_DIR, "Taperia_Caldes_Operaciones_2026_Trabajando.xlsx")
+    if os.environ.get("MS_TENANT_ID") and not os.path.exists(auto_dest):
+        if not _download_excel_onedrive(auto_dest):
+            print("ERROR: No se pudo descargar el Excel desde OneDrive.")
+            sys.exit(1)
+
     candidates = [f for f in os.listdir(SCRIPT_DIR) if 'Taperia' in f and f.endswith('.xlsx')]
     if not candidates:
         print("ERROR: No se encontró el Excel. Pásalo como argumento:")
