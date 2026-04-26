@@ -2,7 +2,7 @@ name: Actualizar Tracker Operativo
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Instalar dependencias
         run: pip install requests openpyxl --quiet
@@ -36,8 +36,10 @@ jobs:
           ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
         run: python generar_tracker.py
 
-      - name: Copiar HTML a carpeta Netfily
-        run: cp tracker-operativo.html Netfily/tracker-operativo.html
+      - name: Preparar carpeta deploy
+        run: |
+          mkdir -p Netfily
+          cp tracker-operativo.html Netfily/tracker-operativo.html
 
       - name: Deploy a Netlify
         env:
@@ -45,4 +47,8 @@ jobs:
           NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
         run: |
           npm install -g netlify-cli --silent
-          netlify deploy --prod --auth "$NETLIFY_AUTH_TOKEN" --site "$NETLIFY_SITE_ID" --dir Netfily --message "Auto-update $(date +'%d/%m/%Y %H:%M')"
+          netlify deploy --prod \
+            --auth    "$NETLIFY_AUTH_TOKEN" \
+            --site    "$NETLIFY_SITE_ID"   \
+            --dir     Netfily              \
+            --message "Auto-update $(date +'%d/%m/%Y %H:%M')"
