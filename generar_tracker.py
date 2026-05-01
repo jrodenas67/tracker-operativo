@@ -116,6 +116,9 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
         'desv_pct': round(float(row[8] or 0)*100, 1) if isinstance(row[8], (int, float)) else 0,
         'coste_p':  round(float(coste_p), 0),
         'evento':   str(row[11]) if row[11] else '',
+        'manana':   round(float(row[2] or 0), 0),
+        'mediodia': round(float(row[3] or 0), 0),
+        'noche':    round(float(row[4] or 0), 0),
     })
 
 mes_totals = {}
@@ -145,6 +148,20 @@ coste_real  = sum(v['coste'] for v in mes_totals.values())
 pct_personal = round(coste_real / total_real * 100, 1) if total_real else 0
 margen       = round(total_real - coste_real, 0)
 pct_vs_prev  = round((total_real / total_prev - 1) * 100, 1) if total_prev else 0
+
+# Ticket medio por turno (media de facturación en días con ese turno activo)
+dias_m  = [d for d in days if d['manana']   > 0]
+dias_md = [d for d in days if d['mediodia'] > 0]
+dias_n  = [d for d in days if d['noche']    > 0]
+ticket_medio = {
+    'global':   round(total_real / total_dias, 0) if total_dias else 0,
+    'manana':   round(sum(d['manana']   for d in dias_m)  / len(dias_m),  0) if dias_m  else 0,
+    'mediodia': round(sum(d['mediodia'] for d in dias_md) / len(dias_md), 0) if dias_md else 0,
+    'noche':    round(sum(d['noche']    for d in dias_n)  / len(dias_n),  0) if dias_n  else 0,
+    'dias_m':   len(dias_m),
+    'dias_md':  len(dias_md),
+    'dias_n':   len(dias_n),
+}
 
 # Rendimiento por día de semana
 dow_order  = ['Sáb', 'Dom', 'Vie', 'Jue', 'Mié']
@@ -463,6 +480,7 @@ DATA = {
         "pct_vs_prev":  pct_vs_prev,
         "pct_personal": pct_personal,
         "margen":       margen,
+        "ticket_medio": ticket_medio,
         "meses":        meses_list,
         "top10":        [day_to_dict(d) for d in top10],
         "ultimos15":    [day_to_dict(d) for d in ultimos15],
