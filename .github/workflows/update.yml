@@ -39,6 +39,7 @@ jobs:
       - name: Preparar carpeta deploy
         run: |
           mkdir -p Netfily
+          cp tracker-operativo.html Netfily/index.html
           cp tracker-operativo.html Netfily/tracker-operativo.html
 
       - name: Deploy a Netlify
