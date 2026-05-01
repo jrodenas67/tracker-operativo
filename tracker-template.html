@@ -138,12 +138,19 @@ function renderFac() {
   var marginPct = (f.margen / f.total_real * 100).toFixed(1);
   var ppp = f.pct_vs_prev;
 
+  var tm = f.ticket_medio || {};
   var h = '<div class="kpi-row">'
     + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_real) + '€</div><div class="kpi-lbl">Facturacion real ' + DATA.meta.periodo + '</div><div class="kpi-sub">' + f.total_dias + ' dias operativos</div></div>'
     + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_prev) + '€</div><div class="kpi-lbl">Facturacion prevista</div><div class="kpi-sub">' + pstr(ppp) + ' vs previsión</div></div>'
     + '<div class="kpi ' + (mediaOk ? 'ok' : 'warn') + '"><div class="kpi-val">' + fmt(f.total_real / f.total_dias) + '€</div><div class="kpi-lbl">Media por dia</div><div class="kpi-sub">Objetivo &gt;1.300€/dia</div></div>'
     + '<div class="kpi ' + (perOk   ? 'ok' : 'warn') + '"><div class="kpi-val">' + f.pct_personal.toFixed(1) + '%</div><div class="kpi-lbl">Coste personal / ventas</div><div class="kpi-sub">Objetivo &lt;35%</div></div>'
     + '<div class="kpi ok"><div class="kpi-val">' + fmt(f.margen) + '€</div><div class="kpi-lbl">Margen bruto</div><div class="kpi-sub">' + marginPct + '%</div></div>'
+    + '</div>'
+    + '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">☀️ ' + fmt(tm.manana)   + '€</div><div class="kpi-lbl">Ticket medio Mañana</div><div class="kpi-sub">' + (tm.dias_m  || 0) + ' servicios</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🍽️ ' + fmt(tm.mediodia) + '€</div><div class="kpi-lbl">Ticket medio Mediodía</div><div class="kpi-sub">' + (tm.dias_md || 0) + ' servicios</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🌙 ' + fmt(tm.noche)    + '€</div><div class="kpi-lbl">Ticket medio Noche</div><div class="kpi-sub">' + (tm.dias_n  || 0) + ' servicios</div></div>'
+    + '<div class="kpi ok"><div class="kpi-val" style="font-size:18px">📊 ' + fmt(tm.global)  + '€</div><div class="kpi-lbl">Ticket medio Global</div><div class="kpi-sub">Media diaria acum.</div></div>'
     + '</div>';
 
   // Tabla mensual
