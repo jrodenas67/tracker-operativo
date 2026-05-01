@@ -190,18 +190,51 @@ pct_personal = round(coste_real / total_real * 100, 1) if total_real else 0
 margen       = round(total_real - coste_real, 0)
 pct_vs_prev  = round((total_real / total_prev - 1) * 100, 1) if total_prev else 0
 
-# Ticket medio por turno (media de facturación en días con ese turno activo)
-dias_m  = [d for d in days if d['manana']   > 0]
-dias_md = [d for d in days if d['mediodia'] > 0]
-dias_n  = [d for d in days if d['noche']    > 0]
+# Ticket medio por turno — cruza sección izquierda (Total€) con sección derecha (Nº Comensales)
+# Sección izquierda: col0=Fecha, col1=Turno, col4=Total€
+# Sección derecha:   col16=Fecha, col18=Turno, col19=Nº Comensales2
+# Las dos secciones NO están alineadas fila a fila → cruzar por (fecha, turno)
+_pax_dict   = {}  # {(date, turno): pax}
+_total_dict = {}  # {(date, turno): total_euros}
+try:
+    ws_dt = wb['Detalle Turnos']
+    for _row in ws_dt.iter_rows(min_row=3, values_only=True):
+        # Sección izquierda
+        _fl = _row[0]; _tl = str(_row[1] or '').strip(); _tot = _row[4]
+        if isinstance(_fl, datetime) and _tl and isinstance(_tot, (int, float)) and _tot > 0:
+            _total_dict[(_fl.date(), _tl)] = float(_tot)
+        # Sección derecha
+        _fr = _row[16]; _tr = str(_row[18] or '').strip(); _pax = _row[19]
+        if isinstance(_fr, datetime) and _tr and isinstance(_pax, (int, float)) and int(_pax) > 0:
+            _pax_dict[(_fr.date(), _tr)] = int(_pax)
+except Exception as _e:
+    print(f"⚠  No se pudo leer Detalle Turnos: {_e}")
+
+_tm = {'Mañana': {'euros': 0, 'pax': 0}, 'Mediodia': {'euros': 0, 'pax': 0}, 'Noche': {'euros': 0, 'pax': 0}}
+for _key, _total in _total_dict.items():
+    _turno = _key[1]
+    if _turno not in _tm: continue
+    _pax_i = _pax_dict.get(_key, 0)
+    if _pax_i <= 0: continue
+    _ticket_dia = _total / _pax_i
+    if _ticket_dia < 2 or _ticket_dia > 80: continue
+    _tm[_turno]['euros'] += _total
+    _tm[_turno]['pax']   += _pax_i
+
+def _ticket(turno_key):
+    d = _tm[turno_key]
+    return round(d['euros'] / d['pax'], 2) if d['pax'] else 0
+
+total_pax = sum(v['pax'] for v in _tm.values())
+total_eur = sum(v['euros'] for v in _tm.values())
 ticket_medio = {
-    'global':   round(total_real / total_dias, 0) if total_dias else 0,
-    'manana':   round(sum(d['manana']   for d in dias_m)  / len(dias_m),  0) if dias_m  else 0,
-    'mediodia': round(sum(d['mediodia'] for d in dias_md) / len(dias_md), 0) if dias_md else 0,
-    'noche':    round(sum(d['noche']    for d in dias_n)  / len(dias_n),  0) if dias_n  else 0,
-    'dias_m':   len(dias_m),
-    'dias_md':  len(dias_md),
-    'dias_n':   len(dias_n),
+    'global':   round(total_eur / total_pax, 2) if total_pax else 0,
+    'manana':   _ticket('Mañana'),
+    'mediodia': _ticket('Mediodia'),
+    'noche':    _ticket('Noche'),
+    'dias_m':   sum(1 for d in days if d['manana']   > 0),
+    'dias_md':  sum(1 for d in days if d['mediodia'] > 0),
+    'dias_n':   sum(1 for d in days if d['noche']    > 0),
 }
 
 # Rendimiento por día de semana
