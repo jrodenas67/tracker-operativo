@@ -21,6 +21,7 @@ jobs:
         run: pip install requests openpyxl --quiet
 
       - name: Actualizar facturacion (cierres de caja)
+        continue-on-error: true
         env:
           MS_TENANT_ID:       ${{ secrets.MS_TENANT_ID }}
           MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
