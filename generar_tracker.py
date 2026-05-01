@@ -29,17 +29,48 @@ except ImportError:
 
 # ── Descarga automática desde OneDrive (para GitHub Actions) ─────────────────
 def _download_excel_onedrive(dest_path: str) -> bool:
-    """Descarga el Excel desde OneDrive si están definidas las variables de entorno."""
+    """
+    Descarga el Excel desde OneDrive.
+    Método 1 (prioritario): ONEDRIVE_DIRECT_URL — enlace directo de descarga
+                            (SharePoint "Descargar" o link con &download=1)
+    Método 2 (fallback):   OAuth con MS_TENANT_ID + MS_CLIENT_ID + MS_CLIENT_SECRET
+                            + ONEDRIVE_SHARE_URL (sharing link del archivo)
+    """
+    if requests is None:
+        print("ERROR: pip install requests  (necesario para descarga OneDrive)")
+        return False
+
+    # ── Método 1: enlace directo (sin OAuth) ──────────────────────────────────
+    direct_url = os.environ.get("ONEDRIVE_DIRECT_URL", "").strip()
+    if direct_url:
+        print("⬇  Descargando Excel (enlace directo)...")
+        # Convertir link de SharePoint "Compartir" a link de descarga directa
+        # https://xxx.sharepoint.com/:x:/...  →  añadir ?download=1 si no lo tiene
+        dl_url = direct_url
+        if "sharepoint.com" in dl_url and "download=1" not in dl_url:
+            sep = "&" if "?" in dl_url else "?"
+            dl_url = dl_url + sep + "download=1"
+        r = requests.get(dl_url, stream=True, allow_redirects=True, timeout=60)
+        r.raise_for_status()
+        with open(dest_path, "wb") as f:
+            for chunk in r.iter_content(65536):
+                f.write(chunk)
+        size = os.path.getsize(dest_path)
+        if size < 10000:
+            print(f"   ⚠  Archivo demasiado pequeño ({size} bytes) — puede ser HTML de error")
+            os.remove(dest_path)
+            return False
+        print(f"   ✅ Excel descargado: {size//1024} KB → {dest_path}")
+        return True
+
+    # ── Método 2: OAuth + sharing link ────────────────────────────────────────
+    import base64
     tenant    = os.environ.get("MS_TENANT_ID", "").strip()
     client_id = os.environ.get("MS_CLIENT_ID", "").strip()
     secret    = os.environ.get("MS_CLIENT_SECRET", "").strip()
     share_url = os.environ.get("ONEDRIVE_SHARE_URL", "").strip()
     if not (tenant and client_id and secret and share_url):
         return False
-    if requests is None:
-        print("ERROR: pip install requests  (necesario para descarga OneDrive)")
-        return False
-    import base64
     print("🔐 Autenticando con Microsoft Graph para descarga del Excel...")
     r = requests.post(
         f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
@@ -50,18 +81,28 @@ def _download_excel_onedrive(dest_path: str) -> bool:
     r.raise_for_status()
     token = r.json()["access_token"]
     enc = "u!" + base64.urlsafe_b64encode(share_url.encode()).decode().rstrip("=")
-    print("⬇  Descargando Excel desde OneDrive...")
-    r = requests.get(
+    print("⬇  Descargando Excel desde OneDrive (OAuth)...")
+    # Intentar primero /driveItem/content, luego /root/content
+    for endpoint in [
         f"https://graph.microsoft.com/v1.0/shares/{enc}/driveItem/content",
-        headers={"Authorization": f"Bearer {token}"},
-        stream=True, allow_redirects=True, timeout=60
-    )
-    r.raise_for_status()
-    with open(dest_path, "wb") as f:
-        for chunk in r.iter_content(65536):
-            f.write(chunk)
-    print(f"   ✅ Excel descargado: {os.path.getsize(dest_path)//1024} KB → {dest_path}")
-    return True
+        f"https://graph.microsoft.com/v1.0/shares/{enc}/root/content",
+    ]:
+        try:
+            r = requests.get(endpoint,
+                             headers={"Authorization": f"Bearer {token}"},
+                             stream=True, allow_redirects=True, timeout=60)
+            if r.status_code == 404:
+                continue
+            r.raise_for_status()
+            with open(dest_path, "wb") as f:
+                for chunk in r.iter_content(65536):
+                    f.write(chunk)
+            print(f"   ✅ Excel descargado: {os.path.getsize(dest_path)//1024} KB → {dest_path}")
+            return True
+        except Exception as e:
+            print(f"   ⚠  {endpoint}: {e}")
+    print("   ❌ No se pudo descargar con ningún endpoint OAuth.")
+    return False
 
 # ── Localizar archivos ────────────────────────────────────────────────────────
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
