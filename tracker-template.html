@@ -363,30 +363,99 @@ function renderAl() {
    PRODUCT MIX
    ═══════════════════════════════════════════════════════════════════ */
 function renderPm() {
-  var h = '<div class="two-col">';
+  var pm = DATA.pm;
+  var totUds = pm.menu_uds + pm.carta_uds;
 
-  h += '<div class="sec"><div class="sec-title">Top 20 productos</div><div class="tbl-wrap"><table>'
-     + '<thead><tr><th>#</th><th>Producto</th><th class="tr">Unidades</th><th>Volumen</th></tr></thead><tbody>';
-  DATA.pm.top_prods.forEach(function(p) {
-    h += '<tr><td class="tc">' + p.rank + '</td>'
-       + '<td class="fw">'     + p.nombre + '</td>'
-       + '<td class="tr fm">'  + fmt(p.uds) + '</td>'
-       + '<td>'                + bar(p.bar_w, 'bar-g') + '</td></tr>';
+  // ── KPIs: Menú vs Carta ────────────────────────────────────────────────────
+  var pctM  = pm.pct_menu_uds;
+  var pctC  = (100 - pctM).toFixed(1);
+  var h = '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(pm.menu_uds) + '</div><div class="kpi-lbl">Menús vendidos</div><div class="kpi-sub">' + pctM.toFixed(1) + '% uds · ' + pm.pct_menu_imp.toFixed(1) + '% importe</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(pm.carta_uds) + '</div><div class="kpi-lbl">Productos carta</div><div class="kpi-sub">' + pctC + '% uds · ' + (100 - pm.pct_menu_imp).toFixed(1) + '% importe</div></div>'
+    + '<div class="kpi ' + (pm.mg_medio_menu  != null ? 'ok' : '') + '"><div class="kpi-val">' + (pm.mg_medio_menu  != null ? pm.mg_medio_menu  + '%' : '—') + '</div><div class="kpi-lbl">Margen medio menú</div></div>'
+    + '<div class="kpi ' + (pm.mg_medio_carta != null ? 'ok' : '') + '"><div class="kpi-val">' + (pm.mg_medio_carta != null ? pm.mg_medio_carta + '%' : '—') + '</div><div class="kpi-lbl">Margen medio carta</div></div>'
+    + '</div>';
+
+  // ── Insight automático ────────────────────────────────────────────────────
+  h += '<div class="alert info" style="margin-bottom:14px">💡 ' + pm.insight + '</div>';
+
+  // ── Evolución mensual de menús ────────────────────────────────────────────
+  var maxMesUds = Math.max.apply(null, pm.menus_mes.map(function(m){return m.uds;}));
+  h += '<div class="sec" style="margin-bottom:14px"><div class="sec-title">Evolución mensual de menús vendidos</div>'
+     + '<div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Mes</th><th class="tr">Menús</th><th class="tr">Importe €</th><th class="tr">€/menú</th><th>Tendencia</th></tr></thead><tbody>';
+  var prevUds = 0;
+  pm.menus_mes.forEach(function(m) {
+    var ticketM = m.uds ? (m.importe / m.uds).toFixed(2) : '—';
+    var tend = '';
+    if (prevUds > 0) {
+      var diff = m.uds - prevUds;
+      var pct  = (diff / prevUds * 100).toFixed(1);
+      tend = '<span class="' + (diff >= 0 ? 'pos' : 'neg') + '">' + (diff >= 0 ? '▲' : '▼') + ' ' + Math.abs(pct) + '%</span>';
+    }
+    var bw = maxMesUds ? (m.uds / maxMesUds * 100).toFixed(1) : 0;
+    h += '<tr><td class="fw">' + m.mes + '</td>'
+       + '<td class="tr fm">' + fmt(m.uds) + '</td>'
+       + '<td class="tr fm">' + fmt(m.importe) + '</td>'
+       + '<td class="tr">'    + ticketM + '€</td>'
+       + '<td style="min-width:120px">' + bar(bw, 'bar-g') + ' ' + tend + '</td></tr>';
+    prevUds = m.uds;
   });
   h += '</tbody></table></div></div>';
 
-  var totU = DATA.pm.top_fams.reduce(function(s,f){return s+f.uds;},0);
-  h += '<div class="sec"><div class="sec-title">Familias</div><div class="tbl-wrap"><table>'
-     + '<thead><tr><th>#</th><th>Familia</th><th class="tr">Unidades</th><th class="tr">%</th><th>Peso</th></tr></thead><tbody>';
-  DATA.pm.top_fams.forEach(function(f) {
+  // ── Barras: Menú vs Carta (visual split) ──────────────────────────────────
+  var wM = pm.pct_menu_imp;
+  var wC = (100 - wM);
+  h += '<div class="sec" style="margin-bottom:14px">'
+     + '<div class="sec-title">Distribución importe: Menú vs Carta</div>'
+     + '<div style="display:flex;height:22px;border-radius:6px;overflow:hidden;margin-top:8px">'
+     + '<div style="width:' + wM.toFixed(1) + '%;background:#86efac;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#15803d">' + (wM > 8 ? wM.toFixed(1) + '% Menú' : '') + '</div>'
+     + '<div style="width:' + wC.toFixed(1) + '%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1d4ed8">' + (wC > 8 ? wC.toFixed(1) + '% Carta' : '') + '</div>'
+     + '</div></div>';
+
+  // ── Tablas: Menús + Familias carta ────────────────────────────────────────
+  h += '<div class="two-col">';
+
+  // Tabla menús
+  h += '<div class="sec"><div class="sec-title">Menús vendidos (unidad real)</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Menú</th><th class="tr">Uds</th><th class="tr">% Uds</th><th class="tr">% Imp.</th><th>Vol.</th></tr></thead><tbody>';
+  pm.menus.forEach(function(m) {
+    h += '<tr><td class="tc">' + m.rank + '</td>'
+       + '<td class="fw">'     + m.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(m.uds) + '</td>'
+       + '<td class="tr">'     + m.pct.toFixed(1) + '%</td>'
+       + '<td class="tr">'     + m.pct_imp.toFixed(1) + '%</td>'
+       + '<td>'                + bar(m.bar_w, 'bar-g') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Tabla familias (menú + carta)
+  h += '<div class="sec"><div class="sec-title">Familias (excl. componentes menú)</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Familia</th><th class="tr">Uds</th><th class="tr">% total</th><th>Tipo</th><th>Peso</th></tr></thead><tbody>';
+  pm.top_fams.forEach(function(f) {
+    var tcls = f.tipo === 'menu' ? 'bg' : 'bb';
+    var tlbl = f.tipo === 'menu' ? 'Menú' : 'Carta';
     h += '<tr><td class="tc">' + f.rank + '</td>'
        + '<td class="fw">'     + f.nombre + '</td>'
        + '<td class="tr fm">'  + fmt(f.uds) + '</td>'
        + '<td class="tr">'     + f.pct.toFixed(1) + '%</td>'
-       + '<td>'                + bar(f.bar_w, 'bar-b') + '</td></tr>';
+       + '<td>'                + bdg(tlbl, tcls) + '</td>'
+       + '<td>'                + bar(f.bar_w, f.tipo === 'menu' ? 'bar-g' : 'bar-b') + '</td></tr>';
   });
   h += '</tbody></table></div></div>';
   h += '</div>'; // two-col
+
+  // Tabla top productos carta
+  h += '<div class="sec"><div class="sec-title">Top 20 productos carta (sin componentes menú)</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Producto</th><th class="tr">Uds</th><th class="tr">% total</th><th>Volumen</th></tr></thead><tbody>';
+  pm.carta.forEach(function(p) {
+    h += '<tr><td class="tc">' + p.rank + '</td>'
+       + '<td class="fw">'     + p.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(p.uds) + '</td>'
+       + '<td class="tr">'     + p.pct.toFixed(1) + '%</td>'
+       + '<td>'                + bar(p.bar_w, 'bar-b') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
 
   document.getElementById('page-pm').innerHTML = h;
 }
