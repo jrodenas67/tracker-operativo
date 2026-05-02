@@ -401,32 +401,136 @@ for row in ws_dash.iter_rows(min_row=27, max_row=33, values_only=True):
         'est_cls':est_cls,
     })
 
-# ── Product Mix Unificado ─────────────────────────────────────────────────────
-ws_pm    = wb['Product Mix Unificado']
-productos = defaultdict(int)
-familias  = defaultdict(int)
-for row in ws_pm.iter_rows(min_row=2, values_only=True):
-    if row[2] and isinstance(row[4], (int, float)):
-        productos[row[2]] += int(row[4])
-        if row[3]: familias[row[3]] += int(row[4])
+# ── Product Mix (desde BD_Datos — lógica menú correcta) ──────────────────────
+# Familias que son COMPONENTES del menú: se excluyen del Product Mix
+FAM_EXCLUIR = {'Menu Primeros','Menu Segundos','Menu Postres','Menu Bebidas','Opciones'}
+FAM_MENU    = 'Menu'  # familia que representa el menú como unidad de venta
 
-top_prods = sorted(productos.items(), key=lambda x: -x[1])[:20]
-top_fams  = sorted(familias.items(),  key=lambda x: -x[1])[:12]
-max_prod  = top_prods[0][1] if top_prods else 1
-max_fam   = top_fams[0][1]  if top_fams  else 1
-tot_fam_u = sum(u for _, u in top_fams)
+# Normalizar nombre de familia (unifica mayúsculas y tildes comunes)
+def _norm_fam(f):
+    return (str(f).strip()
+            .replace('Cafe','Café')
+            .replace('Bocadillos Calientes','Bocadillos calientes')
+            .replace('Bocadillos Frios','Bocadillos fríos')
+            .replace('Bocadillos Fríos','Bocadillos fríos'))
 
-prod_list = [
-    {'rank': i+1, 'nombre': p, 'uds': u,
-     'bar_w': round(min(100, u / max_prod * 100), 1)}
-    for i, (p, u) in enumerate(top_prods)
+# Normalizar nombre de producto del menú
+# "MENU", "menu", "Menu" → "Menú diario"
+# "Hamburguesa menú (...)" → "Hamburguesa Menú"
+def _norm_prod_menu(p):
+    pl = str(p).strip()
+    if pl.upper() == 'MENU': return 'Menú diario'
+    if 'hamburguesa' in pl.lower(): return 'Menú diario'   # variante del menú diario
+    if pl.lower().startswith('menu la '): return pl
+    return pl
+
+ws_bd2 = wb['BD_Datos']
+
+MES_ORDER = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+             'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+
+pm_menus       = defaultdict(lambda: {'uds':0,'importe':0,'coste':0,'margen':0})
+pm_carta       = defaultdict(lambda: {'uds':0,'importe':0,'coste':0,'margen':0})
+pm_fams        = defaultdict(lambda: {'uds':0,'importe':0,'margen':0,'tipo':''})
+pm_menus_mes   = defaultdict(lambda: {'uds':0,'importe':0})  # {mes: totales}
+
+for row in ws_bd2.iter_rows(min_row=2, values_only=True):
+    prod=row[0]; fam=str(row[1] or '').strip(); mes=str(row[3] or '').strip()
+    uds=row[4]; imp=row[5]; coste_u=row[6]; margen_u=row[8]
+    if not prod or not isinstance(uds,(int,float)) or int(uds)<=0: continue
+    if fam in FAM_EXCLUIR: continue
+    u      = int(uds)
+    imp_t  = float(imp or 0)              # Importe ya es el total de la fila
+    marg_t = float(margen_u or 0) * u if isinstance(margen_u,(int,float)) else 0
+    cost_t = float(coste_u  or 0) * u if isinstance(coste_u, (int,float)) else 0
+    fam_n  = _norm_fam(fam)
+
+    if fam == FAM_MENU:
+        prod = _norm_prod_menu(prod)
+        if mes in MES_ORDER:
+            pm_menus_mes[mes]['uds']     += u
+            pm_menus_mes[mes]['importe'] += imp_t
+        pm_menus[prod]['uds']     += u
+        pm_menus[prod]['importe'] += imp_t
+        pm_menus[prod]['coste']   += cost_t
+        pm_menus[prod]['margen']  += marg_t
+        pm_fams[fam_n]['uds']     += u
+        pm_fams[fam_n]['importe'] += imp_t
+        pm_fams[fam_n]['margen']  += marg_t
+        pm_fams[fam_n]['tipo']     = 'menu'
+    else:
+        pm_carta[prod]['uds']     += u
+        pm_carta[prod]['importe'] += imp_t
+        pm_carta[prod]['coste']   += cost_t
+        pm_carta[prod]['margen']  += marg_t
+        pm_fams[fam_n]['uds']     += u
+        pm_fams[fam_n]['importe'] += imp_t
+        pm_fams[fam_n]['margen']  += marg_t
+        pm_fams[fam_n]['tipo']     = 'carta'
+
+# Totales para % y barras
+tot_m_uds = sum(v['uds'] for v in pm_menus.values())
+tot_c_uds = sum(v['uds'] for v in pm_carta.values())
+tot_m_imp = sum(v['importe'] for v in pm_menus.values())
+tot_c_imp = sum(v['importe'] for v in pm_carta.values())
+tot_uds   = tot_m_uds + tot_c_uds
+tot_imp   = tot_m_imp + tot_c_imp
+
+def _mg_pct(v):
+    return round(v['margen'] / v['importe'] * 100, 1) if v.get('importe',0) else 0
+
+# Margen medio ponderado (solo productos con coste informado)
+def _mg_medio(d):
+    imp_c = sum(v['importe'] for v in d.values() if v['coste']>0)
+    mar_c = sum(v['margen']  for v in d.values() if v['coste']>0)
+    return round(mar_c/imp_c*100,1) if imp_c else None
+
+mg_medio_menu  = _mg_medio(pm_menus)
+mg_medio_carta = _mg_medio(pm_carta)
+
+# Insight: ¿el menú canibaliza la carta?
+pct_menu_imp = round(tot_m_imp/tot_imp*100,1) if tot_imp else 0
+pct_menu_uds = round(tot_m_uds/tot_uds*100,1) if tot_uds else 0
+if pct_menu_imp < 15:
+    insight = f"La carta domina ({100-pct_menu_imp:.0f}% del importe). El menú aporta volumen de clientes pero poco margen."
+elif pct_menu_imp > 40:
+    insight = f"El menú concentra el {pct_menu_imp:.0f}% del importe — riesgo de canibalización de carta de mayor margen."
+else:
+    insight = f"Equilibrio menú/carta. Menú: {pct_menu_imp:.0f}% del importe | Carta: {100-pct_menu_imp:.0f}%."
+
+# Listas para el tracker
+top_menus_sorted = sorted(pm_menus.items(), key=lambda x:-x[1]['uds'])[:10]
+top_carta_sorted = sorted(pm_carta.items(), key=lambda x:-x[1]['uds'])[:20]
+top_fams_sorted  = sorted(pm_fams.items(),  key=lambda x:-x[1]['uds'])[:15]
+max_m = top_menus_sorted[0][1]['uds'] if top_menus_sorted else 1
+max_c = top_carta_sorted[0][1]['uds'] if top_carta_sorted else 1
+max_f = top_fams_sorted[0][1]['uds']  if top_fams_sorted  else 1
+
+menu_list = [
+    {'rank':i+1,'nombre':p,'uds':v['uds'],
+     'pct':  round(v['uds']/tot_uds*100,1) if tot_uds else 0,
+     'pct_imp': round(v['importe']/tot_imp*100,1) if tot_imp else 0,
+     'mg_pct': _mg_pct(v),
+     'bar_w':round(min(100,v['uds']/max_m*100),1)}
+    for i,(p,v) in enumerate(top_menus_sorted)
+]
+carta_list = [
+    {'rank':i+1,'nombre':p,'uds':v['uds'],
+     'pct':  round(v['uds']/tot_uds*100,1) if tot_uds else 0,
+     'bar_w':round(min(100,v['uds']/max_c*100),1)}
+    for i,(p,v) in enumerate(top_carta_sorted)
 ]
 fam_list = [
-    {'rank': i+1, 'nombre': f, 'uds': u,
-     'pct':   round(u / tot_fam_u * 100, 1) if tot_fam_u else 0,
-     'bar_w': round(min(100, u / max_fam * 100), 1)}
-    for i, (f, u) in enumerate(top_fams)
+    {'rank':i+1,'nombre':f,'uds':v['uds'],
+     'tipo': v['tipo'],
+     'pct': round(v['uds']/tot_uds*100,1) if tot_uds else 0,
+     'bar_w':round(min(100,v['uds']/max_f*100),1)}
+    for i,(f,v) in enumerate(top_fams_sorted)
 ]
+# Mantener prod_list y top_prods como alias para compatibilidad
+prod_list  = carta_list
+top_prods  = [(p,v['uds']) for p,v in top_carta_sorted]
+top_fams   = [(f,v['uds']) for f,v in top_fams_sorted]
 
 # ── Análisis Omnes ────────────────────────────────────────────────────────────
 ws_om = wb['Análisis Omnes']
@@ -572,7 +676,24 @@ DATA = {
     },
     "ev":  {"eventos": eventos},
     "al":  {"alertas": alertas, "kpis": kpis_fin},
-    "pm":  {"top_prods": prod_list, "top_fams": fam_list},
+    "pm":  {
+        "menu_uds":   tot_m_uds,   "carta_uds":  tot_c_uds,
+        "menu_imp":   round(tot_m_imp,0), "carta_imp": round(tot_c_imp,0),
+        "pct_menu_uds": pct_menu_uds, "pct_menu_imp": pct_menu_imp,
+        "mg_medio_menu":  mg_medio_menu,
+        "mg_medio_carta": mg_medio_carta,
+        "insight":    insight,
+        "menus":      menu_list,
+        "menus_mes":  [
+            {'mes': mes_names[mn], 'uds': pm_menus_mes[mes_names[mn]]['uds'],
+             'importe': round(pm_menus_mes[mes_names[mn]]['importe'], 0)}
+            for mn in sorted(mes_totals.keys())   # solo meses con facturación 2026
+            if pm_menus_mes[mes_names[mn]]['uds'] > 0
+        ],
+        "carta":      carta_list,
+        "top_fams":   fam_list,
+        "top_prods":  prod_list,  # alias carta
+    },
     "om":  {"omnes": omnes},
     "pl":  {
         "e_mar":  round(e_mar, 0),  "e_feb":  round(e_feb, 0),
