@@ -215,11 +215,21 @@ def update_excel(excel_raw: bytes, cierres: dict) -> tuple[bytes, int]:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def main() -> int:
-    print("🔐 Autenticando con Microsoft Graph...")
-    token = _graph_token()
+    try:
+        print("🔐 Autenticando con Microsoft Graph...")
+        token = _graph_token()
+    except Exception as e:
+        print(f"⚠  No se pudo autenticar con Microsoft Graph: {e}")
+        print("   Saltando actualización de facturación (continuando workflow).")
+        return 0
 
-    print("📂 Listando carpeta OneDrive...")
-    files, drive_id = list_folder_files(token)
+    try:
+        print("📂 Listando carpeta OneDrive...")
+        files, drive_id = list_folder_files(token)
+    except Exception as e:
+        print(f"⚠  No se pudo acceder a OneDrive: {e}")
+        print("   Saltando actualización de facturación (continuando workflow).")
+        return 0
     cierres_files = [
         f for f in files
         if "cierres de cajas" in f["name"].lower() and f["name"].lower().endswith(".xlsx")
