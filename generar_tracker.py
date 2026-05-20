@@ -112,10 +112,9 @@ if len(sys.argv) > 1:
 else:
     # En GitHub Actions: intentar descarga automática si hay env vars de OneDrive
     auto_dest = os.path.join(SCRIPT_DIR, "Taperia_Caldes_Operaciones_2026_Trabajando.xlsx")
-    if os.environ.get("MS_TENANT_ID") and not os.path.exists(auto_dest):
+    if os.environ.get("MS_TENANT_ID"):
         if not _download_excel_onedrive(auto_dest):
-            print("ERROR: No se pudo descargar el Excel desde OneDrive.")
-            sys.exit(1)
+            print("⚠  No se pudo descargar desde OneDrive, usando copia local.")
 
     candidates = [f for f in os.listdir(SCRIPT_DIR) if 'Taperia' in f and f.endswith('.xlsx')]
     if not candidates:
