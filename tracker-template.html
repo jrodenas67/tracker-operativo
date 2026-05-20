@@ -504,28 +504,29 @@ function renderPl() {
   var pl = DATA.pl;
   var h  = '';
 
+  var L = pl.labels;
   if (pl.e_mar < 0) {
-    h += '<div class="alert err">Marzo: EBITDA ' + fmt(pl.e_mar) + '€ ('
+    h += '<div class="alert err">' + L.m1 + ': EBITDA ' + fmt(pl.e_mar) + '€ ('
        + pl.ebitda_mar_pct.toFixed(1) + '%). CMV '
        + pl.cmv_mar_pct.toFixed(1) + '% · Personal '
-       + pl.per_mar_pct.toFixed(1) + '%. Acumulado Ene-Mar: '
+       + pl.per_mar_pct.toFixed(1) + '%. Acumulado ' + L.acum + ': '
        + fmt(pl.e_acum) + '€.</div>';
   }
 
   h += '<div class="kpi-row">'
-     + '<div class="kpi ' + (pl.e_mar  < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_mar)  + '€</div><div class="kpi-lbl">EBITDA Marzo</div><div class="kpi-sub">'   + pl.ebitda_mar_pct.toFixed(1)  + '%</div></div>'
-     + '<div class="kpi ok"><div class="kpi-val">' + fmt(pl.e_feb)  + '€</div><div class="kpi-lbl">EBITDA Febrero</div><div class="kpi-sub">'   + (pl.v_feb ? (pl.e_feb/pl.v_feb*100).toFixed(1) : 0) + '%</div></div>'
-     + '<div class="kpi ' + (pl.e_acum < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_acum) + '€</div><div class="kpi-lbl">EBITDA Acumulado Ene-Mar</div><div class="kpi-sub">' + pl.ebitda_acum_pct.toFixed(1) + '%</div></div>'
-     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_mar)  + '€</div><div class="kpi-lbl">Ventas Marzo</div></div>'
-     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_acum) + '€</div><div class="kpi-lbl">Ventas Acumulado</div><div class="kpi-sub">Ene + Feb + Mar</div></div>'
+     + '<div class="kpi ' + (pl.e_mar  < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_mar)  + '€</div><div class="kpi-lbl">EBITDA ' + L.m1 + '</div><div class="kpi-sub">'   + pl.ebitda_mar_pct.toFixed(1)  + '%</div></div>'
+     + '<div class="kpi ' + (pl.e_feb  < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_feb)  + '€</div><div class="kpi-lbl">EBITDA ' + L.m2 + '</div><div class="kpi-sub">'   + (pl.v_feb ? (pl.e_feb/pl.v_feb*100).toFixed(1) : 0) + '%</div></div>'
+     + '<div class="kpi ' + (pl.e_acum < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_acum) + '€</div><div class="kpi-lbl">EBITDA Acumulado ' + L.acum + '</div><div class="kpi-sub">' + pl.ebitda_acum_pct.toFixed(1) + '%</div></div>'
+     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_mar)  + '€</div><div class="kpi-lbl">Ventas ' + L.m1 + '</div></div>'
+     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_acum) + '€</div><div class="kpi-lbl">Ventas ' + L.acum + '</div></div>'
      + '</div>';
 
-  h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — Marzo 2026 (mes anterior) vs meses anteriores</div><div class="tbl-wrap"><table>'
+  h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — ' + L.m1 + ' 2026 (mes más reciente) · Fuente: Yurest + Tickets</div><div class="tbl-wrap"><table>'
      + '<thead><tr><th style="width:220px">Concepto</th>'
-     + '<th class="tr mar">Marzo €</th><th class="tr pc mar">%</th>'
-     + '<th class="tr">Febrero €</th><th class="tr pc">%</th>'
-     + '<th class="tr">Enero €</th><th class="tr pc">%</th>'
-     + '<th class="tr">Acumulado €</th><th class="tr pc">%</th>'
+     + '<th class="tr mar">' + L.m1 + ' €</th><th class="tr pc mar">%</th>'
+     + '<th class="tr">' + L.m2 + ' €</th><th class="tr pc">%</th>'
+     + '<th class="tr">' + L.m3 + ' €</th><th class="tr pc">%</th>'
+     + '<th class="tr">Acum. ' + L.acum + ' €</th><th class="tr pc">%</th>'
      + '</tr></thead><tbody>';
 
   pl.rows.forEach(function(row) {

@@ -558,63 +558,129 @@ for row in ws_om.iter_rows(min_row=6, max_row=24, values_only=True):
     })
 
 # ── P&L EBITDA ────────────────────────────────────────────────────────────────
-ws_pl = wb['P&L EBITDA']
-pl_excel = {}
+
+def _fetch_yurest_pl(year=2026):
+    email    = os.environ.get("YUREST_EMAIL", "")
+    password = os.environ.get("YUREST_PASSWORD", "")
+    if not (email and password):
+        print("⚠  YUREST_EMAIL/YUREST_PASSWORD no configurados — usando Excel P&L")
+        return None
+    try:
+        import re as _re
+        s = requests.Session()
+        lp = s.get("https://cliente.yurest.com/login", timeout=20)
+        tk = _re.search(r'name="_token" value="([^"]+)"', lp.text)
+        if not tk: return None
+        s.post("https://cliente.yurest.com/login",
+               data={"_token": tk.group(1), "email": email, "password": password}, timeout=20)
+        pg   = s.get("https://cliente.yurest.com/admin/informes/balance_financiero", timeout=20)
+        csrf = (_re.search(r'"csrfToken":"([^"]+)"', pg.text) or tk).group(1)
+        sid  = (_re.search(r"user_stores_in_array'\]\s*=\s*\[([^\]]+)\]", pg.text) or type('', (), {'group': lambda s, n: '2909'})()).group(1).strip()
+        resp = s.post(
+            "https://cliente.yurest.com/admin/informes/ajax/balance_financiero/getInforme",
+            headers={"X-CSRF-TOKEN": csrf, "X-Requested-With": "XMLHttpRequest"},
+            data={"_token": csrf, "filtro_locales[]": sid, "filtro_ano": str(year),
+                  "balance_financiero": "1", "comparar": "0", "draw": "1", "start": "0", "length": "200"},
+            timeout=30
+        )
+        result = {}
+        for row in resp.json().get("data", []):
+            nombre = row.get("nombre", "")
+            if not nombre or not row.get("tipo"): continue
+            cols = row.get("columns", [])
+            result[nombre] = {
+                m + 1: float((cols[12 + m] if 12 + m < len(cols) else {}).get("importe", 0) or 0)
+                for m in range(12)
+            }
+        print(f"✅ Yurest P&L: {len(result)} conceptos")
+        return result
+    except Exception as e:
+        print(f"⚠  Yurest P&L: {e}")
+        return None
+
+def _tickets_por_mes(wb_):
+    from collections import defaultdict
+    tots = defaultdict(float)
+    try:
+        ws_ = wb_["Arqueo e incentivos"]
+        for row in ws_.iter_rows(min_row=34, max_col=10, values_only=True):
+            fecha, tickets = row[3], row[5]
+            if isinstance(fecha, datetime) and isinstance(tickets, (int, float)):
+                tots[fecha.month] += float(tickets)
+    except Exception as e:
+        print(f"⚠  tickets_por_mes: {e}")
+    return tots
+
+# Obtener datos
+_yurest = _fetch_yurest_pl(2026)
+_tick   = _tickets_por_mes(wb)
+
 def _f(v):
     if v is None: return 0.0
     if isinstance(v, str): return 0.0
     try: return float(v)
     except (TypeError, ValueError): return 0.0
 
-for row in ws_pl.iter_rows(min_row=4, max_row=60, values_only=True):
-    concepto = row[1]
-    if not concepto or '%' in str(concepto): continue
-    pl_excel[concepto] = {
-        'ene':  _f(row[4]),
-        'feb':  _f(row[5]),
-        'mar':  _f(row[6]),
-        'acum': _f(row[2]),
-    }
+if _yurest:
+    pl_data = _yurest  # {nombre: {1..12: importe}}
+    # Sumar Tickets a Ventas y propagar a EBITDA (ingreso neto sin coste adicional)
+    for mes_num in range(1, 13):
+        t = _tick.get(mes_num, 0)
+        if not t: continue
+        for key in ['Ventas', 'S.O.P.1 /EBITDAR', 'S.O.P /EBITDA', 'RESULTADO']:
+            pl_data.setdefault(key, {})[mes_num] = pl_data.get(key, {}).get(mes_num, 0) + t
+    print(f"   Tickets sumados: {dict(list(_tick.items())[:5])}")
+else:
+    # Fallback: leer del Excel
+    ws_pl = wb['P&L EBITDA']
+    _mkeys = {4: 1, 5: 2, 6: 3}
+    pl_data = {}
+    for row in ws_pl.iter_rows(min_row=4, max_row=60, values_only=True):
+        c = row[1]
+        if not c or '%' in str(c): continue
+        pl_data[c] = {1: _f(row[4]), 2: _f(row[5]), 3: _f(row[6])}
 
-# Parchar desde datos de facturación si P&L tiene 0
-for m_num, m_key in [(1,'ene'), (2,'feb'), (3,'mar')]:
-    mt = mes_totals.get(m_num, {})
-    if pl_excel.get('Ventas', {}).get(m_key, 0) == 0 and mt.get('real', 0):
-        pl_excel.setdefault('Ventas', {})[m_key] = mt['real']
-    if pl_excel.get('Personal', {}).get(m_key, 0) == 0 and meses_personal.get(m_num, 0):
-        pl_excel.setdefault('Personal', {})[m_key] = meses_personal[m_num]
+# Determinar últimos 3 meses completos con datos de Ventas
+_ventas = pl_data.get('Ventas', {})
+_meses_con_datos = sorted([m for m, v in _ventas.items() if v and v > 0])
+if len(_meses_con_datos) >= 3:
+    _m1, _m2, _m3 = _meses_con_datos[-1], _meses_con_datos[-2], _meses_con_datos[-3]
+else:
+    _m1, _m2, _m3 = 3, 2, 1
+_meses_acum = _meses_con_datos if _meses_con_datos else [1, 2, 3]
 
-def pv(c, m): return float(pl_excel.get(c, {}).get(m, 0) or 0)
+_MN = {1:'Enero',2:'Febrero',3:'Marzo',4:'Abril',5:'Mayo',6:'Junio',
+       7:'Julio',8:'Agosto',9:'Septiembre',10:'Octubre',11:'Noviembre',12:'Diciembre'}
+_pl_labels = {
+    'm1':   _MN[_m1],
+    'm2':   _MN[_m2],
+    'm3':   _MN[_m3],
+    'acum': f"Ene-{_MN[_m1][:3]}",
+}
+
+def pv(c, m):  return float(pl_data.get(c, {}).get(m, 0) or 0)
 def pp(c, m):
     ref = pv('Ventas', m)
     return round(pv(c, m) / ref * 100, 1) if ref else 0.0
-
-v_mar = pv('Ventas','mar'); v_feb = pv('Ventas','feb')
-v_ene = pv('Ventas','ene'); v_acum_pl = pv('Ventas','acum')
-# Si acum es 0 (fórmulas no cacheadas), usar suma de meses
-if v_acum_pl == 0: v_acum_pl = v_mar + v_feb + v_ene
-
-e_mar  = pv('S.O.P /EBITDA','mar');  e_feb  = pv('S.O.P /EBITDA','feb')
-e_ene  = pv('S.O.P /EBITDA','ene');  e_acum = pv('S.O.P /EBITDA','acum')
-if e_acum == 0 and any([e_mar, e_feb, e_ene]):
-    e_acum = e_mar + e_feb + e_ene
-
+def pv_acum(c): return round(sum(pv(c, m) for m in _meses_acum), 0)
 def pp_acum(c):
-    return round(pv(c,'acum') / v_acum_pl * 100, 1) if v_acum_pl else 0.0
+    ref = sum(pv('Ventas', m) for m in _meses_acum)
+    return round(pv_acum(c) / ref * 100, 1) if ref else 0.0
+
+v_mar = pv('Ventas', _m1); v_feb = pv('Ventas', _m2); v_acum_pl = sum(pv('Ventas', m) for m in _meses_acum)
+e_mar = pv('S.O.P /EBITDA', _m1); e_feb = pv('S.O.P /EBITDA', _m2)
+e_acum = sum(pv('S.O.P /EBITDA', m) for m in _meses_acum)
 
 # Construir filas del P&L
 pl_rows = []
-def pl_section(label):
-    pl_rows.append({'section': True, 'label': label})
+def pl_section(label): pl_rows.append({'section': True, 'label': label})
 def pl_row(c, label=None, bold=False, subtotal=False):
     pl_rows.append({
-        'label':    label or c,
-        'bold':     bold,
-        'subtotal': subtotal,
-        'mar':   {'v': round(pv(c,'mar'),0),  'p': pp(c,'mar')},
-        'feb':   {'v': round(pv(c,'feb'),0),  'p': pp(c,'feb')},
-        'ene':   {'v': round(pv(c,'ene'),0),  'p': pp(c,'ene')},
-        'acum':  {'v': round(pv(c,'acum'),0), 'p': pp_acum(c)},
+        'label': label or c, 'bold': bold, 'subtotal': subtotal,
+        'mar':  {'v': round(pv(c, _m1), 0), 'p': pp(c, _m1)},
+        'feb':  {'v': round(pv(c, _m2), 0), 'p': pp(c, _m2)},
+        'ene':  {'v': round(pv(c, _m3), 0), 'p': pp(c, _m3)},
+        'acum': {'v': pv_acum(c),            'p': pp_acum(c)},
     })
 
 pl_section("INGRESOS")
@@ -701,13 +767,14 @@ DATA = {
     },
     "om":  {"omnes": omnes},
     "pl":  {
-        "e_mar":  round(e_mar, 0),  "e_feb":  round(e_feb, 0),
-        "e_ene":  round(e_ene, 0),  "e_acum": round(e_acum, 0),
-        "v_mar":  round(v_mar, 0),  "v_feb":  round(v_feb, 0),
-        "v_ene":  round(v_ene, 0),  "v_acum": round(v_acum_pl, 0),
-        "cmv_mar_pct": pp('CMV','mar'),
-        "per_mar_pct": pp('Personal','mar'),
-        "ebitda_mar_pct": pp('S.O.P /EBITDA','mar'),
+        "labels": _pl_labels,
+        "e_mar":  round(e_mar, 0),   "e_feb":  round(e_feb, 0),
+        "e_acum": round(e_acum, 0),
+        "v_mar":  round(v_mar, 0),   "v_feb":  round(v_feb, 0),
+        "v_acum": round(v_acum_pl, 0),
+        "cmv_mar_pct":    pp('CMV', _m1),
+        "per_mar_pct":    pp('Personal', _m1),
+        "ebitda_mar_pct": pp('S.O.P /EBITDA', _m1),
         "ebitda_acum_pct": pp_acum('S.O.P /EBITDA'),
         "rows": pl_rows,
     },

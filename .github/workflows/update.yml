@@ -35,6 +35,8 @@ jobs:
           MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
           MS_CLIENT_SECRET:   ${{ secrets.MS_CLIENT_SECRET }}
           ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
+          YUREST_EMAIL:       ${{ secrets.YUREST_EMAIL }}
+          YUREST_PASSWORD:    ${{ secrets.YUREST_PASSWORD }}
         run: python generar_tracker.py
 
       - name: Preparar carpeta deploy
