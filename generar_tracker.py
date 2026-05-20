@@ -652,10 +652,10 @@ _meses_acum = _meses_con_datos if _meses_con_datos else [1, 2, 3]
 _MN = {1:'Enero',2:'Febrero',3:'Marzo',4:'Abril',5:'Mayo',6:'Junio',
        7:'Julio',8:'Agosto',9:'Septiembre',10:'Octubre',11:'Noviembre',12:'Diciembre'}
 _pl_labels = {
-    'm1':   _MN[_m1],
-    'm2':   _MN[_m2],
-    'm3':   _MN[_m3],
-    'acum': f"Ene-{_MN[_m1][:3]}",
+    'meses': [_MN[m] for m in _meses_acum],
+    'acum':  f"Ene-{_MN[_meses_acum[-1]][:3]}" if _meses_acum else "Acum.",
+    # compat con KPIs
+    'm1': _MN[_m1], 'm2': _MN[_m2], 'm3': _MN[_m3],
 }
 
 def pv(c, m):  return float(pl_data.get(c, {}).get(m, 0) or 0)
@@ -677,10 +677,12 @@ def pl_section(label): pl_rows.append({'section': True, 'label': label})
 def pl_row(c, label=None, bold=False, subtotal=False):
     pl_rows.append({
         'label': label or c, 'bold': bold, 'subtotal': subtotal,
+        'cols': [{'v': round(pv(c, m), 0), 'p': pp(c, m)} for m in _meses_acum],
+        'acum': {'v': pv_acum(c), 'p': pp_acum(c)},
+        # compat legacy
         'mar':  {'v': round(pv(c, _m1), 0), 'p': pp(c, _m1)},
         'feb':  {'v': round(pv(c, _m2), 0), 'p': pp(c, _m2)},
         'ene':  {'v': round(pv(c, _m3), 0), 'p': pp(c, _m3)},
-        'acum': {'v': pv_acum(c),            'p': pp_acum(c)},
     })
 
 pl_section("INGRESOS")

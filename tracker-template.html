@@ -521,37 +521,43 @@ function renderPl() {
      + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_acum) + '€</div><div class="kpi-lbl">Ventas ' + L.acum + '</div></div>'
      + '</div>';
 
+  var meses = (L.meses && L.meses.length) ? L.meses : [L.m3, L.m2, L.m1];
+  var nCols = 1 + meses.length * 2 + 2;
+
   h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — ' + L.m1 + ' 2026 (mes más reciente) · Fuente: Yurest + Tickets</div><div class="tbl-wrap"><table>'
-     + '<thead><tr><th style="width:220px">Concepto</th>'
-     + '<th class="tr mar">' + L.m1 + ' €</th><th class="tr pc mar">%</th>'
-     + '<th class="tr">' + L.m2 + ' €</th><th class="tr pc">%</th>'
-     + '<th class="tr">' + L.m3 + ' €</th><th class="tr pc">%</th>'
-     + '<th class="tr">Acum. ' + L.acum + ' €</th><th class="tr pc">%</th>'
+     + '<thead><tr><th style="width:220px">Concepto</th>';
+  meses.forEach(function(m, i) {
+    var isMar = (i === meses.length - 1);
+    h += '<th class="tr' + (isMar ? ' mar' : '') + '">' + m + ' €</th>'
+       + '<th class="tr pc' + (isMar ? ' mar' : '') + '">%</th>';
+  });
+  h += '<th class="tr">Acum. ' + L.acum + ' €</th><th class="tr pc">%</th>'
      + '</tr></thead><tbody>';
+
+  function plCell(mc) {
+    return '<td class="tr fm' + (mc.v < 0 ? ' neg' : '') + '">' + fmt(mc.v) + '</td>'
+         + '<td class="tr pc">' + mc.p.toFixed(1) + '%</td>';
+  }
 
   pl.rows.forEach(function(row) {
     if (row.section) {
-      h += '<tr class="pl-section"><td colspan="9">' + row.label + '</td></tr>';
+      h += '<tr class="pl-section"><td colspan="' + nCols + '">' + row.label + '</td></tr>';
       return;
     }
     var rowCls = '';
+    var refCol = row.cols ? row.cols[row.cols.length - 1] : row.mar;
     if (row.bold) {
-      rowCls = 'pl-bold ' + (row.mar.v < 0 ? 'neg-row' : 'pos-row');
+      rowCls = 'pl-bold ' + (refCol.v < 0 ? 'neg-row' : 'pos-row');
     } else if (row.subtotal) {
       rowCls = 'pl-sub';
     }
     var lbl = row.bold ? '<strong>' + row.label + '</strong>' : row.label;
 
-    function plCell(mc) {
-      return '<td class="tr fm' + (mc.v < 0 ? ' neg' : '') + '">' + fmt(mc.v) + '</td>'
-           + '<td class="tr pc">' + mc.p.toFixed(1) + '%</td>';
-    }
+    var colsData = row.cols || [row.ene, row.feb, row.mar];
 
     h += '<tr' + (rowCls ? ' class="' + rowCls + '"' : '') + '>'
        + '<td>' + lbl + '</td>'
-       + plCell(row.mar)
-       + plCell(row.feb)
-       + plCell(row.ene)
+       + colsData.map(function(mc) { return plCell(mc); }).join('')
        + plCell(row.acum)
        + '</tr>\n';
   });
