@@ -560,14 +560,20 @@ for row in ws_om.iter_rows(min_row=6, max_row=24, values_only=True):
 # ── P&L EBITDA ────────────────────────────────────────────────────────────────
 ws_pl = wb['P&L EBITDA']
 pl_excel = {}
+def _f(v):
+    if v is None: return 0.0
+    if isinstance(v, str): return 0.0
+    try: return float(v)
+    except (TypeError, ValueError): return 0.0
+
 for row in ws_pl.iter_rows(min_row=4, max_row=60, values_only=True):
     concepto = row[1]
     if not concepto or '%' in str(concepto): continue
     pl_excel[concepto] = {
-        'ene':  float(row[4] or 0),
-        'feb':  float(row[5] or 0),
-        'mar':  float(row[6] or 0),
-        'acum': float(row[2] or 0),
+        'ene':  _f(row[4]),
+        'feb':  _f(row[5]),
+        'mar':  _f(row[6]),
+        'acum': _f(row[2]),
     }
 
 # Parchar desde datos de facturación si P&L tiene 0
