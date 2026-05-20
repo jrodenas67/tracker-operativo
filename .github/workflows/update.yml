@@ -39,9 +39,11 @@ jobs:
 
       - name: Preparar carpeta deploy
         run: |
-          mkdir -p Netfily
+          mkdir -p Netfily/netlify/functions
           cp tracker-operativo.html Netfily/index.html
           cp tracker-operativo.html Netfily/tracker-operativo.html
+          cp netlify.toml Netfily/netlify.toml
+          cp netlify/functions/trigger-update.js Netfily/netlify/functions/trigger-update.js
 
       - name: Deploy a Netlify
         env:

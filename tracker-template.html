@@ -11,7 +11,10 @@
    ═══════════════════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px}
-.header{background:#1e3a2f;color:#fff;padding:16px 24px}
+.header{background:#1e3a2f;color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#btn-update{background:#16a34a;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+#btn-update:hover{background:#15803d}
+#btn-update:disabled{background:#475569;cursor:not-allowed}
 .header-title{font-size:16px;font-weight:700;letter-spacing:.3px}
 .header-sub{font-size:11px;color:#86efac;margin-top:3px}
 .nav{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;overflow-x:auto;padding:0 20px}
@@ -65,8 +68,11 @@ th.mar{background:#fef2f2;color:#b91c1c}
 <body>
 
 <div class="header">
-  <div class="header-title">La Taperia de Caldes &mdash; Tracker Operativo 2026</div>
-  <div class="header-sub" id="header-sub">Cargando...</div>
+  <div>
+    <div class="header-title">La Taperia de Caldes &mdash; Tracker Operativo 2026</div>
+    <div class="header-sub" id="header-sub">Cargando...</div>
+  </div>
+  <button id="btn-update" onclick="triggerUpdate()">↻ Actualizar datos</button>
 </div>
 
 <div class="nav">
@@ -556,6 +562,26 @@ function renderPl() {
 /* ═══════════════════════════════════════════════════════════════════
    INICIALIZACIÓN
    ═══════════════════════════════════════════════════════════════════ */
+async function triggerUpdate() {
+  const btn = document.getElementById('btn-update');
+  btn.disabled = true;
+  btn.textContent = '⏳ Lanzando...';
+  try {
+    const res = await fetch('/.netlify/functions/trigger-update', { method: 'POST' });
+    const data = await res.json();
+    if (data.ok) {
+      btn.textContent = '✓ Lanzado — listo en ~2 min';
+      setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Actualizar datos'; }, 120000);
+    } else {
+      btn.textContent = '✗ Error';
+      setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Actualizar datos'; }, 4000);
+    }
+  } catch {
+    btn.textContent = '✗ Error de red';
+    setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Actualizar datos'; }, 4000);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Header subtitle
   document.getElementById('header-sub').textContent =
