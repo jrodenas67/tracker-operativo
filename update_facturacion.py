@@ -208,7 +208,11 @@ def update_excel(excel_raw: bytes, cierres: dict) -> tuple[bytes, int]:
         if fecha not in cierres:
             continue
         total_actual = row[5]   # col F = Total Real €
+        total_pdf = cierres[fecha].get(COL_TOTAL, 0.0)
         if not isinstance(total_actual, (int, float)) or total_actual == 0:
+            pendientes[fecha] = i
+        elif total_pdf > 0 and abs(total_actual - total_pdf) > max(1.0, total_pdf * 0.5):
+            # Si el valor existente difiere mucho del PDF (bug previo de 100x), corrige
             pendientes[fecha] = i
 
     wb_ro.close()
