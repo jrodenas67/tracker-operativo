@@ -117,21 +117,42 @@ def upload_excel(token: str, drive_id: str, item_id: str, data: bytes) -> None:
 
 # ── Parsear cierres ───────────────────────────────────────────────────────────
 
-def parse_cierres(raw: bytes) -> dict[datetime.date, dict[int, float]]:
+def _find_numero_cierre(row: tuple) -> int | None:
+    """Busca un entero en las primeras columnas (numero de cierre suele estar ahí)."""
+    for v in row[:6]:
+        if isinstance(v, int) and 100 < v < 100000:
+            return v
+        if isinstance(v, str):
+            s = v.strip()
+            if s.isdigit() and 100 < int(s) < 100000:
+                return int(s)
+    return None
+
+
+def parse_cierres(raw: bytes, pdf_fechas: dict[int, datetime.date] | None = None
+                  ) -> dict[datetime.date, dict[int, float]]:
     """
     Devuelve {fecha: {col_openpyxl: total}} con los datos del cierre.
     Si hay varios registros para el mismo día/turno, se suman (por si hay 2 locales).
+    Si `pdf_fechas` está definido y el numero_cierre de la fila aparece en él,
+    se usa esa fecha (fecha de inicio del PDF) en vez de la del xlsx.
     """
+    pdf_fechas = pdf_fechas or {}
     wb = load_workbook(io.BytesIO(raw), read_only=True, data_only=True)
     ws = wb.active
     result: dict[datetime.date, dict[int, float]] = {}
 
-    for row in ws.iter_rows(min_row=2, values_only=True):
+    overrides = 0
+    for idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True)):
         if not row or len(row) < 16:
             continue
         fecha_raw = row[0]
         turno_raw = row[3]
         total_raw = row[15]
+
+        # Debug: imprime las primeras 3 filas con todas sus columnas
+        if idx < 3:
+            print(f"   DEBUG fila {idx+2}: {[str(v)[:30] for v in row[:16]]}")
 
         # Parsear fecha
         if isinstance(fecha_raw, datetime.datetime):
@@ -144,9 +165,12 @@ def parse_cierres(raw: bytes) -> dict[datetime.date, dict[int, float]]:
         else:
             continue
 
-        # El Excel/PDF de cierres registra la fecha de fin (cuando se cierra la caja),
-        # pero la operación pertenece al día de inicio (jornada anterior).
-        fecha = fecha - datetime.timedelta(days=1)
+        # Override con la fecha de inicio del PDF si tenemos el numero de cierre
+        numero = _find_numero_cierre(row)
+        if numero is not None and numero in pdf_fechas:
+            if pdf_fechas[numero] != fecha:
+                overrides += 1
+            fecha = pdf_fechas[numero]
 
         if not turno_raw or not isinstance(total_raw, (int, float)) or total_raw <= 0:
             continue
@@ -159,6 +183,8 @@ def parse_cierres(raw: bytes) -> dict[datetime.date, dict[int, float]]:
             result[fecha] = {}
         result[fecha][col] = round(result[fecha].get(col, 0.0) + float(total_raw), 2)
 
+    if overrides:
+        print(f"   ✏  {overrides} fechas corregidas con fecha_inicio del PDF")
     return result
 
 
@@ -243,12 +269,21 @@ def main() -> int:
         print("⚠  No hay archivos de cierres. Nada que hacer.")
         return 0
 
+    # Cargar map {numero_cierre: fecha_inicio} desde los PDFs de Gmail
+    print("\n📨 Leyendo PDFs de cierre desde Gmail...")
+    try:
+        from gmail_cierres import fetch_fechas_inicio
+        pdf_fechas = fetch_fechas_inicio(days=90)
+    except Exception as e:
+        print(f"⚠  Gmail PDFs no disponibles: {e}")
+        pdf_fechas = {}
+
     # Parsear todos los cierres y consolidar
     all_cierres: dict[datetime.date, dict[int, float]] = {}
     for cf in cierres_files:
         print(f"   📥 Leyendo: {cf['name']}")
         raw = download_item(token, drive_id, cf["id"])
-        day_data = parse_cierres(raw)
+        day_data = parse_cierres(raw, pdf_fechas=pdf_fechas)
         for fecha, turnos in day_data.items():
             if fecha not in all_cierres:
                 all_cierres[fecha] = {}

@@ -18,15 +18,18 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dependencias
-        run: pip install requests openpyxl --quiet
+        run: pip install requests openpyxl pypdf --quiet
 
       - name: Actualizar facturacion (cierres de caja)
         continue-on-error: true
         env:
-          MS_TENANT_ID:       ${{ secrets.MS_TENANT_ID }}
-          MS_CLIENT_ID:       ${{ secrets.MS_CLIENT_ID }}
-          MS_CLIENT_SECRET:   ${{ secrets.MS_CLIENT_SECRET }}
-          ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
+          MS_TENANT_ID:        ${{ secrets.MS_TENANT_ID }}
+          MS_CLIENT_ID:        ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_SECRET:    ${{ secrets.MS_CLIENT_SECRET }}
+          ONEDRIVE_SHARE_URL:  ${{ secrets.ONEDRIVE_SHARE_URL }}
+          GMAIL_CLIENT_ID:     ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
         run: python update_facturacion.py
 
       - name: Generar tracker-operativo.html
