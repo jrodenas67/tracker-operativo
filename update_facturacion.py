@@ -226,12 +226,15 @@ def update_excel(excel_raw: bytes, cierres: dict) -> tuple[bytes, int]:
         ma  = day.get(3, 0.0)
         md  = day.get(4, 0.0)
         no  = day.get(5, 0.0)
-        tot = round(ma + md + no, 2)
+        tot_pdf = day.get(COL_TOTAL, 0.0)
+        # Si hay desglose por turno usamos su suma; si no, usamos el total del PDF
+        tot = round(ma + md + no, 2) if (ma or md or no) else round(tot_pdf, 2)
 
-        ws.cell(row_num, 3).value = ma    # Mañana
-        ws.cell(row_num, 4).value = md    # Mediodía
-        ws.cell(row_num, 5).value = no    # Noche
-        ws.cell(row_num, 6).value = tot   # Total Real (sobreescribimos =SUM)
+        if ma or md or no:
+            ws.cell(row_num, 3).value = ma    # Mañana
+            ws.cell(row_num, 4).value = md    # Mediodía
+            ws.cell(row_num, 5).value = no    # Noche
+        ws.cell(row_num, 6).value = tot       # Total Real
 
         print(f"   ✅ {fecha.strftime('%d/%m/%Y')}  "
               f"MA={ma:>8.2f}  MD={md:>8.2f}  NO={no:>8.2f}  TOT={tot:>9.2f}")
@@ -264,34 +267,42 @@ def main() -> int:
         f for f in files
         if "cierres de cajas" in f["name"].lower() and f["name"].lower().endswith(".xlsx")
     ]
-    print(f"   Archivos de cierres encontrados: {len(cierres_files)}")
-    if not cierres_files:
-        print("⚠  No hay archivos de cierres. Nada que hacer.")
-        return 0
+    print(f"   Archivos de cierres xlsx encontrados: {len(cierres_files)}")
 
-    # Cargar map {numero_cierre: fecha_inicio} desde los PDFs de Gmail
+    # Fuente PRIMARIA: PDFs adjuntos a correos "Cierre de caja" en Gmail.
+    # Cada PDF tiene Fecha inicio (jornada real) + Total ventas.
     print("\n📨 Leyendo PDFs de cierre desde Gmail...")
     try:
-        from gmail_cierres import fetch_fechas_inicio
-        pdf_fechas = fetch_fechas_inicio(days=90)
+        from gmail_cierres import fetch_cierres
+        pdf_cierres = fetch_cierres(days=90)
     except Exception as e:
         print(f"⚠  Gmail PDFs no disponibles: {e}")
-        pdf_fechas = {}
+        pdf_cierres = []
 
-    # Parsear todos los cierres y consolidar
     all_cierres: dict[datetime.date, dict[int, float]] = {}
+
+    # Sumar totales del PDF al día de Fecha inicio, en la columna Total Real (col 6)
+    for c in pdf_cierres:
+        if c["total"] <= 0:
+            continue
+        d = all_cierres.setdefault(c["fecha"], {})
+        d[COL_TOTAL] = round(d.get(COL_TOTAL, 0.0) + c["total"], 2)
+
+    # Fuente SECUNDARIA: xlsx legacy con desglose por turno (Desayuno/Comida/Cena)
+    pdf_fechas = {c["numero"]: c["fecha"] for c in pdf_cierres}
     for cf in cierres_files:
-        print(f"   📥 Leyendo: {cf['name']}")
+        print(f"   📥 Leyendo xlsx: {cf['name']}")
         raw = download_item(token, drive_id, cf["id"])
         day_data = parse_cierres(raw, pdf_fechas=pdf_fechas)
         for fecha, turnos in day_data.items():
-            if fecha not in all_cierres:
-                all_cierres[fecha] = {}
+            d = all_cierres.setdefault(fecha, {})
             for col, total in turnos.items():
-                # Si hay solapamiento entre archivos, conserva el valor mayor
-                all_cierres[fecha][col] = max(all_cierres[fecha].get(col, 0.0), total)
+                d[col] = max(d.get(col, 0.0), total)
 
     print(f"   Total días con datos de cierre: {len(all_cierres)}")
+    if not all_cierres:
+        print("⚠  Sin datos de cierre (ni xlsx ni PDFs). Nada que hacer.")
+        return 0
 
     print("\n⬇  Descargando Excel principal...")
     item       = _get_main_item(token)

@@ -83,10 +83,11 @@ def _download_attachment(token: str, msg_id: str, att_id: str) -> bytes:
 
 _RE_NUMERO = re.compile(r"Número\s+de\s+cierre[:\s]+(\d+)", re.IGNORECASE)
 _RE_FECHA  = re.compile(r"Fecha\s+inicio[:\s]+(\d{2}/\d{2}/\d{4})", re.IGNORECASE)
+_RE_TOTAL  = re.compile(r"Total\s+ventas\s+([0-9.,]+)\s*€", re.IGNORECASE)
 
 
-def _parse_pdf(raw: bytes) -> tuple[int, datetime.date] | None:
-    """Extrae (numero_cierre, fecha_inicio) del PDF. Devuelve None si no se puede."""
+def _parse_pdf(raw: bytes) -> dict | None:
+    """Extrae numero_cierre, fecha_inicio y total_ventas del PDF."""
     try:
         from pypdf import PdfReader  # type: ignore
     except ImportError:
@@ -104,30 +105,37 @@ def _parse_pdf(raw: bytes) -> tuple[int, datetime.date] | None:
 
     m_num = _RE_NUMERO.search(text)
     m_fec = _RE_FECHA.search(text)
+    m_tot = _RE_TOTAL.search(text)
     if not (m_num and m_fec):
         return None
     try:
         fecha = datetime.datetime.strptime(m_fec.group(1), "%d/%m/%Y").date()
     except ValueError:
         return None
-    return int(m_num.group(1)), fecha
+    total = 0.0
+    if m_tot:
+        try:
+            total = float(m_tot.group(1).replace(".", "").replace(",", "."))
+        except ValueError:
+            total = 0.0
+    return {"numero": int(m_num.group(1)), "fecha": fecha, "total": total}
 
 
-def fetch_fechas_inicio(days: int = 90) -> dict[int, datetime.date]:
+def fetch_cierres(days: int = 90) -> list[dict]:
     """
-    Devuelve {numero_cierre: fecha_inicio} para todos los PDFs de cierre
-    de los últimos `days` días.
+    Devuelve [{numero, fecha, total}, ...] con todos los PDFs de cierre
+    de los últimos `days` días. Deduplica por numero_cierre.
     """
     if not all(os.environ.get(k) for k in
                ("GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN")):
-        print("⚠  Gmail OAuth no configurado — sin map de fechas de inicio.")
-        return {}
+        print("⚠  Gmail OAuth no configurado.")
+        return []
 
     try:
         token = _access_token()
     except Exception as e:
         print(f"⚠  No se pudo obtener token Gmail: {e}")
-        return {}
+        return []
 
     since = (datetime.date.today() - datetime.timedelta(days=days)).strftime("%Y/%m/%d")
     query = f'subject:"Cierre de caja" has:attachment after:{since}'
@@ -137,10 +145,11 @@ def fetch_fechas_inicio(days: int = 90) -> dict[int, datetime.date]:
         ids = _list_message_ids(token, query)
     except Exception as e:
         print(f"⚠  Gmail list error: {e}")
-        return {}
+        return []
     print(f"   Correos de cierre encontrados: {len(ids)}")
 
-    result: dict[int, datetime.date] = {}
+    seen: set[int] = set()
+    result: list[dict] = []
     for mid in ids:
         try:
             msg = _get_message(token, mid)
@@ -151,17 +160,23 @@ def fetch_fechas_inicio(days: int = 90) -> dict[int, datetime.date]:
             parsed = _parse_pdf(pdf_raw)
             if not parsed:
                 continue
-            numero, fecha = parsed
-            result[numero] = fecha
+            if parsed["numero"] in seen:
+                continue
+            seen.add(parsed["numero"])
+            result.append(parsed)
         except Exception as e:
             print(f"⚠  Error procesando mensaje {mid}: {e}")
             continue
 
-    print(f"   PDFs parseados: {len(result)} cierres con (numero, fecha_inicio)")
+    print(f"   PDFs parseados: {len(result)} cierres")
     return result
 
 
+def fetch_fechas_inicio(days: int = 90) -> dict[int, datetime.date]:
+    """Compat — solo {numero: fecha_inicio}."""
+    return {c["numero"]: c["fecha"] for c in fetch_cierres(days)}
+
+
 if __name__ == "__main__":
-    m = fetch_fechas_inicio()
-    for n, f in sorted(m.items()):
-        print(f"  Cierre #{n}: inicio {f.strftime('%d/%m/%Y')}")
+    for c in sorted(fetch_cierres(), key=lambda x: x["fecha"]):
+        print(f"  #{c['numero']}: {c['fecha'].strftime('%d/%m/%Y')}  →  {c['total']:.2f} €")
