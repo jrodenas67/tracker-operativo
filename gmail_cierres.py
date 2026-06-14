@@ -122,8 +122,12 @@ def _parse_pdf(raw: bytes) -> dict | None:
         return None
     total = 0.0
     if m_tot:
+        raw = m_tot.group(1)
+        # Si lleva coma es formato europeo (1.432,65); si no, el punto es decimal (1432.65)
+        if "," in raw:
+            raw = raw.replace(".", "").replace(",", ".")
         try:
-            total = float(m_tot.group(1).replace(".", "").replace(",", "."))
+            total = float(raw)
         except ValueError:
             total = 0.0
     return {"numero": int(m_num.group(1)), "fecha": fecha, "total": total}
