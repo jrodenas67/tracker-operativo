@@ -23,12 +23,20 @@ GMAIL_API       = "https://gmail.googleapis.com/gmail/v1/users/me"
 
 
 def _access_token() -> str:
+    cid = os.environ["GMAIL_CLIENT_ID"]
+    csc = os.environ["GMAIL_CLIENT_SECRET"]
+    rfk = os.environ["GMAIL_REFRESH_TOKEN"]
+    # Debug: longitudes esperadas 72 / 35 / 103
+    print(f"   DEBUG longitudes secrets: CID={len(cid)} (esp 72), "
+          f"CSC={len(csc)} (esp 35), RFK={len(rfk)} (esp 103)")
     resp = requests.post(GMAIL_TOKEN_URL, data={
-        "client_id":     os.environ["GMAIL_CLIENT_ID"],
-        "client_secret": os.environ["GMAIL_CLIENT_SECRET"],
-        "refresh_token": os.environ["GMAIL_REFRESH_TOKEN"],
+        "client_id":     cid,
+        "client_secret": csc,
+        "refresh_token": rfk,
         "grant_type":    "refresh_token",
     }, timeout=20)
+    if resp.status_code != 200:
+        print(f"   DEBUG respuesta Google: {resp.status_code} {resp.text[:200]}")
     resp.raise_for_status()
     return resp.json()["access_token"]
 
