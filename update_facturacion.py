@@ -144,6 +144,10 @@ def parse_cierres(raw: bytes) -> dict[datetime.date, dict[int, float]]:
         else:
             continue
 
+        # El Excel/PDF de cierres registra la fecha de fin (cuando se cierra la caja),
+        # pero la operación pertenece al día de inicio (jornada anterior).
+        fecha = fecha - datetime.timedelta(days=1)
+
         if not turno_raw or not isinstance(total_raw, (int, float)) or total_raw <= 0:
             continue
 
