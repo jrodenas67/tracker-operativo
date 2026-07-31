@@ -152,9 +152,18 @@ try:
     else:
         _csrc = 'https://taperia-caldes-kpi.netlify.app/cierres_diarios.json'
         _craw = requests.get(_csrc, timeout=30).text
+    # El JSON guarda importes "netos" (contado tal cual, tarjeta/tickets ÷1.10).
+    # El Excel histórico va en BRUTO C2 = contado + (visa+tickets)×1.10
+    # (verificado al céntimo contra los días ya consolidados) → reconstruir.
     for _k, _v in _json.loads(_craw).items():
         try:
-            _cierres_overlay[datetime.strptime(_k, '%Y-%m-%d').date()] = float(_v.get('total') or 0)
+            _fch = datetime.strptime(_k, '%Y-%m-%d').date()
+            _ct = float(_v.get('contado') or 0)
+            _vs = float(_v.get('visa') or 0)
+            _tk = _v.get('tickets_rest')
+            _tk = float(_tk) if _tk is not None else float(_v.get('passo') or 0)
+            _bruto = _ct + (_vs + _tk) * 1.10
+            _cierres_overlay[_fch] = round(_bruto, 2) if _bruto > 0 else float(_v.get('total') or 0)
         except (ValueError, TypeError, AttributeError):
             pass
     print(f"   Overlay cierres KPI ({_csrc}): {len(_cierres_overlay)} días")
@@ -189,7 +198,6 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
     if not isinstance(real, (int, float)) or real <= 0:
         real = _cierres_overlay.get(fecha.date(), 0)
         if real <= 0: continue
-        real += _c1_diario.get(fecha.date(), 0)
         _overlay_used = True
     coste_p = row[9] if isinstance(row[9], (int, float)) else 0
     days.append({
