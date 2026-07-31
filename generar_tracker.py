@@ -161,6 +161,24 @@ try:
 except Exception as _e:
     print(f"⚠  Overlay cierres KPI no disponible: {_e}")
 
+# Caja 1 diaria (tickets transcritos → BD ventas_caja1, snapshot c1_diario.json).
+# El total del PDF de cierre es solo Caja 2; los días de overlay deben sumar C1
+# (los días ya escritos en el Excel la incluían vía el xlsx por turnos).
+_c1_diario = {}
+try:
+    import json as _json
+    _c1_path = os.environ.get('C1_JSON', os.path.join(SCRIPT_DIR, 'c1_diario.json'))
+    if os.path.exists(_c1_path):
+        with open(_c1_path) as _fh:
+            for _k, _v in _json.load(_fh).items():
+                try:
+                    _c1_diario[datetime.strptime(_k, '%Y-%m-%d').date()] = float(_v or 0)
+                except (ValueError, TypeError):
+                    pass
+        print(f"   C1 diaria ({_c1_path}): {len(_c1_diario)} días")
+except Exception as _e:
+    print(f"⚠  C1 diaria no disponible: {_e}")
+
 ws_fac = wb['Facturación 2026']
 days = []
 for row in ws_fac.iter_rows(min_row=4, values_only=True):
@@ -171,6 +189,7 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
     if not isinstance(real, (int, float)) or real <= 0:
         real = _cierres_overlay.get(fecha.date(), 0)
         if real <= 0: continue
+        real += _c1_diario.get(fecha.date(), 0)
         _overlay_used = True
     coste_p = row[9] if isinstance(row[9], (int, float)) else 0
     days.append({
