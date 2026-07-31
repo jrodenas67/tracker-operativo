@@ -138,13 +138,38 @@ mes_names = {
 }
 
 # ── Facturación 2026 ──────────────────────────────────────────────────────────
+# Overlay de cierres diarios: si el Excel aún no tiene el día (Total Real = 0),
+# usa el total del PDF de cierre de caja publicado por el pipeline del KPI
+# (mismo dato que escribiría update_facturacion.py si Gmail funcionara).
+_cierres_overlay = {}
+try:
+    import json as _json
+    _cjson_path = os.environ.get('CIERRES_JSON', '')
+    if _cjson_path and os.path.exists(_cjson_path):
+        with open(_cjson_path) as _fh:
+            _craw = _fh.read()
+        _csrc = _cjson_path
+    else:
+        _csrc = 'https://taperia-caldes-kpi.netlify.app/cierres_diarios.json'
+        _craw = requests.get(_csrc, timeout=30).text
+    for _k, _v in _json.loads(_craw).items():
+        try:
+            _cierres_overlay[datetime.strptime(_k, '%Y-%m-%d').date()] = float(_v.get('total') or 0)
+        except (ValueError, TypeError, AttributeError):
+            pass
+    print(f"   Overlay cierres KPI ({_csrc}): {len(_cierres_overlay)} días")
+except Exception as _e:
+    print(f"⚠  Overlay cierres KPI no disponible: {_e}")
+
 ws_fac = wb['Facturación 2026']
 days = []
 for row in ws_fac.iter_rows(min_row=4, values_only=True):
     fecha = row[0]
     if not isinstance(fecha, datetime): continue
     real = row[5]
-    if not isinstance(real, (int, float)) or real <= 0: continue
+    if not isinstance(real, (int, float)) or real <= 0:
+        real = _cierres_overlay.get(fecha.date(), 0)
+        if real <= 0: continue
     coste_p = row[9] if isinstance(row[9], (int, float)) else 0
     days.append({
         'fecha':    fecha.strftime('%d/%m'),
@@ -320,7 +345,7 @@ for s in sorted(semanas_data.keys()):
     })
 
 meses_per_list = []
-for m in range(1, 5):
+for m in sorted(mes_totals.keys()):
     c  = float(meses_personal.get(m, 0))
     vv = float(mes_totals.get(m, {'real': 0})['real'])
     meses_per_list.append({
@@ -735,7 +760,7 @@ pl_row('S.O.P /EBITDA', 'EBITDA', bold=True)
 now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
 meses_list = []
-for m in range(1, 5):
+for m in sorted(mes_totals.keys()):
     mt = mes_totals.get(m, {'real': 0, 'previsto': 0, 'coste': 0, 'dias': 0})
     r  = float(mt['real']); p = float(mt['previsto'])
     c  = float(mt['coste']); di = int(mt['dias'])
@@ -748,7 +773,7 @@ for m in range(1, 5):
 DATA = {
     "meta": {
         "generado": now,
-        "periodo": "Ene-Abr",
+        "periodo": (f"Ene-{mes_names[max(mes_totals.keys())][:3]}" if mes_totals else "2026"),
     },
     "fac": {
         "total_real":   total_real,
