@@ -138,10 +138,12 @@ mes_names = {
 }
 
 # ── Facturación 2026 ──────────────────────────────────────────────────────────
-# Overlay de cierres diarios: si el Excel aún no tiene el día (Total Real = 0),
-# usa el total del PDF de cierre de caja publicado por el pipeline del KPI
-# (mismo dato que escribiría update_facturacion.py si Gmail funcionara).
-_cierres_overlay = {}
+# Serie diaria en NETO + C1 (desde 2026-07-31, para que sea comparable a ojo
+# con la tabla de incentivos del KPI y con el P&L):
+#   real_dia = C2_neto (cierres_diarios.json: contado tal cual + resto ÷1.10)
+#            + C1_neta (c1_diario.json bruto ÷ 1.10, tickets transcritos)
+# Fallback si un día no está en cierres_diarios: Total Real del Excel (bruto) ÷ 1.10.
+_c2_neto = {}
 try:
     import json as _json
     _cjson_path = os.environ.get('CIERRES_JSON', '')
@@ -152,27 +154,16 @@ try:
     else:
         _csrc = 'https://taperia-caldes-kpi.netlify.app/cierres_diarios.json'
         _craw = requests.get(_csrc, timeout=30).text
-    # El JSON guarda importes "netos" (contado tal cual, tarjeta/tickets ÷1.10).
-    # El Excel histórico va en BRUTO C2 = contado + (visa+tickets)×1.10
-    # (verificado al céntimo contra los días ya consolidados) → reconstruir.
     for _k, _v in _json.loads(_craw).items():
         try:
-            _fch = datetime.strptime(_k, '%Y-%m-%d').date()
-            _ct = float(_v.get('contado') or 0)
-            _vs = float(_v.get('visa') or 0)
-            _tk = _v.get('tickets_rest')
-            _tk = float(_tk) if _tk is not None else float(_v.get('passo') or 0)
-            _bruto = _ct + (_vs + _tk) * 1.10
-            _cierres_overlay[_fch] = round(_bruto, 2) if _bruto > 0 else float(_v.get('total') or 0)
+            _c2_neto[datetime.strptime(_k, '%Y-%m-%d').date()] = float(_v.get('total') or 0)
         except (ValueError, TypeError, AttributeError):
             pass
-    print(f"   Overlay cierres KPI ({_csrc}): {len(_cierres_overlay)} días")
+    print(f"   C2 neto cierres KPI ({_csrc}): {len(_c2_neto)} días")
 except Exception as _e:
-    print(f"⚠  Overlay cierres KPI no disponible: {_e}")
+    print(f"⚠  Cierres KPI no disponibles: {_e}")
 
-# Caja 1 diaria (tickets transcritos → BD ventas_caja1, snapshot c1_diario.json).
-# El total del PDF de cierre es solo Caja 2; los días de overlay deben sumar C1
-# (los días ya escritos en el Excel la incluían vía el xlsx por turnos).
+# Caja 1 diaria (tickets transcritos → BD ventas_caja1, snapshot c1_diario.json, bruto).
 _c1_diario = {}
 try:
     import json as _json
@@ -193,12 +184,16 @@ days = []
 for row in ws_fac.iter_rows(min_row=4, values_only=True):
     fecha = row[0]
     if not isinstance(fecha, datetime): continue
-    real = row[5]
-    _overlay_used = False
-    if not isinstance(real, (int, float)) or real <= 0:
-        real = _cierres_overlay.get(fecha.date(), 0)
-        if real <= 0: continue
-        _overlay_used = True
+    excel_real = row[5] if isinstance(row[5], (int, float)) else 0
+    c2n = _c2_neto.get(fecha.date(), 0)
+    if c2n > 0:
+        real = c2n                       # C2 neto del cierre (fuente primaria)
+    elif excel_real > 0:
+        real = excel_real / 1.10         # fallback: Excel bruto → neto aprox.
+    else:
+        continue
+    real += _c1_diario.get(fecha.date(), 0) / 1.10   # + C1 neta (si hay tickets)
+    previsto = float(row[6] or 0) / 1.10             # previsto Excel bruto → neto
     coste_p = row[9] if isinstance(row[9], (int, float)) else 0
     days.append({
         'fecha':    fecha.strftime('%d/%m'),
@@ -206,15 +201,13 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
         'mes':      fecha.month,
         'sem':      fecha.isocalendar()[1],
         'real':     round(float(real), 0),
-        'previsto': round(float(row[6] or 0), 0),
-        'desv_pct': (round((float(real) / float(row[6]) - 1) * 100, 1)
-                     if _overlay_used and isinstance(row[6], (int, float)) and row[6]
-                     else round(float(row[8] or 0)*100, 1) if isinstance(row[8], (int, float)) else 0),
+        'previsto': round(previsto, 0),
+        'desv_pct': round((float(real) / previsto - 1) * 100, 1) if previsto else 0,
         'coste_p':  round(float(coste_p), 0),
         'evento':   str(row[11]) if row[11] else '',
-        'manana':   round(float(row[2] or 0), 0),
-        'mediodia': round(float(row[3] or 0), 0),
-        'noche':    round(float(row[4] or 0), 0),
+        'manana':   round(float(row[2] or 0) / 1.10, 0),
+        'mediodia': round(float(row[3] or 0) / 1.10, 0),
+        'noche':    round(float(row[4] or 0) / 1.10, 0),
     })
 
 mes_totals = {}

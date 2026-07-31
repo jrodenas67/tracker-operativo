@@ -592,7 +592,7 @@ async function triggerUpdate() {
 document.addEventListener('DOMContentLoaded', function() {
   // Header subtitle
   document.getElementById('header-sub').textContent =
-    'Facturado ' + DATA.meta.periodo + ': ' + fmt(DATA.fac.total_real) + '€'
+    'Facturado ' + DATA.meta.periodo + ' (neto+C1): ' + fmt(DATA.fac.total_real) + '€'
     + '  |  ' + DATA.fac.total_dias + ' dias operativos'
     + '  |  Generado: ' + DATA.meta.generado;
 
