@@ -524,7 +524,7 @@ function renderPl() {
   var meses = (L.meses && L.meses.length) ? L.meses : [L.m3, L.m2, L.m1];
   var nCols = 1 + meses.length * 2 + 2;
 
-  h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — ' + L.m1 + ' 2026 (mes más reciente) · Fuente: Yurest + Tickets</div><div class="tbl-wrap"><table>'
+  h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — ' + L.m1 + ' 2026 (mes más reciente) · Fuente: Yurest + Tickets + Caja 1</div><div class="tbl-wrap"><table>'
      + '<thead><tr><th style="width:220px">Concepto</th>';
   meses.forEach(function(m, i) {
     var isMar = (i === meses.length - 1);

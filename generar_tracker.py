@@ -598,6 +598,21 @@ def _fetch_yurest_pl(year=2026):
         print(f"⚠  Yurest P&L: {e}")
         return None
 
+def _c1_por_mes(wb_):
+    """Ventas de Caja 1 (neto sin IVA) por mes, desde la hoja 'Ventas Caja 1'."""
+    from collections import defaultdict
+    tots = defaultdict(float)
+    try:
+        ws_ = wb_['Ventas Caja 1']
+        for row in ws_.iter_rows(min_row=5, max_col=8, values_only=True):
+            fecha, total, neto = row[1], row[6], row[7]
+            if not isinstance(fecha, datetime): continue
+            v = neto if isinstance(neto, (int, float)) else (float(total) / 1.10 if isinstance(total, (int, float)) else 0)
+            tots[fecha.month] += float(v)
+    except Exception as e:
+        print(f"⚠  c1_por_mes: {e}")
+    return tots
+
 def _tickets_por_mes(wb_):
     from collections import defaultdict
     tots = defaultdict(float)
@@ -614,6 +629,7 @@ def _tickets_por_mes(wb_):
 # Obtener datos
 _yurest = _fetch_yurest_pl(2026)
 _tick   = _tickets_por_mes(wb)
+_c1     = _c1_por_mes(wb)
 
 def _f(v):
     if v is None: return 0.0
@@ -630,6 +646,15 @@ if _yurest:
         for key in ['Ventas', 'S.O.P.1 /EBITDAR', 'S.O.P /EBITDA', 'RESULTADO']:
             pl_data.setdefault(key, {})[mes_num] = pl_data.get(key, {}).get(mes_num, 0) + t
     print(f"   Tickets sumados: {dict(list(_tick.items())[:5])}")
+    # Otros ingresos = ventas Caja 1 (neto). Yurest solo trae Caja 2, así que
+    # se añaden como línea propia y se propagan a EBITDAR/EBITDA como los Tickets.
+    for mes_num in range(1, 13):
+        c1v = _c1.get(mes_num, 0)
+        if not c1v: continue
+        pl_data.setdefault('Otros ingresos', {})[mes_num] = c1v
+        for key in ['S.O.P.1 /EBITDAR', 'S.O.P /EBITDA', 'RESULTADO']:
+            pl_data.setdefault(key, {})[mes_num] = pl_data.get(key, {}).get(mes_num, 0) + c1v
+    print(f"   Caja 1 (Otros ingresos): { {m: round(v) for m, v in sorted(_c1.items())} }")
 else:
     # Fallback: leer del Excel
     ws_pl = wb['P&L EBITDA']
@@ -687,6 +712,7 @@ def pl_row(c, label=None, bold=False, subtotal=False):
 
 pl_section("INGRESOS")
 pl_row('Ventas', bold=True)
+pl_row('Otros ingresos', 'Otros ingresos (ventas Caja 1)')
 pl_section("COSTES VARIABLES")
 pl_row('CMV', 'CMV (coste mercancia vendida)')
 pl_row('Producto Limpieza', 'Producto limpieza')
