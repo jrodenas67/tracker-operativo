@@ -659,6 +659,16 @@ def _c1_por_mes(wb_):
             tots[fecha.month] += float(v)
     except Exception as e:
         print(f"⚠  c1_por_mes: {e}")
+    # Fallback: desde jun-2026 la hoja tiene las líneas sin PVP/TOTAL (neto=0).
+    # Usar c1_diario.json (bruto, tickets transcritos) ÷ 1.10 para esos meses.
+    fb = defaultdict(float)
+    for _d, _v in _c1_diario.items():
+        if _d.year == 2026:
+            fb[_d.month] += _v / 1.10
+    for _m, _v in fb.items():
+        if tots.get(_m, 0) < 1 and _v > 0:
+            tots[_m] = round(_v, 2)
+            print(f"   C1 P&L mes {_m}: {tots[_m]:.2f}€ neto desde c1_diario.json")
     return tots
 
 def _tickets_por_mes(wb_):
