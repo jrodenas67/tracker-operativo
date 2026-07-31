@@ -167,9 +167,11 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
     fecha = row[0]
     if not isinstance(fecha, datetime): continue
     real = row[5]
+    _overlay_used = False
     if not isinstance(real, (int, float)) or real <= 0:
         real = _cierres_overlay.get(fecha.date(), 0)
         if real <= 0: continue
+        _overlay_used = True
     coste_p = row[9] if isinstance(row[9], (int, float)) else 0
     days.append({
         'fecha':    fecha.strftime('%d/%m'),
@@ -178,7 +180,9 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
         'sem':      fecha.isocalendar()[1],
         'real':     round(float(real), 0),
         'previsto': round(float(row[6] or 0), 0),
-        'desv_pct': round(float(row[8] or 0)*100, 1) if isinstance(row[8], (int, float)) else 0,
+        'desv_pct': (round((float(real) / float(row[6]) - 1) * 100, 1)
+                     if _overlay_used and isinstance(row[6], (int, float)) and row[6]
+                     else round(float(row[8] or 0)*100, 1) if isinstance(row[8], (int, float)) else 0),
         'coste_p':  round(float(coste_p), 0),
         'evento':   str(row[11]) if row[11] else '',
         'manana':   round(float(row[2] or 0), 0),
