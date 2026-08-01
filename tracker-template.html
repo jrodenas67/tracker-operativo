@@ -155,10 +155,10 @@ function renderFac() {
     + '<div class="kpi ok"><div class="kpi-val">' + fmt(f.margen) + '€</div><div class="kpi-lbl">Margen bruto</div><div class="kpi-sub">' + marginPct + '%</div></div>'
     + '</div>'
     + '<div class="kpi-row">'
-    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">☀️ ' + fmt(tm.manana)   + '€</div><div class="kpi-lbl">Ticket medio Mañana</div><div class="kpi-sub">' + (tm.dias_m  || 0) + ' servicios</div></div>'
-    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🍽️ ' + fmt(tm.mediodia) + '€</div><div class="kpi-lbl">Ticket medio Mediodía</div><div class="kpi-sub">' + (tm.dias_md || 0) + ' servicios</div></div>'
-    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🌙 ' + fmt(tm.noche)    + '€</div><div class="kpi-lbl">Ticket medio Noche</div><div class="kpi-sub">' + (tm.dias_n  || 0) + ' servicios</div></div>'
-    + '<div class="kpi ok"><div class="kpi-val" style="font-size:18px">📊 ' + fmt(tm.global)  + '€</div><div class="kpi-lbl">Ticket medio Global</div><div class="kpi-sub">Media diaria acum.</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">☀️ ' + tm.manana.toFixed(2)   + '€</div><div class="kpi-lbl">Ticket medio Mañana</div><div class="kpi-sub">' + fmt(tm.pax_m  || 0) + ' comensales</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🍽️ ' + tm.mediodia.toFixed(2) + '€</div><div class="kpi-lbl">Ticket medio Mediodía</div><div class="kpi-sub">' + fmt(tm.pax_md || 0) + ' comensales</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🌙 ' + tm.noche.toFixed(2)    + '€</div><div class="kpi-lbl">Ticket medio Noche</div><div class="kpi-sub">' + fmt(tm.pax_n  || 0) + ' comensales</div></div>'
+    + '<div class="kpi ok"><div class="kpi-val" style="font-size:18px">📊 ' + tm.global.toFixed(2)  + '€</div><div class="kpi-lbl">Ticket medio Global</div><div class="kpi-sub">' + fmt(tm.pax_total || 0) + ' comensales (neto/pax)</div></div>'
     + '</div>';
 
   // Ticket medio y afluencia por mes y turno

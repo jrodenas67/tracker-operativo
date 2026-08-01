@@ -321,6 +321,27 @@ try:
         _row['tot'] = {'pax': _tpax, 'tm': round(_teur / _tpax, 2) if _tpax else 0}
         tm_mes.append(_row)
     print(f"   Turnos/afluencia: {len(tm_mes)} meses desde {_tj_path}")
+    # Las tarjetas de ticket medio usan esta misma fuente (neto por comensal)
+    if tm_mes:
+        _sum = {}
+        for (_mm, _t), _a in _agg.items():
+            _s = _sum.setdefault(_t, {'eur': 0.0, 'pax': 0})
+            _s['eur'] += _a['eur']; _s['pax'] += _a['pax']
+        def _tk(_t):
+            _s = _sum.get(_t, {'eur': 0, 'pax': 0})
+            return round(_s['eur'] / _s['pax'], 2) if _s['pax'] else 0
+        _tot_eur = sum(_s['eur'] for _s in _sum.values())
+        _tot_pax = sum(_s['pax'] for _s in _sum.values())
+        ticket_medio = {
+            'global':   round(_tot_eur / _tot_pax, 2) if _tot_pax else 0,
+            'manana':   _tk('Mañana'),
+            'mediodia': _tk('Mediodía'),
+            'noche':    _tk('Noche'),
+            'pax_m':    _sum.get('Mañana',   {'pax': 0})['pax'],
+            'pax_md':   _sum.get('Mediodía', {'pax': 0})['pax'],
+            'pax_n':    _sum.get('Noche',    {'pax': 0})['pax'],
+            'pax_total': _tot_pax,
+        }
 except Exception as _e:
     print(f"⚠  turnos_diario.json no disponible: {_e}")
 
