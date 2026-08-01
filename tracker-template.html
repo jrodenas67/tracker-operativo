@@ -161,6 +161,30 @@ function renderFac() {
     + '<div class="kpi ok"><div class="kpi-val" style="font-size:18px">📊 ' + fmt(tm.global)  + '€</div><div class="kpi-lbl">Ticket medio Global</div><div class="kpi-sub">Media diaria acum.</div></div>'
     + '</div>';
 
+  // Ticket medio y afluencia por mes y turno
+  if (f.tm_mes && f.tm_mes.length) {
+    h += '<div class="sec"><div class="sec-title">Ticket medio y afluencia por mes y turno</div>'
+       + '<div style="font-size:11px;color:#8a7560;margin-bottom:8px">Comensales y € netos por comensal · C1+C2 (C1 con detalle desde jun-26) · Mañana &lt;12h · Mediodía 12-19h · Noche &gt;19h</div>'
+       + '<div class="tbl-wrap"><table>'
+       + '<thead><tr><th>Mes</th>'
+       + '<th class="tr">☀️ Comensales</th><th class="tr">Ticket €</th>'
+       + '<th class="tr">🍽️ Comensales</th><th class="tr">Ticket €</th>'
+       + '<th class="tr">🌙 Comensales</th><th class="tr">Ticket €</th>'
+       + '<th class="tr">Total pax</th><th class="tr">Ticket €</th></tr></thead><tbody>';
+    var tp = 0, te = 0;
+    f.tm_mes.forEach(function(r) {
+      h += '<tr><td class="fw">' + r.mes + '</td>'
+         + '<td class="tr">' + fmt(r.m.pax)  + '</td><td class="tr">'  + r.m.tm.toFixed(2)  + '</td>'
+         + '<td class="tr">' + fmt(r.md.pax) + '</td><td class="tr fm">' + r.md.tm.toFixed(2) + '</td>'
+         + '<td class="tr">' + fmt(r.n.pax)  + '</td><td class="tr fm">' + r.n.tm.toFixed(2)  + '</td>'
+         + '<td class="tr fw">' + fmt(r.tot.pax) + '</td><td class="tr fm fw">' + r.tot.tm.toFixed(2) + '</td></tr>';
+      tp += r.tot.pax; te += r.tot.pax * r.tot.tm;
+    });
+    h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td><td colspan="6"></td>'
+       + '<td class="tr">' + fmt(tp) + '</td><td class="tr fm">' + (tp ? (te/tp).toFixed(2) : '0') + '</td></tr>';
+    h += '</tbody></table></div></div>';
+  }
+
   // Tabla mensual
   h += '<div class="two-col">';
   h += '<div class="sec"><div class="sec-title">Facturacion mensual</div><div class="tbl-wrap"><table>'

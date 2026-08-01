@@ -290,6 +290,40 @@ ticket_medio = {
     'dias_n':   sum(1 for d in days if d['noche']    > 0),
 }
 
+# Ticket medio y afluencia por mes y turno (C1+C2, neto)
+# Fuente: turnos_diario.json del repo = {fecha: {turno: {c2_eur,c2_pax,c1_eur,c1_pax}}}
+# (C2 del informe Ventas Diarias de Camarero10; C1 de la BD de tickets, jun-2026+)
+tm_mes = []
+try:
+    import json as _json
+    _tj_path = os.environ.get('TURNOS_JSON', os.path.join(SCRIPT_DIR, 'turnos_diario.json'))
+    with open(_tj_path) as _fh:
+        _tj = _json.load(_fh)
+    _agg = {}
+    for _f, _ts in _tj.items():
+        try:
+            _mm = datetime.strptime(_f, '%Y-%m-%d').month
+        except ValueError:
+            continue
+        for _t, _v in _ts.items():
+            _k = (_mm, _t)
+            _a = _agg.setdefault(_k, {'eur': 0.0, 'pax': 0})
+            _a['eur'] += float(_v.get('c2_eur') or 0) + float(_v.get('c1_eur') or 0)
+            _a['pax'] += int(_v.get('c2_pax') or 0) + int(_v.get('c1_pax') or 0)
+    for _mm in sorted({k[0] for k in _agg}):
+        _row = {'mes': mes_names[_mm]}
+        _teur = _tpax = 0
+        for _t, _key in (('Mañana', 'm'), ('Mediodía', 'md'), ('Noche', 'n')):
+            _a = _agg.get((_mm, _t), {'eur': 0, 'pax': 0})
+            _teur += _a['eur']; _tpax += _a['pax']
+            _row[_key] = {'pax': _a['pax'],
+                          'tm': round(_a['eur'] / _a['pax'], 2) if _a['pax'] else 0}
+        _row['tot'] = {'pax': _tpax, 'tm': round(_teur / _tpax, 2) if _tpax else 0}
+        tm_mes.append(_row)
+    print(f"   Turnos/afluencia: {len(tm_mes)} meses desde {_tj_path}")
+except Exception as _e:
+    print(f"⚠  turnos_diario.json no disponible: {_e}")
+
 # Rendimiento por día de semana
 dow_order  = ['Sáb', 'Dom', 'Vie', 'Jue', 'Mié']
 best_media = max(
@@ -826,6 +860,7 @@ DATA = {
         "pct_personal": pct_personal,
         "margen":       margen,
         "ticket_medio": ticket_medio,
+        "tm_mes":       tm_mes,
         "meses":        meses_list,
         "top10":        [day_to_dict(d) for d in top10],
         "ultimos15":    [day_to_dict(d) for d in ultimos15],
