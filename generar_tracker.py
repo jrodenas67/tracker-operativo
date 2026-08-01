@@ -187,12 +187,13 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
     excel_real = row[5] if isinstance(row[5], (int, float)) else 0
     c2n = _c2_neto.get(fecha.date(), 0)
     if c2n > 0:
-        real = c2n                       # C2 neto del cierre (fuente primaria)
+        c2 = c2n                         # C2 neto del cierre (fuente primaria)
     elif excel_real > 0:
-        real = excel_real / 1.10         # fallback: Excel bruto → neto aprox.
+        c2 = excel_real / 1.10           # fallback: Excel bruto → neto aprox.
     else:
         continue
-    real += _c1_diario.get(fecha.date(), 0) / 1.10   # + C1 neta (si hay tickets)
+    c1 = _c1_diario.get(fecha.date(), 0) / 1.10      # C1 neta (si hay tickets)
+    real = c2 + c1
     previsto = float(row[6] or 0) / 1.10             # previsto Excel bruto → neto
     coste_p = row[9] if isinstance(row[9], (int, float)) else 0
     days.append({
@@ -201,6 +202,8 @@ for row in ws_fac.iter_rows(min_row=4, values_only=True):
         'mes':      fecha.month,
         'sem':      fecha.isocalendar()[1],
         'real':     round(float(real), 0),
+        'c2':       round(float(c2), 0),
+        'c1':       round(float(c1), 0),
         'previsto': round(previsto, 0),
         'desv_pct': round((float(real) / previsto - 1) * 100, 1) if previsto else 0,
         'coste_p':  round(float(coste_p), 0),
@@ -214,8 +217,10 @@ mes_totals = {}
 for d in days:
     m = d['mes']
     if m not in mes_totals:
-        mes_totals[m] = {'real': 0, 'previsto': 0, 'coste': 0, 'dias': 0}
+        mes_totals[m] = {'real': 0, 'c2': 0, 'c1': 0, 'previsto': 0, 'coste': 0, 'dias': 0}
     mes_totals[m]['real']     += d['real']
+    mes_totals[m]['c2']       += d['c2']
+    mes_totals[m]['c1']       += d['c1']
     mes_totals[m]['previsto'] += d['previsto']
     mes_totals[m]['coste']    += d['coste_p']
     mes_totals[m]['dias']     += 1
@@ -310,7 +315,7 @@ for dia in dow_order:
 
 # Datos para los bloques de datos (top10, ultimos15)
 def day_to_dict(d):
-    return {k: d[k] for k in ('fecha', 'dia', 'real', 'previsto', 'desv_pct', 'evento')}
+    return {k: d[k] for k in ('fecha', 'dia', 'real', 'c2', 'c1', 'previsto', 'desv_pct', 'evento')}
 
 # ── Horarios Personal ─────────────────────────────────────────────────────────
 ws_hor = wb['Horarios Personal']
@@ -795,12 +800,14 @@ now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
 meses_list = []
 for m in sorted(mes_totals.keys()):
-    mt = mes_totals.get(m, {'real': 0, 'previsto': 0, 'coste': 0, 'dias': 0})
+    mt = mes_totals.get(m, {'real': 0, 'c2': 0, 'c1': 0, 'previsto': 0, 'coste': 0, 'dias': 0})
     r  = float(mt['real']); p = float(mt['previsto'])
     c  = float(mt['coste']); di = int(mt['dias'])
     dv = round((r / p - 1) * 100, 1) if p else 0
     meses_list.append({
-        'nombre': mes_names[m], 'real': round(r, 0), 'previsto': round(p, 0),
+        'nombre': mes_names[m], 'real': round(r, 0),
+        'c2': round(float(mt.get('c2', 0)), 0), 'c1': round(float(mt.get('c1', 0)), 0),
+        'previsto': round(p, 0),
         'dias': di, 'coste_p': round(c, 0), 'dv': dv,
     })
 
@@ -811,6 +818,8 @@ DATA = {
     },
     "fac": {
         "total_real":   total_real,
+        "total_c2":     round(sum(d['c2'] for d in days), 0),
+        "total_c1":     round(sum(d['c1'] for d in days), 0),
         "total_prev":   total_prev,
         "total_dias":   total_dias,
         "pct_vs_prev":  pct_vs_prev,

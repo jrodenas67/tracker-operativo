@@ -146,7 +146,9 @@ function renderFac() {
 
   var tm = f.ticket_medio || {};
   var h = '<div class="kpi-row">'
-    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_real) + '€</div><div class="kpi-lbl">Facturacion real ' + DATA.meta.periodo + '</div><div class="kpi-sub">' + f.total_dias + ' dias operativos</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_real) + '€</div><div class="kpi-lbl">Facturacion total ' + DATA.meta.periodo + ' (neto)</div><div class="kpi-sub">' + f.total_dias + ' dias operativos</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_c2 || 0) + '€</div><div class="kpi-lbl">Caja 2 · Restaurant</div><div class="kpi-sub">' + (f.total_real ? ((f.total_c2 || 0) / f.total_real * 100).toFixed(1) : 0) + '% del total</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_c1 || 0) + '€</div><div class="kpi-lbl">Caja 1 · Cafeteria</div><div class="kpi-sub">' + (f.total_real ? ((f.total_c1 || 0) / f.total_real * 100).toFixed(1) : 0) + '% del total</div></div>'
     + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_prev) + '€</div><div class="kpi-lbl">Facturacion prevista</div><div class="kpi-sub">' + pstr(ppp) + ' vs previsión</div></div>'
     + '<div class="kpi ' + (mediaOk ? 'ok' : 'warn') + '"><div class="kpi-val">' + fmt(f.total_real / f.total_dias) + '€</div><div class="kpi-lbl">Media por dia</div><div class="kpi-sub">Objetivo &gt;1.300€/dia</div></div>'
     + '<div class="kpi ' + (perOk   ? 'ok' : 'warn') + '"><div class="kpi-val">' + f.pct_personal.toFixed(1) + '%</div><div class="kpi-lbl">Coste personal / ventas</div><div class="kpi-sub">Objetivo &lt;35%</div></div>'
@@ -162,13 +164,15 @@ function renderFac() {
   // Tabla mensual
   h += '<div class="two-col">';
   h += '<div class="sec"><div class="sec-title">Facturacion mensual</div><div class="tbl-wrap"><table>'
-     + '<thead><tr><th>Mes</th><th class="tr">Real €</th><th class="tr">Previsto €</th><th class="tr">vs Prev.</th><th class="tr">Dias</th><th class="tr">Media/dia</th><th class="tr">% Personal</th></tr></thead><tbody>';
+     + '<thead><tr><th>Mes</th><th class="tr">Caja 2 €</th><th class="tr">Caja 1 €</th><th class="tr">Total €</th><th class="tr">Previsto €</th><th class="tr">vs Prev.</th><th class="tr">Dias</th><th class="tr">Media/dia</th><th class="tr">% Personal</th></tr></thead><tbody>';
   var totalCosteM = 0;
   f.meses.forEach(function(m) {
     var media = m.dias ? m.real / m.dias : 0;
     var pcp   = m.real ? m.coste_p / m.real * 100 : 0;
     totalCosteM += m.coste_p;
     h += '<tr><td class="fw">' + m.nombre + '</td>'
+       + '<td class="tr">'     + fmt(m.c2 || 0)  + '</td>'
+       + '<td class="tr">'     + fmt(m.c1 || 0)  + '</td>'
        + '<td class="tr fm">'  + fmt(m.real)     + '</td>'
        + '<td class="tr">'     + fmt(m.previsto)  + '</td>'
        + '<td class="tr ' + pcls(m.dv) + '">' + pstr(m.dv) + '</td>'
@@ -177,6 +181,8 @@ function renderFac() {
        + '<td class="tr">'     + pcp.toFixed(1)   + '%</td></tr>';
   });
   h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td>'
+     + '<td class="tr">'     + fmt(f.total_c2 || 0) + '</td>'
+     + '<td class="tr">'     + fmt(f.total_c1 || 0) + '</td>'
      + '<td class="tr fm">'  + fmt(f.total_real) + '</td>'
      + '<td class="tr">'     + fmt(f.total_prev) + '</td>'
      + '<td class="tr ' + pcls(ppp) + '">' + pstr(ppp) + '</td>'
@@ -187,11 +193,13 @@ function renderFac() {
 
   // Top 10 días
   h += '<div class="sec"><div class="sec-title">Top 10 dias</div><div class="tbl-wrap"><table>'
-     + '<thead><tr><th>#</th><th>Fecha</th><th>Dia</th><th class="tr">Real €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
+     + '<thead><tr><th>#</th><th>Fecha</th><th>Dia</th><th class="tr">C2 €</th><th class="tr">C1 €</th><th class="tr">Total €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
   f.top10.forEach(function(d, i) {
     var ev = d.evento || '';
     h += '<tr><td class="tc fw">' + (i+1) + '</td>'
        + '<td>' + d.fecha + '</td><td>' + d.dia + '</td>'
+       + '<td class="tr">'       + fmt(d.c2 || 0)  + '</td>'
+       + '<td class="tr">'       + fmt(d.c1 || 0)  + '</td>'
        + '<td class="tr fm fw">' + fmt(d.real)     + '</td>'
        + '<td class="tr">'       + fmt(d.previsto)  + '</td>'
        + '<td class="tr ' + pcls(d.desv_pct) + '">' + pstr(d.desv_pct) + '</td>'
@@ -202,10 +210,12 @@ function renderFac() {
 
   // Últimos 15 días
   h += '<div class="sec"><div class="sec-title">Ultimos 15 dias</div><div class="tbl-wrap"><table>'
-     + '<thead><tr><th>Fecha</th><th>Dia</th><th class="tr">Real €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
+     + '<thead><tr><th>Fecha</th><th>Dia</th><th class="tr">C2 €</th><th class="tr">C1 €</th><th class="tr">Total €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
   f.ultimos15.forEach(function(d) {
     var ev = d.evento || '';
     h += '<tr><td class="fw">' + d.fecha + '</td><td>' + d.dia + '</td>'
+       + '<td class="tr">'       + fmt(d.c2 || 0)  + '</td>'
+       + '<td class="tr">'       + fmt(d.c1 || 0)  + '</td>'
        + '<td class="tr fm fw">' + fmt(d.real)     + '</td>'
        + '<td class="tr">'       + fmt(d.previsto)  + '</td>'
        + '<td class="tr ' + pcls(d.desv_pct) + '">' + pstr(d.desv_pct) + '</td>'
