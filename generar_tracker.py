@@ -765,15 +765,15 @@ if _yurest:
         for key in ['Ventas', 'S.O.P.1 /EBITDAR', 'S.O.P /EBITDA', 'RESULTADO']:
             pl_data.setdefault(key, {})[mes_num] = pl_data.get(key, {}).get(mes_num, 0) + t
     print(f"   Tickets sumados: {dict(list(_tick.items())[:5])}")
-    # Otros ingresos = ventas Caja 1 (neto). Yurest solo trae Caja 2, así que
-    # se añaden como línea propia y se propagan a EBITDAR/EBITDA como los Tickets.
+    # Ventas Caja 1 (neto): Yurest solo trae la Caja 2, así que van como línea
+    # propia y se propagan a EBITDAR/EBITDA como los Tickets.
     for mes_num in range(1, 13):
         c1v = _c1.get(mes_num, 0)
         if not c1v: continue
-        pl_data.setdefault('Otros ingresos', {})[mes_num] = c1v
+        pl_data.setdefault('Ventas Caja 1', {})[mes_num] = c1v
         for key in ['S.O.P.1 /EBITDAR', 'S.O.P /EBITDA', 'RESULTADO']:
             pl_data.setdefault(key, {})[mes_num] = pl_data.get(key, {}).get(mes_num, 0) + c1v
-    print(f"   Caja 1 (Otros ingresos): { {m: round(v) for m, v in sorted(_c1.items())} }")
+    print(f"   Ventas Caja 1: { {m: round(v) for m, v in sorted(_c1.items())} }")
 else:
     # Fallback: leer del Excel
     ws_pl = wb['P&L EBITDA']
@@ -782,10 +782,19 @@ else:
     for row in ws_pl.iter_rows(min_row=4, max_row=60, values_only=True):
         c = row[1]
         if not c or '%' in str(c): continue
-        pl_data[c] = {1: _f(row[4]), 2: _f(row[5]), 3: _f(row[6])}
+        pl_data[str(c).strip()] = {1: _f(row[4]), 2: _f(row[5]), 3: _f(row[6])}
+    # La hoja usa 'Caja 2'/'Caja 1'; alinear con los nombres de Yurest
+    pl_data.setdefault('Ventas', pl_data.get('Caja 2', {}))
+    pl_data.setdefault('Ventas Caja 1', pl_data.get('Caja 1', {}))
+
+# Total Ventas = Caja 2 (Yurest/Excel, con Tickets) + Caja 1
+pl_data['Total Ventas'] = {
+    m: pl_data.get('Ventas', {}).get(m, 0) + pl_data.get('Ventas Caja 1', {}).get(m, 0)
+    for m in range(1, 13)
+}
 
 # Determinar últimos 3 meses completos con datos de Ventas
-_ventas = pl_data.get('Ventas', {})
+_ventas = pl_data.get('Total Ventas', {})
 _meses_con_datos = sorted([m for m, v in _ventas.items() if v and v > 0])
 if len(_meses_con_datos) >= 3:
     _m1, _m2, _m3 = _meses_con_datos[-1], _meses_con_datos[-2], _meses_con_datos[-3]
@@ -804,14 +813,14 @@ _pl_labels = {
 
 def pv(c, m):  return float(pl_data.get(c, {}).get(m, 0) or 0)
 def pp(c, m):
-    ref = pv('Ventas', m)
+    ref = pv('Total Ventas', m)
     return round(pv(c, m) / ref * 100, 1) if ref else 0.0
 def pv_acum(c): return round(sum(pv(c, m) for m in _meses_acum), 0)
 def pp_acum(c):
-    ref = sum(pv('Ventas', m) for m in _meses_acum)
+    ref = sum(pv('Total Ventas', m) for m in _meses_acum)
     return round(pv_acum(c) / ref * 100, 1) if ref else 0.0
 
-v_mar = pv('Ventas', _m1); v_feb = pv('Ventas', _m2); v_acum_pl = sum(pv('Ventas', m) for m in _meses_acum)
+v_mar = pv('Total Ventas', _m1); v_feb = pv('Total Ventas', _m2); v_acum_pl = sum(pv('Total Ventas', m) for m in _meses_acum)
 e_mar = pv('S.O.P /EBITDA', _m1); e_feb = pv('S.O.P /EBITDA', _m2)
 e_acum = sum(pv('S.O.P /EBITDA', m) for m in _meses_acum)
 
@@ -830,8 +839,9 @@ def pl_row(c, label=None, bold=False, subtotal=False):
     })
 
 pl_section("INGRESOS")
-pl_row('Ventas', bold=True)
-pl_row('Otros ingresos', 'Otros ingresos (ventas Caja 1)')
+pl_row('Total Ventas', bold=True)
+pl_row('Ventas', 'Ventas Caja 2')
+pl_row('Ventas Caja 1')
 pl_section("COSTES VARIABLES")
 pl_row('CMV', 'CMV (coste mercancia vendida)')
 pl_row('Producto Limpieza', 'Producto limpieza')
