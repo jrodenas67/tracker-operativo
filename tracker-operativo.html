@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La Taperia de Caldes — Tracker Operativo 2026</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   DISEÑO FIJO — no modificar este fichero manualmente.
+   Los datos se inyectan automáticamente por generar_tracker.py
+   ═══════════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px}
+.header{background:#1e3a2f;color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#btn-update{background:#16a34a;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+#btn-update:hover{background:#15803d}
+#btn-update:disabled{background:#475569;cursor:not-allowed}
+.header-title{font-size:16px;font-weight:700;letter-spacing:.3px}
+.header-sub{font-size:11px;color:#86efac;margin-top:3px}
+.nav{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;overflow-x:auto;padding:0 20px}
+.nav-tab{padding:13px 16px;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;text-transform:uppercase;letter-spacing:.6px;transition:all .15s}
+.nav-tab:hover{color:#1e293b}
+.nav-tab.active{color:#1e3a2f;border-bottom-color:#1e3a2f}
+.page{display:none;padding:20px}
+.page.active{display:block}
+.kpi-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;flex:1;min-width:130px}
+.kpi-val{font-size:22px;font-weight:700;color:#1e3a2f;line-height:1.1}
+.kpi-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.kpi-sub{font-size:11px;color:#64748b;margin-top:3px}
+.kpi.ok .kpi-val{color:#16a34a}
+.kpi.warn .kpi-val{color:#d97706}
+.kpi.bad .kpi-val{color:#dc2626}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.sec{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:14px}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#475569;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f1f5f9}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8fafc;color:#475569;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.tr{text-align:right}.tc{text-align:center}
+.fm{font-variant-numeric:tabular-nums;font-weight:500}
+.fw{font-weight:600}
+.pc{text-align:right;color:#64748b;font-size:11px}
+.pos{color:#16a34a}.neg{color:#dc2626}
+.tbl-wrap{overflow-x:auto}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.bg{background:#dcfce7;color:#15803d}
+.bo{background:#fef3c7;color:#92400e}
+.br{background:#fee2e2;color:#b91c1c}
+.bb{background:#dbeafe;color:#1d4ed8}
+.bgr{background:#f1f5f9;color:#64748b}
+.bar-track{background:#f1f5f9;border-radius:4px;height:8px;overflow:hidden;min-width:50px}
+.bar-fill{height:8px;border-radius:4px}
+.bar-g{background:#86efac}.bar-o{background:#fcd34d}.bar-r{background:#fca5a5}.bar-b{background:#93c5fd}
+.pl-section td{background:#f8fafc;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#475569;padding:6px 10px}
+.pl-sub td{background:#f0fdf4;font-weight:600;color:#15803d}
+.pl-bold td{font-weight:700;font-size:13px}
+.pl-bold.pos-row td{background:#ecfdf5;color:#065f46}
+.pl-bold.neg-row td{background:#fef2f2;color:#dc2626}
+.alert{border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px}
+.alert.info{background:#dbeafe;border-left:3px solid #3b82f6;color:#1e40af}
+.alert.err{background:#fee2e2;border-left:3px solid #ef4444;color:#b91c1c}
+th.mar{background:#fef2f2;color:#b91c1c}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">La Taperia de Caldes &mdash; Tracker Operativo 2026</div>
+    <div class="header-sub" id="header-sub">Cargando...</div>
+  </div>
+  <button id="btn-update" onclick="triggerUpdate()">↻ Actualizar datos</button>
+</div>
+
+<div class="nav">
+  <div class="nav-tab active"  onclick="showPage('fac',this)">Facturacion</div>
+  <div class="nav-tab"         onclick="showPage('per',this)">Personal</div>
+  <div class="nav-tab"         onclick="showPage('ev',this)">Eventos</div>
+  <div class="nav-tab"         onclick="showPage('al',this)">Alertas</div>
+  <div class="nav-tab"         onclick="showPage('pm',this)">Product Mix</div>
+  <div class="nav-tab"         onclick="showPage('om',this)">Omnes</div>
+  <div class="nav-tab"         onclick="showPage('pl',this)">P&amp;L EBITDA</div>
+</div>
+
+<div id="page-fac" class="page active"></div>
+<div id="page-per" class="page"></div>
+<div id="page-ev"  class="page"></div>
+<div id="page-al"  class="page"></div>
+<div id="page-pm"  class="page"></div>
+<div id="page-om"  class="page"></div>
+<div id="page-pl"  class="page"></div>
+
+<script>
+/* ─── DATOS (reemplazado automáticamente por generar_tracker.py) ─── */
+const DATA = {"meta":{"generado":"06/08/2026 13:58","periodo":"Ene-Ago"},"fac":{"total_real":203118.0,"total_c2":168511.0,"total_c1":34607.0,"total_prev":205838.0,"total_dias":144,"pct_vs_prev":-1.3,"pct_personal":12.5,"margen":177763.0,"ticket_medio":{"global":12.55,"manana":4.27,"mediodia":13.34,"noche":15.54,"pax_m":2461,"pax_md":6027,"pax_n":5236,"pax_total":13724},"tm_mes":[{"mes":"Enero","m":{"pax":345,"tm":4.42},"md":{"pax":914,"tm":13.58},"n":{"pax":564,"tm":15.96},"tot":{"pax":1823,"tm":12.58}},{"mes":"Febrero","m":{"pax":334,"tm":4.2},"md":{"pax":859,"tm":14.55},"n":{"pax":549,"tm":15.61},"tot":{"pax":1742,"tm":12.9}},{"mes":"Marzo","m":{"pax":282,"tm":4.07},"md":{"pax":638,"tm":13.3},"n":{"pax":416,"tm":16.2},"tot":{"pax":1336,"tm":12.26}},{"mes":"Abril","m":{"pax":250,"tm":3.75},"md":{"pax":819,"tm":15.05},"n":{"pax":736,"tm":15.61},"tot":{"pax":1805,"tm":13.71}},{"mes":"Mayo","m":{"pax":298,"tm":4.2},"md":{"pax":985,"tm":14.89},"n":{"pax":834,"tm":16.95},"tot":{"pax":2117,"tm":14.2}},{"mes":"Junio","m":{"pax":495,"tm":4.15},"md":{"pax":871,"tm":11.77},"n":{"pax":909,"tm":14.44},"tot":{"pax":2275,"tm":11.18}},{"mes":"Julio","m":{"pax":457,"tm":4.79},"md":{"pax":941,"tm":10.36},"n":{"pax":1228,"tm":14.89},"tot":{"pax":2626,"tm":11.51}}],"meses":[{"nombre":"Enero","real":28441.0,"c2":23375.0,"c1":5072.0,"previsto":31719.0,"dias":22,"coste_p":10708.0,"dv":-10.3},{"nombre":"Febrero","real":27714.0,"c2":22782.0,"c1":4928.0,"previsto":22656.0,"dias":16,"coste_p":8426.0,"dv":22.3},{"nombre":"Marzo","real":20991.0,"c2":16556.0,"c1":4434.0,"previsto":21120.0,"dias":15,"coste_p":6221.0,"dv":-0.6},{"nombre":"Abril","real":31127.0,"c2":24983.0,"c1":6142.0,"previsto":31424.0,"dias":22,"coste_p":0.0,"dv":-0.9},{"nombre":"Mayo","real":33550.0,"c2":30490.0,"c1":3060.0,"previsto":34841.0,"dias":23,"coste_p":0.0,"dv":-3.7},{"nombre":"Junio","real":25612.0,"c2":21500.0,"c1":4113.0,"previsto":28160.0,"dias":20,"coste_p":0.0,"dv":-9.0},{"nombre":"Julio","real":30396.0,"c2":24209.0,"c1":6187.0,"previsto":31574.0,"dias":23,"coste_p":0.0,"dv":-3.7},{"nombre":"Agosto","real":5287.0,"c2":4616.0,"c1":671.0,"previsto":4344.0,"dias":3,"coste_p":0.0,"dv":21.7}],"top10":[{"fecha":"07/02","dia":"Sá","real":4040.0,"c2":3987.0,"c1":53.0,"previsto":1863.0,"desv_pct":116.8,"evento":""},{"fecha":"14/02","dia":"Sá","real":3548.0,"c2":3054.0,"c1":494.0,"previsto":1863.0,"desv_pct":90.4,"evento":"San Valentín"},{"fecha":"01/05","dia":"Vi","real":3090.0,"c2":3022.0,"c1":68.0,"previsto":2273.0,"desv_pct":36.0,"evento":""},{"fecha":"21/02","dia":"Sá","real":3017.0,"c2":2437.0,"c1":579.0,"previsto":1863.0,"desv_pct":61.9,"evento":""},{"fecha":"18/07","dia":"Sá","real":2938.0,"c2":2443.0,"c1":495.0,"previsto":1863.0,"desv_pct":57.7,"evento":""},{"fecha":"23/05","dia":"Sá","real":2891.0,"c2":2891.0,"c1":0.0,"previsto":1863.0,"desv_pct":55.1,"evento":""},{"fecha":"10/01","dia":"Sá","real":2872.0,"c2":2357.0,"c1":516.0,"previsto":1863.0,"desv_pct":54.1,"evento":""},{"fecha":"03/05","dia":"Do","real":2729.0,"c2":2593.0,"c1":136.0,"previsto":2545.0,"desv_pct":7.2,"evento":""},{"fecha":"15/03","dia":"Do","real":2721.0,"c2":2583.0,"c1":138.0,"previsto":1536.0,"desv_pct":77.1,"evento":"Mercado Olla"},{"fecha":"05/04","dia":"Do","real":2714.0,"c2":2066.0,"c1":649.0,"previsto":1536.0,"desv_pct":76.7,"evento":""}],"ultimos15":[{"fecha":"05/08","dia":"Mi","real":1123.0,"c2":1123.0,"c1":0.0,"previsto":945.0,"desv_pct":18.8,"evento":""},{"fecha":"02/08","dia":"Do","real":1558.0,"c2":1045.0,"c1":514.0,"previsto":1536.0,"desv_pct":1.4,"evento":""},{"fecha":"01/08","dia":"Sá","real":2606.0,"c2":2448.0,"c1":157.0,"previsto":1863.0,"desv_pct":39.8,"evento":""},{"fecha":"31/07","dia":"Vi","real":1603.0,"c2":1419.0,"c1":184.0,"previsto":1696.0,"desv_pct":-5.5,"evento":""},{"fecha":"30/07","dia":"Ju","real":753.0,"c2":584.0,"c1":169.0,"previsto":1000.0,"desv_pct":-24.7,"evento":""},{"fecha":"29/07","dia":"Mi","real":1295.0,"c2":936.0,"c1":359.0,"previsto":945.0,"desv_pct":36.9,"evento":""},{"fecha":"26/07","dia":"Do","real":1654.0,"c2":1057.0,"c1":597.0,"previsto":1536.0,"desv_pct":7.6,"evento":""},{"fecha":"25/07","dia":"Sá","real":1435.0,"c2":1101.0,"c1":334.0,"previsto":1863.0,"desv_pct":-23.0,"evento":""},{"fecha":"24/07","dia":"Vi","real":788.0,"c2":705.0,"c1":83.0,"previsto":1696.0,"desv_pct":-53.5,"evento":""},{"fecha":"23/07","dia":"Ju","real":1173.0,"c2":976.0,"c1":198.0,"previsto":1000.0,"desv_pct":17.3,"evento":""},{"fecha":"22/07","dia":"Mi","real":1146.0,"c2":956.0,"c1":190.0,"previsto":945.0,"desv_pct":21.2,"evento":""},{"fecha":"19/07","dia":"Do","real":728.0,"c2":501.0,"c1":227.0,"previsto":1536.0,"desv_pct":-52.6,"evento":""},{"fecha":"18/07","dia":"Sá","real":2938.0,"c2":2443.0,"c1":495.0,"previsto":1863.0,"desv_pct":57.7,"evento":""},{"fecha":"17/07","dia":"Vi","real":1530.0,"c2":1300.0,"c1":230.0,"previsto":1696.0,"desv_pct":-9.8,"evento":""},{"fecha":"16/07","dia":"Ju","real":1095.0,"c2":894.0,"c1":201.0,"previsto":1000.0,"desv_pct":9.5,"evento":""}],"dow":[]},"per":{"total_coste":46186.0,"n_empleados":17,"ratio":22.7,"coste_dia":321.0,"semanas":[{"sem":1,"coste":1559.0,"ventas":4235.0,"pct":36.8,"cum_pct":36.8,"bar_cls":"bar-o","bar_w":52.6},{"sem":2,"coste":2378.0,"ventas":6275.0,"pct":37.9,"cum_pct":37.5,"bar_cls":"bar-o","bar_w":54.1},{"sem":3,"coste":2505.0,"ventas":5193.0,"pct":48.2,"cum_pct":41.0,"bar_cls":"bar-r","bar_w":68.9},{"sem":4,"coste":2589.0,"ventas":6561.0,"pct":39.5,"cum_pct":40.6,"bar_cls":"bar-o","bar_w":56.4},{"sem":5,"coste":2669.0,"ventas":7304.0,"pct":36.5,"cum_pct":39.6,"bar_cls":"bar-o","bar_w":52.1},{"sem":6,"coste":2989.0,"ventas":10296.0,"pct":29.0,"cum_pct":36.8,"bar_cls":"bar-g","bar_w":41.4},{"sem":7,"coste":2784.0,"ventas":8138.0,"pct":34.2,"cum_pct":36.4,"bar_cls":"bar-o","bar_w":48.9},{"sem":8,"coste":2717.0,"ventas":8153.0,"pct":33.3,"cum_pct":36.0,"bar_cls":"bar-o","bar_w":47.6},{"sem":11,"coste":2562.0,"ventas":7759.0,"pct":33.0,"cum_pct":35.6,"bar_cls":"bar-o","bar_w":47.1},{"sem":12,"coste":2347.0,"ventas":6225.0,"pct":37.7,"cum_pct":35.8,"bar_cls":"bar-o","bar_w":53.9},{"sem":13,"coste":2529.0,"ventas":7007.0,"pct":36.1,"cum_pct":35.8,"bar_cls":"bar-o","bar_w":51.6},{"sem":14,"coste":2899.0,"ventas":10084.0,"pct":28.7,"cum_pct":35.0,"bar_cls":"bar-g","bar_w":41.0},{"sem":15,"coste":1861.0,"ventas":5340.0,"pct":34.9,"cum_pct":35.0,"bar_cls":"bar-o","bar_w":49.9},{"sem":16,"coste":2567.0,"ventas":6543.0,"pct":39.2,"cum_pct":35.3,"bar_cls":"bar-o","bar_w":56.0},{"sem":17,"coste":2475.0,"ventas":7422.0,"pct":33.3,"cum_pct":35.1,"bar_cls":"bar-o","bar_w":47.6},{"sem":18,"coste":2305.0,"ventas":9947.0,"pct":23.2,"cum_pct":34.1,"bar_cls":"bar-g","bar_w":33.1},{"sem":19,"coste":1243.0,"ventas":5392.0,"pct":23.1,"cum_pct":33.6,"bar_cls":"bar-g","bar_w":33.0},{"sem":20,"coste":1802.0,"ventas":7323.0,"pct":24.6,"cum_pct":33.1,"bar_cls":"bar-g","bar_w":35.1},{"sem":21,"coste":2158.0,"ventas":7345.0,"pct":29.4,"cum_pct":32.9,"bar_cls":"bar-g","bar_w":42.0},{"sem":22,"coste":1249.0,"ventas":5281.0,"pct":23.6,"cum_pct":32.6,"bar_cls":"bar-g","bar_w":33.7},{"sem":23,"coste":0,"ventas":7619.0,"pct":0.0,"cum_pct":30.9,"bar_cls":"bar-g","bar_w":0},{"sem":24,"coste":0,"ventas":6306.0,"pct":0.0,"cum_pct":29.7,"bar_cls":"bar-g","bar_w":0},{"sem":25,"coste":0,"ventas":5246.0,"pct":0.0,"cum_pct":28.7,"bar_cls":"bar-g","bar_w":0},{"sem":26,"coste":0,"ventas":6441.0,"pct":0.0,"cum_pct":27.6,"bar_cls":"bar-g","bar_w":0},{"sem":27,"coste":0,"ventas":7733.0,"pct":0.0,"cum_pct":26.4,"bar_cls":"bar-g","bar_w":0},{"sem":28,"coste":0,"ventas":5846.0,"pct":0.0,"cum_pct":25.5,"bar_cls":"bar-g","bar_w":0},{"sem":29,"coste":0,"ventas":6970.0,"pct":0.0,"cum_pct":24.6,"bar_cls":"bar-g","bar_w":0},{"sem":30,"coste":0,"ventas":6196.0,"pct":0.0,"cum_pct":23.8,"bar_cls":"bar-g","bar_w":0},{"sem":31,"coste":0,"ventas":7815.0,"pct":0.0,"cum_pct":22.9,"bar_cls":"bar-g","bar_w":0},{"sem":32,"coste":0,"ventas":1123.0,"pct":0.0,"cum_pct":22.7,"bar_cls":"bar-g","bar_w":0}],"empleados":[{"nombre":"Sonia","coste":13853.0,"pct_masa":30.0,"horas":866.0,"coste_hora":16.0,"bar_w":100},{"nombre":"Lourdes","coste":8330.0,"pct_masa":18.0,"horas":833.0,"coste_hora":10.0,"bar_w":60.1},{"nombre":"Juan","coste":7513.0,"pct_masa":16.3,"horas":684.0,"coste_hora":10.98,"bar_w":54.2},{"nombre":"Jonh","coste":5738.0,"pct_masa":12.4,"horas":792.0,"coste_hora":7.25,"bar_w":41.4},{"nombre":"Rubí","coste":3327.0,"pct_masa":7.2,"horas":644.0,"coste_hora":5.17,"bar_w":24.0},{"nombre":"Alejandra","coste":2318.0,"pct_masa":5.0,"horas":363.0,"coste_hora":6.39,"bar_w":16.7},{"nombre":"Brigitte","coste":1790.0,"pct_masa":3.9,"horas":224.0,"coste_hora":8.0,"bar_w":12.9},{"nombre":"Gabi","coste":1287.0,"pct_masa":2.8,"horas":176.0,"coste_hora":7.3,"bar_w":9.3},{"nombre":"Mireia M","coste":822.0,"pct_masa":1.8,"horas":48.0,"coste_hora":17.13,"bar_w":5.9},{"nombre":"Génesis","coste":510.0,"pct_masa":1.1,"horas":64.0,"coste_hora":8.0,"bar_w":3.7},{"nombre":"Aina","coste":411.0,"pct_masa":0.9,"horas":70.0,"coste_hora":5.83,"bar_w":3.0},{"nombre":"Adria","coste":208.0,"pct_masa":0.5,"horas":26.0,"coste_hora":8.0,"bar_w":1.5},{"nombre":"Cesar","coste":48.0,"pct_masa":0.1,"horas":6.0,"coste_hora":8.0,"bar_w":0.3},{"nombre":"Genesis","coste":24.0,"pct_masa":0.1,"horas":5.0,"coste_hora":4.57,"bar_w":0.2},{"nombre":"Luisa","coste":6.0,"pct_masa":0.0,"horas":1.0,"coste_hora":6.0,"bar_w":0.0},{"nombre":"Mireia M.","coste":0.0,"pct_masa":0.0,"horas":104.0,"coste_hora":0.0,"bar_w":0.0},{"nombre":"Adrià","coste":0.0,"pct_masa":0.0,"horas":4.0,"coste_hora":0.0,"bar_w":0.0}],"meses":[{"nombre":"Enero","coste":11235.0,"ventas":28441.0,"pct":39.5},{"nombre":"Febrero","coste":8954.0,"ventas":27714.0,"pct":32.3},{"nombre":"Marzo","coste":7614.0,"ventas":20991.0,"pct":36.3},{"nombre":"Abril","coste":10475.0,"ventas":31127.0,"pct":33.7},{"nombre":"Mayo","coste":7907.0,"ventas":33550.0,"pct":23.6},{"nombre":"Junio","coste":0.0,"ventas":25612.0,"pct":0.0},{"nombre":"Julio","coste":0.0,"ventas":30396.0,"pct":0.0},{"nombre":"Agosto","coste":0.0,"ventas":5287.0,"pct":0.0}],"dow_efic":[{"dia":"Miércoles","fact":657.0,"coste":197.0,"ratio":30.0,"obj":38.0,"estado":"OK","est_cls":"bg"},{"dia":"Jueves","fact":867.0,"coste":200.0,"ratio":23.0,"obj":35.0,"estado":"OK","est_cls":"bg"},{"dia":"Viernes","fact":1438.0,"coste":254.0,"ratio":17.6,"obj":32.0,"estado":"OK","est_cls":"bg"},{"dia":"Sábado","fact":2023.0,"coste":265.0,"ratio":13.1,"obj":30.0,"estado":"OK","est_cls":"bg"},{"dia":"Domingo","fact":1600.0,"coste":213.0,"ratio":13.3,"obj":33.0,"estado":"OK","est_cls":"bg"}]},"ev":{"eventos":[{"mes":"Enero","nombre":"San Antonio Abad","tipo":"Festivo local","mult":1.5,"prev":1800.0,"real":null,"desv":-1800.0,"desv_pct":-100.0,"estado":"Pasado","est_cls":"bg"},{"mes":"Febrero","nombre":"San Valentín","tipo":"Evento especial","mult":2.8,"prev":4000.0,"real":3543.0,"desv":-457.0,"desv_pct":-11.4,"estado":"Pasado","est_cls":"bg"},{"mes":"Febrero","nombre":"Carnaval","tipo":"Fiesta local","mult":2,"prev":3500.0,"real":3184.0,"desv":-316.0,"desv_pct":-9.0,"estado":"Pasado","est_cls":"bg"},{"mes":"Marzo","nombre":"Mercado Olla","tipo":"Mercado local","mult":1.8,"prev":2800.0,"real":2683.0,"desv":-117.0,"desv_pct":-4.2,"estado":"Pasado","est_cls":"bg"},{"mes":"Marzo","nombre":"Semana Santa","tipo":"Festivo","mult":1.9,"prev":2200.0,"real":1813.0,"desv":-387.0,"desv_pct":-17.6,"estado":"Pasado","est_cls":"bg"},{"mes":"Abril","nombre":"Sant Jordi","tipo":"Festivo local","mult":2.2,"prev":2400.0,"real":2405.0,"desv":5.0,"desv_pct":0.2,"estado":"Pasado","est_cls":"bg"},{"mes":"Abril","nombre":"Trobada de Bèsties · Font del Lleó","tipo":"Fiesta popular","mult":1.8,"prev":2200.0,"real":null,"desv":-2200.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Mayo","nombre":"Dia del Treballador / Día del Trabajador","tipo":"Festivo nacional","mult":1.6,"prev":2500.0,"real":null,"desv":-2500.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Mayo","nombre":"Dia de la Mare / Día de la Madre","tipo":"Evento especial","mult":1.8,"prev":2800.0,"real":null,"desv":-2800.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Abril","nombre":"Joan Pera — Casino","tipo":"Monólogo","mult":2.5,"prev":2800.0,"real":null,"desv":-2800.0,"desv_pct":-100.0,"estado":"Confirmado","est_cls":"bb"},{"mes":"Mayo","nombre":"Fira Titiriteiros","tipo":"Feria","mult":1.5,"prev":1800.0,"real":null,"desv":-1800.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Junio","nombre":"San Juan / Caldeja't","tipo":"Festivo","mult":1.5,"prev":2000.0,"real":null,"desv":-2000.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Julio","nombre":"Templàrium","tipo":"Fiesta popular","mult":1.6,"prev":1800.0,"real":null,"desv":-1800.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Julio","nombre":"Escaldàrium","tipo":"Fiesta mayor","mult":2.1,"prev":3800.0,"real":null,"desv":-3800.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Agosto","nombre":"Asunción pico","tipo":"Festivo","mult":1.8,"prev":3500.0,"real":null,"desv":-3500.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Septiembre","nombre":"MIAU","tipo":"Festival arte","mult":1.5,"prev":2200.0,"real":null,"desv":-2200.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"},{"mes":"Octubre","nombre":"Festa Major","tipo":"Fiesta mayor","mult":2.7,"prev":6500.0,"real":null,"desv":-6500.0,"desv_pct":-100.0,"estado":"Pendiente","est_cls":"bgr"}]},"al":{"alertas":[{"prio":"URGENTE","concepto":"26/04/2026 — Joan Pera Casino","detalle":"Confirmado · Reforzar turno noche: +1 sala +1 barra · Prev. 2.800€"},{"prio":"MENSUAL","concepto":"Revisar agenda Casino Caldes","detalle":"1er lunes mes: tscproducciones.cat + entrapolis.com + @tscproduccionescat"},{"prio":"FICHAJE","concepto":"Alerta registros >12h/turno","detalle":"5 errores detectados ene-abr = −1.366€ coste ficticio. Implementar validación."},{"prio":"RATIO","concepto":"Ratio coste/venta: 33,4%","detalle":"Objetivo <35% ✓ · Verano bajará 25-28% · Enero fue el mes más alto (40%)"},{"prio":"PLANTILLA","concepto":"Mireia M. = coste fijo 34,26€/noche","detalle":"Evaluar ROI en días <600€ facturación noche. Considerar flexibilizar."},{"prio":"PREVISION","concepto":"Julio–Agosto: pico temporada alta","detalle":"Reforzar plantilla +2 pers/día. Prever género +40%. Horario mañanas sáb/dom."},{"prio":"HORARIO","concepto":"Nuevo horario desde 6 abril","detalle":"Sin mañana Mié-Vie. Domingo noche abierta. Monitorizar impacto en ratio."},{"prio":"CASINO","concepto":"Programación 2026 sin confirmar (nov)","detalle":"Contactar tscproducciones.cat para fecha noviembre. Impacto ×2.5 noche viernes."}],"kpis":[{"kpi":"Ratio coste laboral / ventas","val":"17.1%","obj":"<35%","estado":"OK","est_cls":"bg","tend":"↗ Mejorando"},{"kpi":"Margen bruto operativo","val":"82.9%","obj":">65%","estado":"OK","est_cls":"bg","tend":"→ Estable"},{"kpi":"Facturación por día operativo","val":"1.325€","obj":">1.300€","estado":"OK","est_cls":"bg","tend":"↗ Mejorando"},{"kpi":"Crecimiento YoY ene-abr","val":"48.5%","obj":">10%","estado":"OK","est_cls":"bg","tend":"↗ Fuerte"},{"kpi":"% días con evento Casino","val":"10.7%","obj":">12%","estado":"Mejorar","est_cls":"br","tend":"→ Estable"},{"kpi":"Ticket medio noche viernes","val":"931€","obj":">1.000€","estado":"Atención","est_cls":"bo","tend":"↗ Mejorando"},{"kpi":"Coste personal / día operativo","val":"226€","obj":"<400€","estado":"OK","est_cls":"bg","tend":"↗ Mejorando"},{"kpi":"Días con ratio >45% coste","val":"21.4%","obj":"<10%","estado":"Muchos","est_cls":"br","tend":"↘ Bajando"}]},"pm":{"menu_uds":1469,"carta_uds":42715,"menu_imp":20942.0,"carta_imp":184074.0,"pct_menu_uds":3.3,"pct_menu_imp":10.2,"mg_medio_menu":null,"mg_medio_carta":81.8,"insight":"La carta domina (90% del importe). El menú aporta volumen de clientes pero poco margen.","menus":[{"rank":1,"nombre":"Menú diario","uds":1469,"pct":3.3,"pct_imp":10.2,"mg_pct":100.0,"bar_w":100}],"menus_mes":[{"mes":"Enero","uds":165,"importe":2354.0},{"mes":"Febrero","uds":193,"importe":2598.0},{"mes":"Marzo","uds":159,"importe":1983.0},{"mes":"Abril","uds":77,"importe":1147.0},{"mes":"Mayo","uds":68,"importe":1013.0},{"mes":"Junio","uds":145,"importe":2160.0},{"mes":"Julio","uds":114,"importe":1699.0},{"mes":"Agosto","uds":156,"importe":2324.0}],"carta":[{"rank":1,"nombre":"Cafe amb llet","uds":3848,"pct":8.7,"bar_w":100},{"rank":2,"nombre":"Tallat","uds":3392,"pct":7.7,"bar_w":88.1},{"rank":3,"nombre":"Aigua Vidre","uds":1877,"pct":4.2,"bar_w":48.8},{"rank":4,"nombre":"Alhambra C:Copa","uds":1796,"pct":4.1,"bar_w":46.7},{"rank":5,"nombre":"Patates Braves","uds":1368,"pct":3.1,"bar_w":35.6},{"rank":6,"nombre":"Cafè amb llet","uds":961,"pct":2.2,"bar_w":25.0},{"rank":7,"nombre":"Cafe sol","uds":809,"pct":1.8,"bar_w":21.0},{"rank":8,"nombre":"Croquetes de l'àvia","uds":754,"pct":1.7,"bar_w":19.6},{"rank":9,"nombre":"Calamars a l'andalusa","uds":732,"pct":1.7,"bar_w":19.0},{"rank":10,"nombre":"Pa cristal·lí","uds":645,"pct":1.5,"bar_w":16.8},{"rank":11,"nombre":"Croisant","uds":595,"pct":1.3,"bar_w":15.5},{"rank":12,"nombre":"Gel","uds":562,"pct":1.3,"bar_w":14.6},{"rank":13,"nombre":"Crusantet","uds":511,"pct":1.2,"bar_w":13.3},{"rank":14,"nombre":"Fingers de pollastre","uds":509,"pct":1.2,"bar_w":13.2},{"rank":15,"nombre":"Mahou 0,0","uds":469,"pct":1.1,"bar_w":12.2},{"rank":16,"nombre":"Pa coca","uds":458,"pct":1.0,"bar_w":11.9},{"rank":17,"nombre":"Bomba","uds":444,"pct":1.0,"bar_w":11.5},{"rank":18,"nombre":"Aigua Gas","uds":424,"pct":1.0,"bar_w":11.0},{"rank":19,"nombre":"Morro fregit","uds":407,"pct":0.9,"bar_w":10.6},{"rank":20,"nombre":"1925 Verda","uds":379,"pct":0.9,"bar_w":9.8}],"top_fams":[{"rank":1,"nombre":"Café","uds":10301,"tipo":"carta","pct":23.3,"bar_w":100},{"rank":2,"nombre":"Tapas Calientes","uds":9041,"tipo":"carta","pct":20.5,"bar_w":87.8},{"rank":3,"nombre":"Refrescos","uds":5161,"tipo":"carta","pct":11.7,"bar_w":50.1},{"rank":4,"nombre":"Cervezas","uds":4502,"tipo":"carta","pct":10.2,"bar_w":43.7},{"rank":5,"nombre":"Suplementos","uds":2593,"tipo":"carta","pct":5.9,"bar_w":25.2},{"rank":6,"nombre":"Bolleria","uds":2018,"tipo":"carta","pct":4.6,"bar_w":19.6},{"rank":7,"nombre":"Postres","uds":1701,"tipo":"carta","pct":3.8,"bar_w":16.5},{"rank":8,"nombre":"Menu","uds":1469,"tipo":"menu","pct":3.3,"bar_w":14.3},{"rank":9,"nombre":"Vinos","uds":1376,"tipo":"carta","pct":3.1,"bar_w":13.4},{"rank":10,"nombre":"Bocadillos calientes","uds":825,"tipo":"carta","pct":1.9,"bar_w":8.0},{"rank":11,"nombre":"Huevos estrellados","uds":718,"tipo":"carta","pct":1.6,"bar_w":7.0},{"rank":12,"nombre":"Desayunos","uds":686,"tipo":"carta","pct":1.6,"bar_w":6.7},{"rank":13,"nombre":"Bocadillos fríos","uds":679,"tipo":"carta","pct":1.5,"bar_w":6.6},{"rank":14,"nombre":"Tosta Pizzas","uds":526,"tipo":"carta","pct":1.2,"bar_w":5.1},{"rank":15,"nombre":"Ensaladas","uds":440,"tipo":"carta","pct":1.0,"bar_w":4.3}],"top_prods":[{"rank":1,"nombre":"Cafe amb llet","uds":3848,"pct":8.7,"bar_w":100},{"rank":2,"nombre":"Tallat","uds":3392,"pct":7.7,"bar_w":88.1},{"rank":3,"nombre":"Aigua Vidre","uds":1877,"pct":4.2,"bar_w":48.8},{"rank":4,"nombre":"Alhambra C:Copa","uds":1796,"pct":4.1,"bar_w":46.7},{"rank":5,"nombre":"Patates Braves","uds":1368,"pct":3.1,"bar_w":35.6},{"rank":6,"nombre":"Cafè amb llet","uds":961,"pct":2.2,"bar_w":25.0},{"rank":7,"nombre":"Cafe sol","uds":809,"pct":1.8,"bar_w":21.0},{"rank":8,"nombre":"Croquetes de l'àvia","uds":754,"pct":1.7,"bar_w":19.6},{"rank":9,"nombre":"Calamars a l'andalusa","uds":732,"pct":1.7,"bar_w":19.0},{"rank":10,"nombre":"Pa cristal·lí","uds":645,"pct":1.5,"bar_w":16.8},{"rank":11,"nombre":"Croisant","uds":595,"pct":1.3,"bar_w":15.5},{"rank":12,"nombre":"Gel","uds":562,"pct":1.3,"bar_w":14.6},{"rank":13,"nombre":"Crusantet","uds":511,"pct":1.2,"bar_w":13.3},{"rank":14,"nombre":"Fingers de pollastre","uds":509,"pct":1.2,"bar_w":13.2},{"rank":15,"nombre":"Mahou 0,0","uds":469,"pct":1.1,"bar_w":12.2},{"rank":16,"nombre":"Pa coca","uds":458,"pct":1.0,"bar_w":11.9},{"rank":17,"nombre":"Bomba","uds":444,"pct":1.0,"bar_w":11.5},{"rank":18,"nombre":"Aigua Gas","uds":424,"pct":1.0,"bar_w":11.0},{"rank":19,"nombre":"Morro fregit","uds":407,"pct":0.9,"bar_w":10.6},{"rank":20,"nombre":"1925 Verda","uds":379,"pct":0.9,"bar_w":9.8}]},"om":{"omnes":[{"sf":"Tapas Calientes","np":92,"pmin":1.6,"pmax":16,"baja":26,"media_p":52,"alta":14,"aper":10.0,"lim":3,"est_ap":"Excede","ap_cls":"br","ratio_do":0.92,"est_do":"OK","do_cls":"bg"},{"sf":"Tapas Frias","np":17,"pmin":3.95,"pmax":14.9,"baja":10,"media_p":4,"alta":3,"aper":3.77,"lim":3,"est_ap":"Excede","ap_cls":"br","ratio_do":1.05,"est_do":"OK","do_cls":"bg"},{"sf":"Ensaladas","np":7,"pmin":5.95,"pmax":12.65,"baja":1,"media_p":2,"alta":4,"aper":2.13,"lim":2.5,"est_ap":"OK","ap_cls":"bg","ratio_do":1.01,"est_do":"OK","do_cls":"bg"},{"sf":"Huevos Estrellados","np":12,"pmin":7.95,"pmax":14.9,"baja":7,"media_p":3,"alta":2,"aper":1.87,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":1,"est_do":"OK","do_cls":"bg"},{"sf":"Tosta Pizzas","np":8,"pmin":9.25,"pmax":12.9,"baja":1,"media_p":3,"alta":4,"aper":1.39,"lim":2.5,"est_ap":"OK","ap_cls":"bg","ratio_do":0.97,"est_do":"OK","do_cls":"bg"},{"sf":"Bocadillos Calientes","np":32,"pmin":3.1,"pmax":7,"baja":15,"media_p":11,"alta":6,"aper":2.26,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":0.93,"est_do":"OK","do_cls":"bg"},{"sf":"Bocadillos Frios","np":26,"pmin":2.9,"pmax":11.85,"baja":22,"media_p":3,"alta":1,"aper":4.09,"lim":3,"est_ap":"Excede","ap_cls":"br","ratio_do":0.89,"est_do":"OK","do_cls":"bg"},{"sf":"Postres","np":41,"pmin":1,"pmax":6.5,"baja":5,"media_p":6,"alta":30,"aper":6.5,"lim":3,"est_ap":"Excede","ap_cls":"br","ratio_do":1.02,"est_do":"OK","do_cls":"bg"},{"sf":"Cervezas Copa","np":15,"pmin":2.5,"pmax":3.5,"baja":10,"media_p":1,"alta":4,"aper":1.4,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":0.93,"est_do":"OK","do_cls":"bg"},{"sf":"Cervezas Caña","np":11,"pmin":2.05,"pmax":4.15,"baja":5,"media_p":4,"alta":2,"aper":2.02,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":0.77,"est_do":"Bajo","do_cls":"br"},{"sf":"Cervezas Otros","np":19,"pmin":1.8,"pmax":11.65,"baja":17,"media_p":0,"alta":2,"aper":6.47,"lim":3,"est_ap":"Excede","ap_cls":"br","ratio_do":0.82,"est_do":"Bajo","do_cls":"br"},{"sf":"Vinos Copa","np":35,"pmin":3.25,"pmax":9.1,"baja":33,"media_p":0,"alta":2,"aper":2.8,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":0.92,"est_do":"OK","do_cls":"bg"},{"sf":"Vinos Botella","np":20,"pmin":15.15,"pmax":27.5,"baja":10,"media_p":7,"alta":3,"aper":1.82,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":0.93,"est_do":"OK","do_cls":"bg"},{"sf":"Sangría/Jarra","np":5,"pmin":14.85,"pmax":17,"baja":4,"media_p":0,"alta":1,"aper":1.14,"lim":2.5,"est_ap":"OK","ap_cls":"bg","ratio_do":1.02,"est_do":"OK","do_cls":"bg"},{"sf":"Aguas","np":7,"pmin":1.55,"pmax":5,"baja":6,"media_p":0,"alta":1,"aper":3.23,"lim":2.5,"est_ap":"Excede","ap_cls":"br","ratio_do":0.82,"est_do":"Bajo","do_cls":"br"},{"sf":"Zumos","np":7,"pmin":2.2,"pmax":2.75,"baja":5,"media_p":0,"alta":2,"aper":1.25,"lim":2.5,"est_ap":"OK","ap_cls":"bg","ratio_do":1.07,"est_do":"Alto","do_cls":"bo"},{"sf":"Refrescos","np":20,"pmin":2.1,"pmax":2.9,"baja":6,"media_p":0,"alta":14,"aper":1.38,"lim":3,"est_ap":"OK","ap_cls":"bg","ratio_do":1.05,"est_do":"OK","do_cls":"bg"},{"sf":"Cafés","np":30,"pmin":1.24,"pmax":26.5,"baja":29,"media_p":0,"alta":1,"aper":21.37,"lim":3,"est_ap":"Excede","ap_cls":"br","ratio_do":0.6,"est_do":"Bajo","do_cls":"br"}]},"pl":{"labels":{"meses":["Enero","Febrero","Marzo"],"acum":"Ene-Mar","m1":"Marzo","m2":"Febrero","m3":"Enero"},"e_mar":-4206.0,"e_feb":1142.0,"e_acum":-3149.0,"v_mar":16373.0,"v_feb":22439.0,"v_acum":61765.0,"cmv_mar_pct":43.8,"per_mar_pct":49.1,"ebitda_mar_pct":-25.7,"ebitda_acum_pct":-5.1,"rows":[{"section":true,"label":"INGRESOS"},{"label":"Total Ventas","bold":true,"subtotal":false,"cols":[{"v":22954.0,"p":100.0},{"v":22439.0,"p":100.0},{"v":16373.0,"p":100.0}],"acum":{"v":61765.0,"p":100.0},"mar":{"v":16373.0,"p":100.0},"feb":{"v":22439.0,"p":100.0},"ene":{"v":22954.0,"p":100.0}},{"label":"Ventas Caja 2","bold":false,"subtotal":false,"cols":[{"v":22954.0,"p":100.0},{"v":22439.0,"p":100.0},{"v":16373.0,"p":100.0}],"acum":{"v":61765.0,"p":100.0},"mar":{"v":16373.0,"p":100.0},"feb":{"v":22439.0,"p":100.0},"ene":{"v":22954.0,"p":100.0}},{"label":"Ventas Caja 1","bold":false,"subtotal":false,"cols":[{"v":0.0,"p":0.0},{"v":0.0,"p":0.0},{"v":0.0,"p":0.0}],"acum":{"v":0.0,"p":0.0},"mar":{"v":0.0,"p":0.0},"feb":{"v":0.0,"p":0.0},"ene":{"v":0.0,"p":0.0}},{"section":true,"label":"COSTES VARIABLES"},{"label":"CMV (coste mercancia vendida)","bold":false,"subtotal":false,"cols":[{"v":8173.0,"p":35.6},{"v":5891.0,"p":26.3},{"v":7170.0,"p":43.8}],"acum":{"v":21234.0,"p":34.4},"mar":{"v":7170.0,"p":43.8},"feb":{"v":5891.0,"p":26.3},"ene":{"v":8173.0,"p":35.6}},{"label":"Producto limpieza","bold":false,"subtotal":false,"cols":[{"v":244.0,"p":1.1},{"v":152.0,"p":0.7},{"v":145.0,"p":0.9}],"acum":{"v":541.0,"p":0.9},"mar":{"v":145.0,"p":0.9},"feb":{"v":152.0,"p":0.7},"ene":{"v":244.0,"p":1.1}},{"label":"Servicio en mesa","bold":false,"subtotal":false,"cols":[{"v":116.0,"p":0.5},{"v":77.0,"p":0.3},{"v":109.0,"p":0.7}],"acum":{"v":301.0,"p":0.5},"mar":{"v":109.0,"p":0.7},"feb":{"v":77.0,"p":0.3},"ene":{"v":116.0,"p":0.5}},{"label":"Otros variables","bold":false,"subtotal":false,"cols":[{"v":0.0,"p":0.0},{"v":0.0,"p":0.0},{"v":8.0,"p":0.0}],"acum":{"v":8.0,"p":0.0},"mar":{"v":8.0,"p":0.0},"feb":{"v":0.0,"p":0.0},"ene":{"v":0.0,"p":0.0}},{"section":true,"label":"GASTOS ESTRUCTURALES"},{"label":"Personal","bold":false,"subtotal":false,"cols":[{"v":10139.0,"p":44.2},{"v":10413.0,"p":46.4},{"v":8046.0,"p":49.1}],"acum":{"v":28598.0,"p":46.3},"mar":{"v":8046.0,"p":49.1},"feb":{"v":10413.0,"p":46.4},"ene":{"v":10139.0,"p":44.2}},{"label":"Suministros","bold":false,"subtotal":false,"cols":[{"v":745.0,"p":3.2},{"v":962.0,"p":4.3},{"v":928.0,"p":5.7}],"acum":{"v":2635.0,"p":4.3},"mar":{"v":928.0,"p":5.7},"feb":{"v":962.0,"p":4.3},"ene":{"v":745.0,"p":3.2}},{"label":"Contratos","bold":false,"subtotal":false,"cols":[{"v":679.0,"p":3.0},{"v":652.0,"p":2.9},{"v":809.0,"p":4.9}],"acum":{"v":2140.0,"p":3.5},"mar":{"v":809.0,"p":4.9},"feb":{"v":652.0,"p":2.9},"ene":{"v":679.0,"p":3.0}},{"label":"Marketing","bold":false,"subtotal":false,"cols":[{"v":563.0,"p":2.5},{"v":250.0,"p":1.1},{"v":305.0,"p":1.9}],"acum":{"v":1118.0,"p":1.8},"mar":{"v":305.0,"p":1.9},"feb":{"v":250.0,"p":1.1},"ene":{"v":563.0,"p":2.5}},{"label":"Otros gastos","bold":false,"subtotal":false,"cols":[{"v":134.0,"p":0.6},{"v":507.0,"p":2.3},{"v":552.0,"p":3.4}],"acum":{"v":1193.0,"p":1.9},"mar":{"v":552.0,"p":3.4},"feb":{"v":507.0,"p":2.3},"ene":{"v":134.0,"p":0.6}},{"label":"Mantenimiento","bold":false,"subtotal":false,"cols":[{"v":36.0,"p":0.2},{"v":184.0,"p":0.8},{"v":297.0,"p":1.8}],"acum":{"v":517.0,"p":0.8},"mar":{"v":297.0,"p":1.8},"feb":{"v":184.0,"p":0.8},"ene":{"v":36.0,"p":0.2}},{"label":"S.O.P. / EBITDAR","bold":false,"subtotal":true,"cols":[{"v":2125.0,"p":9.3},{"v":3352.0,"p":14.9},{"v":-1996.0,"p":-12.2}],"acum":{"v":3481.0,"p":5.6},"mar":{"v":-1996.0,"p":-12.2},"feb":{"v":3352.0,"p":14.9},"ene":{"v":2125.0,"p":9.3}},{"section":true,"label":"COSTES FIJOS"},{"label":"Alquileres","bold":false,"subtotal":false,"cols":[{"v":2210.0,"p":9.6},{"v":2210.0,"p":9.8},{"v":2210.0,"p":13.5}],"acum":{"v":6630.0,"p":10.7},"mar":{"v":2210.0,"p":13.5},"feb":{"v":2210.0,"p":9.8},"ene":{"v":2210.0,"p":9.6}},{"label":"Royalty","bold":false,"subtotal":false,"cols":[{"v":0.0,"p":0.0},{"v":0.0,"p":0.0},{"v":0.0,"p":0.0}],"acum":{"v":0.0,"p":0.0},"mar":{"v":0.0,"p":0.0},"feb":{"v":0.0,"p":0.0},"ene":{"v":0.0,"p":0.0}},{"label":"EBITDA","bold":true,"subtotal":false,"cols":[{"v":-85.0,"p":-0.4},{"v":1142.0,"p":5.1},{"v":-4206.0,"p":-25.7}],"acum":{"v":-3149.0,"p":-5.1},"mar":{"v":-4206.0,"p":-25.7},"feb":{"v":1142.0,"p":5.1},"ene":{"v":-85.0,"p":-0.4}}]}};
+/* ─── FIN DATOS ──────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════════
+   FUNCIONES DE UTILIDAD — no modificar
+   ═══════════════════════════════════════════════════════════════════ */
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Formateo numérico estilo español: 26.444 / 1.234,56
+function fmt(v, dec) {
+  dec = dec || 0;
+  if (v === null || v === undefined) return '\u2014';
+  var n = Number(v);
+  if (isNaN(n)) return v !== '' ? String(v) : '\u2014';
+  return n.toLocaleString('de-DE', {minimumFractionDigits: dec, maximumFractionDigits: dec});
+}
+
+function pstr(v, dec) {
+  dec = dec == null ? 1 : dec;
+  return (v >= 0 ? '+' : '') + Number(v).toFixed(dec) + '%';
+}
+
+function pcls(v) { return Number(v) >= 0 ? 'pos' : 'neg'; }
+
+function bar(w, cls) {
+  cls = cls || 'bar-g';
+  return '<div class="bar-track"><div class="bar-fill ' + cls + '" style="width:' + Number(w).toFixed(1) + '%"></div></div>';
+}
+
+function bdg(text, cls) {
+  return '<span class="badge ' + (cls || 'bgr') + '">' + (text || '\u2014') + '</span>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FACTURACIÓN
+   ═══════════════════════════════════════════════════════════════════ */
+function renderFac() {
+  var f = DATA.fac;
+  var mediaOk = (f.total_real / f.total_dias) > 1300;
+  var perOk   = f.pct_personal < 35;
+  var marginPct = (f.margen / f.total_real * 100).toFixed(1);
+  var ppp = f.pct_vs_prev;
+
+  var tm = f.ticket_medio || {};
+  var h = '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_real) + '€</div><div class="kpi-lbl">Facturacion total ' + DATA.meta.periodo + ' (neto)</div><div class="kpi-sub">' + f.total_dias + ' dias operativos</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_c2 || 0) + '€</div><div class="kpi-lbl">Caja 2 · Restaurant</div><div class="kpi-sub">' + (f.total_real ? ((f.total_c2 || 0) / f.total_real * 100).toFixed(1) : 0) + '% del total</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_c1 || 0) + '€</div><div class="kpi-lbl">Caja 1 · Cafeteria</div><div class="kpi-sub">' + (f.total_real ? ((f.total_c1 || 0) / f.total_real * 100).toFixed(1) : 0) + '% del total</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(f.total_prev) + '€</div><div class="kpi-lbl">Facturacion prevista</div><div class="kpi-sub">' + pstr(ppp) + ' vs previsión</div></div>'
+    + '<div class="kpi ' + (mediaOk ? 'ok' : 'warn') + '"><div class="kpi-val">' + fmt(f.total_real / f.total_dias) + '€</div><div class="kpi-lbl">Media por dia</div><div class="kpi-sub">Objetivo &gt;1.300€/dia</div></div>'
+    + '<div class="kpi ' + (perOk   ? 'ok' : 'warn') + '"><div class="kpi-val">' + f.pct_personal.toFixed(1) + '%</div><div class="kpi-lbl">Coste personal / ventas</div><div class="kpi-sub">Objetivo &lt;35%</div></div>'
+    + '<div class="kpi ok"><div class="kpi-val">' + fmt(f.margen) + '€</div><div class="kpi-lbl">Margen bruto</div><div class="kpi-sub">' + marginPct + '%</div></div>'
+    + '</div>'
+    + '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">☀️ ' + tm.manana.toFixed(2)   + '€</div><div class="kpi-lbl">Ticket medio Mañana</div><div class="kpi-sub">' + fmt(tm.pax_m  || 0) + ' comensales</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🍽️ ' + tm.mediodia.toFixed(2) + '€</div><div class="kpi-lbl">Ticket medio Mediodía</div><div class="kpi-sub">' + fmt(tm.pax_md || 0) + ' comensales</div></div>'
+    + '<div class="kpi"><div class="kpi-val" style="font-size:18px">🌙 ' + tm.noche.toFixed(2)    + '€</div><div class="kpi-lbl">Ticket medio Noche</div><div class="kpi-sub">' + fmt(tm.pax_n  || 0) + ' comensales</div></div>'
+    + '<div class="kpi ok"><div class="kpi-val" style="font-size:18px">📊 ' + tm.global.toFixed(2)  + '€</div><div class="kpi-lbl">Ticket medio Global</div><div class="kpi-sub">' + fmt(tm.pax_total || 0) + ' comensales (neto/pax)</div></div>'
+    + '</div>';
+
+  // Ticket medio y afluencia por mes y turno
+  if (f.tm_mes && f.tm_mes.length) {
+    h += '<div class="sec"><div class="sec-title">Ticket medio y afluencia por mes y turno</div>'
+       + '<div style="font-size:11px;color:#8a7560;margin-bottom:8px">Comensales y € netos por comensal · C1+C2 (C1 con detalle desde jun-26) · Mañana &lt;12h · Mediodía 12-19h · Noche &gt;19h</div>'
+       + '<div class="tbl-wrap"><table>'
+       + '<thead><tr><th>Mes</th>'
+       + '<th class="tr">☀️ Comensales</th><th class="tr">Ticket €</th>'
+       + '<th class="tr">🍽️ Comensales</th><th class="tr">Ticket €</th>'
+       + '<th class="tr">🌙 Comensales</th><th class="tr">Ticket €</th>'
+       + '<th class="tr">Total pax</th><th class="tr">Ticket €</th></tr></thead><tbody>';
+    var tp = 0, te = 0;
+    f.tm_mes.forEach(function(r) {
+      h += '<tr><td class="fw">' + r.mes + '</td>'
+         + '<td class="tr">' + fmt(r.m.pax)  + '</td><td class="tr">'  + r.m.tm.toFixed(2)  + '</td>'
+         + '<td class="tr">' + fmt(r.md.pax) + '</td><td class="tr fm">' + r.md.tm.toFixed(2) + '</td>'
+         + '<td class="tr">' + fmt(r.n.pax)  + '</td><td class="tr fm">' + r.n.tm.toFixed(2)  + '</td>'
+         + '<td class="tr fw">' + fmt(r.tot.pax) + '</td><td class="tr fm fw">' + r.tot.tm.toFixed(2) + '</td></tr>';
+      tp += r.tot.pax; te += r.tot.pax * r.tot.tm;
+    });
+    h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td><td colspan="6"></td>'
+       + '<td class="tr">' + fmt(tp) + '</td><td class="tr fm">' + (tp ? (te/tp).toFixed(2) : '0') + '</td></tr>';
+    h += '</tbody></table></div></div>';
+  }
+
+  // Tabla mensual
+  h += '<div class="two-col">';
+  h += '<div class="sec"><div class="sec-title">Facturacion mensual</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Mes</th><th class="tr">Caja 2 €</th><th class="tr">Caja 1 €</th><th class="tr">Total €</th><th class="tr">Previsto €</th><th class="tr">vs Prev.</th><th class="tr">Dias</th><th class="tr">Media/dia</th><th class="tr">% Personal</th></tr></thead><tbody>';
+  var totalCosteM = 0;
+  f.meses.forEach(function(m) {
+    var media = m.dias ? m.real / m.dias : 0;
+    var pcp   = m.real ? m.coste_p / m.real * 100 : 0;
+    totalCosteM += m.coste_p;
+    h += '<tr><td class="fw">' + m.nombre + '</td>'
+       + '<td class="tr">'     + fmt(m.c2 || 0)  + '</td>'
+       + '<td class="tr">'     + fmt(m.c1 || 0)  + '</td>'
+       + '<td class="tr fm">'  + fmt(m.real)     + '</td>'
+       + '<td class="tr">'     + fmt(m.previsto)  + '</td>'
+       + '<td class="tr ' + pcls(m.dv) + '">' + pstr(m.dv) + '</td>'
+       + '<td class="tc">'     + m.dias           + '</td>'
+       + '<td class="tr">'     + (m.dias ? fmt(media) : '\u2014') + '</td>'
+       + '<td class="tr">'     + pcp.toFixed(1)   + '%</td></tr>';
+  });
+  h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td>'
+     + '<td class="tr">'     + fmt(f.total_c2 || 0) + '</td>'
+     + '<td class="tr">'     + fmt(f.total_c1 || 0) + '</td>'
+     + '<td class="tr fm">'  + fmt(f.total_real) + '</td>'
+     + '<td class="tr">'     + fmt(f.total_prev) + '</td>'
+     + '<td class="tr ' + pcls(ppp) + '">' + pstr(ppp) + '</td>'
+     + '<td class="tc">'     + f.total_dias      + '</td>'
+     + '<td class="tr">'     + fmt(f.total_real / f.total_dias) + '</td>'
+     + '<td class="tr">'     + (totalCosteM / f.total_real * 100).toFixed(1) + '%</td></tr>';
+  h += '</tbody></table></div></div>';
+
+  // Top 10 días
+  h += '<div class="sec"><div class="sec-title">Top 10 dias</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Fecha</th><th>Dia</th><th class="tr">C2 €</th><th class="tr">C1 €</th><th class="tr">Total €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
+  f.top10.forEach(function(d, i) {
+    var ev = d.evento || '';
+    h += '<tr><td class="tc fw">' + (i+1) + '</td>'
+       + '<td>' + d.fecha + '</td><td>' + d.dia + '</td>'
+       + '<td class="tr">'       + fmt(d.c2 || 0)  + '</td>'
+       + '<td class="tr">'       + fmt(d.c1 || 0)  + '</td>'
+       + '<td class="tr fm fw">' + fmt(d.real)     + '</td>'
+       + '<td class="tr">'       + fmt(d.previsto)  + '</td>'
+       + '<td class="tr ' + pcls(d.desv_pct) + '">' + pstr(d.desv_pct) + '</td>'
+       + '<td>' + bdg(ev || '\u2014', ev ? 'bg' : 'bgr') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  // Últimos 15 días
+  h += '<div class="sec"><div class="sec-title">Ultimos 15 dias</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Fecha</th><th>Dia</th><th class="tr">C2 €</th><th class="tr">C1 €</th><th class="tr">Total €</th><th class="tr">Previsto €</th><th class="tr">Desv.</th><th>Evento</th></tr></thead><tbody>';
+  f.ultimos15.forEach(function(d) {
+    var ev = d.evento || '';
+    h += '<tr><td class="fw">' + d.fecha + '</td><td>' + d.dia + '</td>'
+       + '<td class="tr">'       + fmt(d.c2 || 0)  + '</td>'
+       + '<td class="tr">'       + fmt(d.c1 || 0)  + '</td>'
+       + '<td class="tr fm fw">' + fmt(d.real)     + '</td>'
+       + '<td class="tr">'       + fmt(d.previsto)  + '</td>'
+       + '<td class="tr ' + pcls(d.desv_pct) + '">' + pstr(d.desv_pct) + '</td>'
+       + '<td>' + bdg(ev || '\u2014', ev ? 'bg' : 'bgr') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Rendimiento por día de semana
+  h += '<div class="sec"><div class="sec-title">Rendimiento por dia de semana</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Dia</th><th class="tr">Dias</th><th class="tr">Total €</th><th class="tr">Media/dia</th><th class="tr">% Personal</th><th>Volumen</th></tr></thead><tbody>';
+  f.dow.forEach(function(d) {
+    h += '<tr><td class="fw">'  + d.dia  + '</td>'
+       + '<td class="tc">'      + d.dias + '</td>'
+       + '<td class="tr fm">'   + fmt(d.total) + '</td>'
+       + '<td class="tr fm fw">'+ fmt(d.media) + '</td>'
+       + '<td class="tr">'      + d.pct_personal.toFixed(1) + '%</td>'
+       + '<td>'                 + bar(d.bar_w, d.bar_cls)   + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  document.getElementById('page-fac').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PERSONAL
+   ═══════════════════════════════════════════════════════════════════ */
+function renderPer() {
+  var p = DATA.per;
+  var ratioOk  = p.ratio < 35;
+  var costeDOk = p.coste_dia < 400;
+
+  var h = '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(p.total_coste) + '€</div><div class="kpi-lbl">Coste total personal</div><div class="kpi-sub">Fichajes ' + DATA.meta.periodo + '</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + p.n_empleados + '</div><div class="kpi-lbl">Empleados activos</div></div>'
+    + '<div class="kpi ' + (ratioOk  ? 'ok' : 'warn') + '"><div class="kpi-val">' + p.ratio.toFixed(1) + '%</div><div class="kpi-lbl">Ratio coste/ventas</div><div class="kpi-sub">Objetivo &lt;35%</div></div>'
+    + '<div class="kpi ' + (costeDOk ? 'ok' : 'warn') + '"><div class="kpi-val">' + fmt(p.coste_dia) + '€</div><div class="kpi-lbl">Coste medio/dia</div><div class="kpi-sub">Objetivo &lt;400€</div></div>'
+    + '</div>';
+
+  h += '<div class="two-col">';
+
+  // Coste semanal vs ventas
+  h += '<div class="sec"><div class="sec-title">Coste semanal vs ventas</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Semana</th><th class="tr">Coste €</th><th class="tr">Ventas €</th><th class="tr">% Sem.</th><th class="tr">% Acum.</th><th>Ratio</th></tr></thead><tbody>';
+  p.semanas.forEach(function(s) {
+    var rs = s.pct > 100 ? ' style="background:#fff7ed"' : '';
+    h += '<tr' + rs + '><td class="fw">S' + s.sem + '</td>'
+       + '<td class="tr fm">' + fmt(s.coste) + '</td>'
+       + '<td class="tr">'    + fmt(s.ventas) + '</td>'
+       + '<td class="tr fw ' + (s.pct > 100 ? 'br' : '') + '">' + s.pct.toFixed(1) + '%</td>'
+       + '<td class="tr">'   + s.cum_pct.toFixed(1) + '%</td>'
+       + '<td>'               + bar(s.bar_w, s.bar_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Empleados
+  h += '<div class="sec"><div class="sec-title">Empleados ' + DATA.meta.periodo + '</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Empleado</th><th class="tr">Coste €</th><th class="tr">% masa</th><th class="tr">Horas</th><th class="tr">€/h</th><th>Peso</th></tr></thead><tbody>';
+  p.empleados.forEach(function(e) {
+    h += '<tr><td class="fw">' + e.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(e.coste)    + '</td>'
+       + '<td class="tr">'     + e.pct_masa.toFixed(1) + '%</td>'
+       + '<td class="tr">'     + e.horas + 'h</td>'
+       + '<td class="tr">'     + (e.coste_hora != null ? e.coste_hora.toFixed(2) : '\u2014') + '</td>'
+       + '<td>'                + bar(e.bar_w, 'bar-b') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  h += '<div class="two-col">';
+
+  // Coste por mes
+  h += '<div class="sec"><div class="sec-title">Coste por mes</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Mes</th><th class="tr">Coste €</th><th class="tr">Ventas €</th><th class="tr">%</th></tr></thead><tbody>';
+  p.meses.forEach(function(m) {
+    h += '<tr><td class="fw">' + m.nombre + '</td>'
+       + '<td class="tr fm">' + fmt(m.coste)  + '</td>'
+       + '<td class="tr">'    + fmt(m.ventas) + '</td>'
+       + '<td class="tr">'    + m.pct.toFixed(1) + '%</td></tr>';
+  });
+  var totC = p.meses.reduce(function(s,m){return s+m.coste;},0);
+  var totV = p.meses.reduce(function(s,m){return s+m.ventas;},0);
+  h += '<tr style="background:#f0fdf4;font-weight:700"><td>TOTAL</td>'
+     + '<td class="tr fm">' + fmt(totC) + '</td>'
+     + '<td class="tr">'    + fmt(totV) + '</td>'
+     + '<td class="tr">'    + (totV ? (totC/totV*100).toFixed(1) : '0.0') + '%</td></tr>';
+  h += '</tbody></table></div></div>';
+
+  // Eficiencia por día semana
+  h += '<div class="sec"><div class="sec-title">Eficiencia por dia semana</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Dia</th><th class="tr">Fact. media</th><th class="tr">Coste</th><th class="tr">Ratio</th><th class="tr">Obj.</th><th>Estado</th></tr></thead><tbody>';
+  p.dow_efic.forEach(function(e) {
+    h += '<tr><td class="fw">' + e.dia + '</td>'
+       + '<td class="tr">'    + fmt(e.fact)  + '</td>'
+       + '<td class="tr">'    + fmt(e.coste) + '</td>'
+       + '<td class="tr fw">' + e.ratio.toFixed(1) + '%</td>'
+       + '<td class="tr">'    + e.obj.toFixed(0)   + '%</td>'
+       + '<td>'               + bdg(e.estado, e.est_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  document.getElementById('page-per').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EVENTOS
+   ═══════════════════════════════════════════════════════════════════ */
+function renderEv() {
+  var h = '<div class="sec"><div class="sec-title">Calendario eventos 2026</div><div class="tbl-wrap"><table>'
+    + '<thead><tr><th>Mes</th><th>Evento</th><th>Tipo</th><th class="tc">Mult.</th>'
+    + '<th class="tr">Prev. €</th><th class="tr">Real €</th><th class="tr">Desv. €</th><th class="tr">%</th><th>Estado</th></tr></thead><tbody>';
+  DATA.ev.eventos.forEach(function(ev) {
+    var dpct = ev.desv_pct != null ? ev.desv_pct : null;
+    var dc   = (dpct != null && dpct < 0) ? 'neg' : '';
+    h += '<tr><td>' + ev.mes + '</td>'
+       + '<td class="fw">' + ev.nombre + '</td>'
+       + '<td style="font-size:11px;color:#64748b">' + ev.tipo + '</td>'
+       + '<td class="tc">' + ev.mult + 'x</td>'
+       + '<td class="tr">'    + (ev.prev  != null ? fmt(ev.prev)  : '\u2014') + '</td>'
+       + '<td class="tr fm">' + (ev.real  != null ? fmt(ev.real)  : '\u2014') + '</td>'
+       + '<td class="tr ' + dc + '">' + (ev.desv  != null ? fmt(ev.desv)  : '\u2014') + '</td>'
+       + '<td class="tr ' + dc + '">' + (dpct != null ? pstr(dpct) : '\u2014') + '</td>'
+       + '<td>' + bdg(ev.estado, ev.est_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  document.getElementById('page-ev').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ALERTAS
+   ═══════════════════════════════════════════════════════════════════ */
+function renderAl() {
+  var h = '<div class="two-col">';
+
+  h += '<div class="sec"><div class="sec-title">Alertas operativas</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Prioridad</th><th>Concepto</th><th>Detalle</th></tr></thead><tbody>';
+  DATA.al.alertas.forEach(function(a) {
+    var cls = a.prio.indexOf('URGENTE') >= 0 ? 'br' : 'bo';
+    h += '<tr><td>' + bdg(a.prio, cls) + '</td>'
+       + '<td class="fw">' + a.concepto + '</td>'
+       + '<td style="font-size:11px;color:#64748b">' + a.detalle + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  h += '<div class="sec"><div class="sec-title">KPIs financieros</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Indicador</th><th class="tr">Valor</th><th class="tr">Objetivo</th><th>Estado</th><th>Tendencia</th></tr></thead><tbody>';
+  DATA.al.kpis.forEach(function(k) {
+    h += '<tr><td>' + k.kpi + '</td>'
+       + '<td class="tr fm fw">' + k.val + '</td>'
+       + '<td class="tr" style="color:#64748b">' + k.obj + '</td>'
+       + '<td>' + bdg(k.estado, k.est_cls) + '</td>'
+       + '<td style="font-size:11px;color:#64748b">' + k.tend + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  document.getElementById('page-al').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRODUCT MIX
+   ═══════════════════════════════════════════════════════════════════ */
+function renderPm() {
+  var pm = DATA.pm;
+  var totUds = pm.menu_uds + pm.carta_uds;
+
+  // ── KPIs: Menú vs Carta ────────────────────────────────────────────────────
+  var pctM  = pm.pct_menu_uds;
+  var pctC  = (100 - pctM).toFixed(1);
+  var h = '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(pm.menu_uds) + '</div><div class="kpi-lbl">Menús vendidos</div><div class="kpi-sub">' + pctM.toFixed(1) + '% uds · ' + pm.pct_menu_imp.toFixed(1) + '% importe</div></div>'
+    + '<div class="kpi"><div class="kpi-val">' + fmt(pm.carta_uds) + '</div><div class="kpi-lbl">Productos carta</div><div class="kpi-sub">' + pctC + '% uds · ' + (100 - pm.pct_menu_imp).toFixed(1) + '% importe</div></div>'
+    + '<div class="kpi ' + (pm.mg_medio_menu  != null ? 'ok' : '') + '"><div class="kpi-val">' + (pm.mg_medio_menu  != null ? pm.mg_medio_menu  + '%' : '—') + '</div><div class="kpi-lbl">Margen medio menú</div></div>'
+    + '<div class="kpi ' + (pm.mg_medio_carta != null ? 'ok' : '') + '"><div class="kpi-val">' + (pm.mg_medio_carta != null ? pm.mg_medio_carta + '%' : '—') + '</div><div class="kpi-lbl">Margen medio carta</div></div>'
+    + '</div>';
+
+  // ── Insight automático ────────────────────────────────────────────────────
+  h += '<div class="alert info" style="margin-bottom:14px">💡 ' + pm.insight + '</div>';
+
+  // ── Evolución mensual de menús ────────────────────────────────────────────
+  var maxMesUds = Math.max.apply(null, pm.menus_mes.map(function(m){return m.uds;}));
+  h += '<div class="sec" style="margin-bottom:14px"><div class="sec-title">Evolución mensual de menús vendidos</div>'
+     + '<div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Mes</th><th class="tr">Menús</th><th class="tr">Importe €</th><th class="tr">€/menú</th><th>Tendencia</th></tr></thead><tbody>';
+  var prevUds = 0;
+  pm.menus_mes.forEach(function(m) {
+    var ticketM = m.uds ? (m.importe / m.uds).toFixed(2) : '—';
+    var tend = '';
+    if (prevUds > 0) {
+      var diff = m.uds - prevUds;
+      var pct  = (diff / prevUds * 100).toFixed(1);
+      tend = '<span class="' + (diff >= 0 ? 'pos' : 'neg') + '">' + (diff >= 0 ? '▲' : '▼') + ' ' + Math.abs(pct) + '%</span>';
+    }
+    var bw = maxMesUds ? (m.uds / maxMesUds * 100).toFixed(1) : 0;
+    h += '<tr><td class="fw">' + m.mes + '</td>'
+       + '<td class="tr fm">' + fmt(m.uds) + '</td>'
+       + '<td class="tr fm">' + fmt(m.importe) + '</td>'
+       + '<td class="tr">'    + ticketM + '€</td>'
+       + '<td style="min-width:120px">' + bar(bw, 'bar-g') + ' ' + tend + '</td></tr>';
+    prevUds = m.uds;
+  });
+  h += '</tbody></table></div></div>';
+
+  // ── Barras: Menú vs Carta (visual split) ──────────────────────────────────
+  var wM = pm.pct_menu_imp;
+  var wC = (100 - wM);
+  h += '<div class="sec" style="margin-bottom:14px">'
+     + '<div class="sec-title">Distribución importe: Menú vs Carta</div>'
+     + '<div style="display:flex;height:22px;border-radius:6px;overflow:hidden;margin-top:8px">'
+     + '<div style="width:' + wM.toFixed(1) + '%;background:#86efac;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#15803d">' + (wM > 8 ? wM.toFixed(1) + '% Menú' : '') + '</div>'
+     + '<div style="width:' + wC.toFixed(1) + '%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1d4ed8">' + (wC > 8 ? wC.toFixed(1) + '% Carta' : '') + '</div>'
+     + '</div></div>';
+
+  // ── Tablas: Menús + Familias carta ────────────────────────────────────────
+  h += '<div class="two-col">';
+
+  // Tabla menús
+  h += '<div class="sec"><div class="sec-title">Menús vendidos (unidad real)</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Menú</th><th class="tr">Uds</th><th class="tr">% Uds</th><th class="tr">% Imp.</th><th>Vol.</th></tr></thead><tbody>';
+  pm.menus.forEach(function(m) {
+    h += '<tr><td class="tc">' + m.rank + '</td>'
+       + '<td class="fw">'     + m.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(m.uds) + '</td>'
+       + '<td class="tr">'     + m.pct.toFixed(1) + '%</td>'
+       + '<td class="tr">'     + m.pct_imp.toFixed(1) + '%</td>'
+       + '<td>'                + bar(m.bar_w, 'bar-g') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Tabla familias (menú + carta)
+  h += '<div class="sec"><div class="sec-title">Familias (excl. componentes menú)</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Familia</th><th class="tr">Uds</th><th class="tr">% total</th><th>Tipo</th><th>Peso</th></tr></thead><tbody>';
+  pm.top_fams.forEach(function(f) {
+    var tcls = f.tipo === 'menu' ? 'bg' : 'bb';
+    var tlbl = f.tipo === 'menu' ? 'Menú' : 'Carta';
+    h += '<tr><td class="tc">' + f.rank + '</td>'
+       + '<td class="fw">'     + f.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(f.uds) + '</td>'
+       + '<td class="tr">'     + f.pct.toFixed(1) + '%</td>'
+       + '<td>'                + bdg(tlbl, tcls) + '</td>'
+       + '<td>'                + bar(f.bar_w, f.tipo === 'menu' ? 'bar-g' : 'bar-b') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '</div>'; // two-col
+
+  // Tabla top productos carta
+  h += '<div class="sec"><div class="sec-title">Top 20 productos carta (sin componentes menú)</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>#</th><th>Producto</th><th class="tr">Uds</th><th class="tr">% total</th><th>Volumen</th></tr></thead><tbody>';
+  pm.carta.forEach(function(p) {
+    h += '<tr><td class="tc">' + p.rank + '</td>'
+       + '<td class="fw">'     + p.nombre + '</td>'
+       + '<td class="tr fm">'  + fmt(p.uds) + '</td>'
+       + '<td class="tr">'     + p.pct.toFixed(1) + '%</td>'
+       + '<td>'                + bar(p.bar_w, 'bar-b') + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  document.getElementById('page-pm').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   OMNES
+   ═══════════════════════════════════════════════════════════════════ */
+function renderOm() {
+  var h = '<div class="alert info">Metodologia Omnes: Apertura ≤2.5x (&lt;10 platos) o ≤3x (&gt;9). Ratio D/O ideal 0.85–1.05.</div>';
+  h += '<div class="sec"><div class="sec-title">Análisis precios por subfamilia</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th>Subfamilia</th><th class="tc">Prods.</th>'
+     + '<th class="tr">P.Min</th><th class="tr">P.Max</th>'
+     + '<th class="tc">Baja</th><th class="tc">Media</th><th class="tc">Alta</th>'
+     + '<th class="tr">Apertura</th><th class="tr">Limite</th><th>Apertura</th>'
+     + '<th class="tr">D/O</th><th>D/O</th></tr></thead><tbody>';
+  DATA.om.omnes.forEach(function(o) {
+    var pmin = o.pmin != null ? fmt(o.pmin, 2) : '\u2014';
+    var pmax = o.pmax != null ? fmt(o.pmax, 2) : '\u2014';
+    h += '<tr><td class="fw">' + o.sf + '</td>'
+       + '<td class="tc">' + (o.np    || '\u2014') + '</td>'
+       + '<td class="tr">' + pmin + '</td>'
+       + '<td class="tr">' + pmax + '</td>'
+       + '<td class="tc">' + (o.baja   || '\u2014') + '</td>'
+       + '<td class="tc">' + (o.media_p|| '\u2014') + '</td>'
+       + '<td class="tc">' + (o.alta   || '\u2014') + '</td>'
+       + '<td class="tr fw">' + (o.aper != null ? o.aper : '\u2014') + '</td>'
+       + '<td class="tr">' + (o.lim    || '\u2014') + '</td>'
+       + '<td>'            + bdg(o.est_ap, o.ap_cls) + '</td>'
+       + '<td class="tr fw">' + (o.ratio_do != null ? o.ratio_do : '\u2014') + '</td>'
+       + '<td>'            + bdg(o.est_do, o.do_cls) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  document.getElementById('page-om').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   P&L EBITDA
+   ═══════════════════════════════════════════════════════════════════ */
+function renderPl() {
+  var pl = DATA.pl;
+  var h  = '';
+
+  var L = pl.labels;
+  if (pl.e_mar < 0) {
+    h += '<div class="alert err">' + L.m1 + ': EBITDA ' + fmt(pl.e_mar) + '€ ('
+       + pl.ebitda_mar_pct.toFixed(1) + '%). CMV '
+       + pl.cmv_mar_pct.toFixed(1) + '% · Personal '
+       + pl.per_mar_pct.toFixed(1) + '%. Acumulado ' + L.acum + ': '
+       + fmt(pl.e_acum) + '€.</div>';
+  }
+
+  h += '<div class="kpi-row">'
+     + '<div class="kpi ' + (pl.e_mar  < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_mar)  + '€</div><div class="kpi-lbl">EBITDA ' + L.m1 + '</div><div class="kpi-sub">'   + pl.ebitda_mar_pct.toFixed(1)  + '%</div></div>'
+     + '<div class="kpi ' + (pl.e_feb  < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_feb)  + '€</div><div class="kpi-lbl">EBITDA ' + L.m2 + '</div><div class="kpi-sub">'   + (pl.v_feb ? (pl.e_feb/pl.v_feb*100).toFixed(1) : 0) + '%</div></div>'
+     + '<div class="kpi ' + (pl.e_acum < 0 ? 'bad' : 'ok') + '"><div class="kpi-val">' + fmt(pl.e_acum) + '€</div><div class="kpi-lbl">EBITDA Acumulado ' + L.acum + '</div><div class="kpi-sub">' + pl.ebitda_acum_pct.toFixed(1) + '%</div></div>'
+     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_mar)  + '€</div><div class="kpi-lbl">Ventas ' + L.m1 + '</div></div>'
+     + '<div class="kpi"><div class="kpi-val">'   + fmt(pl.v_acum) + '€</div><div class="kpi-lbl">Ventas ' + L.acum + '</div></div>'
+     + '</div>';
+
+  var meses = (L.meses && L.meses.length) ? L.meses : [L.m3, L.m2, L.m1];
+  var nCols = 1 + meses.length * 2 + 2;
+
+  h += '<div class="sec"><div class="sec-title">P&amp;L EBITDA — ' + L.m1 + ' 2026 (mes más reciente) · Fuente: Yurest + Tickets + Caja 1</div><div class="tbl-wrap"><table>'
+     + '<thead><tr><th style="width:220px">Concepto</th>';
+  meses.forEach(function(m, i) {
+    var isMar = (i === meses.length - 1);
+    h += '<th class="tr' + (isMar ? ' mar' : '') + '">' + m + ' €</th>'
+       + '<th class="tr pc' + (isMar ? ' mar' : '') + '">%</th>';
+  });
+  h += '<th class="tr">Acum. ' + L.acum + ' €</th><th class="tr pc">%</th>'
+     + '</tr></thead><tbody>';
+
+  function plCell(mc) {
+    return '<td class="tr fm' + (mc.v < 0 ? ' neg' : '') + '">' + fmt(mc.v) + '</td>'
+         + '<td class="tr pc">' + mc.p.toFixed(1) + '%</td>';
+  }
+
+  pl.rows.forEach(function(row) {
+    if (row.section) {
+      h += '<tr class="pl-section"><td colspan="' + nCols + '">' + row.label + '</td></tr>';
+      return;
+    }
+    var rowCls = '';
+    var refCol = row.cols ? row.cols[row.cols.length - 1] : row.mar;
+    if (row.bold) {
+      rowCls = 'pl-bold ' + (refCol.v < 0 ? 'neg-row' : 'pos-row');
+    } else if (row.subtotal) {
+      rowCls = 'pl-sub';
+    }
+    var lbl = row.bold ? '<strong>' + row.label + '</strong>' : row.label;
+
+    var colsData = row.cols || [row.ene, row.feb, row.mar];
+
+    h += '<tr' + (rowCls ? ' class="' + rowCls + '"' : '') + '>'
+       + '<td>' + lbl + '</td>'
+       + colsData.map(function(mc) { return plCell(mc); }).join('')
+       + plCell(row.acum)
+       + '</tr>\n';
+  });
+
+  h += '</tbody></table></div></div>';
+  document.getElementById('page-pl').innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INICIALIZACIÓN
+   ═══════════════════════════════════════════════════════════════════ */
+async function triggerUpdate() {
+  const btn = document.getElementById('btn-update');
+  btn.disabled = true;
+  btn.textContent = '⏳ Lanzando...';
+  try {
+    const res = await fetch('/.netlify/functions/trigger-update', { method: 'POST' });
+    const data = await res.json();
+    if (data.ok) {
+      btn.textContent = '✓ Lanzado — listo en ~2 min';
+      setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Actualizar datos'; }, 120000);
+    } else {
+      btn.textContent = '✗ Error';
+      setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Actualizar datos'; }, 4000);
+    }
+  } catch {
+    btn.textContent = '✗ Error de red';
+    setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Actualizar datos'; }, 4000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Header subtitle
+  document.getElementById('header-sub').textContent =
+    'Facturado ' + DATA.meta.periodo + ' (neto+C1): ' + fmt(DATA.fac.total_real) + '€'
+    + '  |  ' + DATA.fac.total_dias + ' dias operativos'
+    + '  |  Generado: ' + DATA.meta.generado;
+
+  // Render all pages
+  renderFac();
+  renderPer();
+  renderEv();
+  renderAl();
+  renderPm();
+  renderOm();
+  renderPl();
+});
+</script>
+</body>
+</html>
