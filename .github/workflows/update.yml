@@ -50,17 +50,8 @@ jobs:
           cp netlify.toml Netfily/netlify.toml
           cp netlify/functions/trigger-update.js Netfily/netlify/functions/trigger-update.js
 
-      - name: Deploy a Netlify
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
-        run: |
-          npm install -g netlify-cli@26.1.0 --silent
-          netlify deploy --prod \
-            --auth    "$NETLIFY_AUTH_TOKEN" \
-            --site    "$NETLIFY_SITE_ID"   \
-            --dir     Netfily              \
-            --message "Auto-update $(date +'%d/%m/%Y %H:%M')"
+      # Netlify desactivado (deploy roto por token/CLI, ver ref_pipelines_kpi_tracker_verificacion.md).
+      # tracker-operativo-taperia.pages.dev (Cloudflare) es ahora el sitio en uso.
 
       - name: Deploy a Cloudflare Pages
         env:
