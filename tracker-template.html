@@ -83,6 +83,7 @@ th.mar{background:#fef2f2;color:#b91c1c}
   <div class="nav-tab"         onclick="showPage('pm',this)">Product Mix</div>
   <div class="nav-tab"         onclick="showPage('om',this)">Omnes</div>
   <div class="nav-tab"         onclick="showPage('pl',this)">P&amp;L EBITDA</div>
+  <div class="nav-tab"         onclick="showPage('mn',this)">Menú</div>
 </div>
 
 <div id="page-fac" class="page active"></div>
@@ -92,6 +93,111 @@ th.mar{background:#fef2f2;color:#b91c1c}
 <div id="page-pm"  class="page"></div>
 <div id="page-om"  class="page"></div>
 <div id="page-pl"  class="page"></div>
+<div id="page-mn"  class="page">
+<!-- Contenido estático — no depende de DATA/generar_tracker.py. Fuente: análisis de menús 2026 (28/28 semanas PDF + costes reales Yurest Cocina→Recetas). Actualizar a mano si cambia el análisis. -->
+
+<div class="alert info">Menú del día 2026: 28 de 28 semanas leídas directamente de los PDF reales publicados (la semana 23, un escaneo ilegible por software, se transcribió a mano). Rentabilidad de los 13 platos más repetidos verificada con coste real de <b>Cocina &rarr; Recetas</b> en Yurest &mdash; cero estimaciones. Generado 06/08/2026.</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-val">129</div><div class="kpi-lbl">Platos en el banco</div></div>
+  <div class="kpi"><div class="kpi-val">79 / 83</div><div class="kpi-lbl">Primeros / Segundos distintos</div></div>
+  <div class="kpi ok"><div class="kpi-val">9/9</div><div class="kpi-lbl">Postres = banco catalogado</div></div>
+  <div class="kpi ok"><div class="kpi-val">72-96%</div><div class="kpi-lbl">Margen 13 platos top (Recetas real)</div></div>
+  <div class="kpi bad"><div class="kpi-val">5</div><div class="kpi-lbl">Platos con margen negativo (2025)</div></div>
+</div>
+
+<div class="two-col">
+<div class="sec">
+  <div class="sec-title">Primeros más repetidos &mdash; 2026 (28 semanas)</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Plato</th><th class="tr">Semanas</th><th>Presencia</th></tr>
+    <tr><td>Flors de carxofa amb pernil ibèric</td><td class="tr fm">8/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:28.6%"></div></div></td></tr>
+    <tr><td>Flors de carxofa amb encenalls d'ibèric</td><td class="tr fm">6/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:21.4%"></div></div></td></tr>
+    <tr><td>Amanida Cèsar</td><td class="tr fm">6/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:21.4%"></div></div></td></tr>
+    <tr><td>Amanida russa casolana</td><td class="tr fm">6/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:21.4%"></div></div></td></tr>
+    <tr><td>Gaspatxo de remolatxa</td><td class="tr fm">6/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:21.4%"></div></div></td></tr>
+    <tr><td>Amanida de l'horta amb tonyina</td><td class="tr fm">5/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:17.9%"></div></div></td></tr>
+    <tr><td>Matrimoni</td><td class="tr fm">5/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:17.9%"></div></div></td></tr>
+    <tr><td>Bomba de la Taperia</td><td class="tr fm">4/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:14.3%"></div></div></td></tr>
+    <tr><td>Arròs a la cubana amb plàtan fregit</td><td class="tr fm">4/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:14.3%"></div></div></td></tr>
+  </table></div>
+  <div class="pc">Carxofa combinando variantes de nombre: 19/28 semanas (68%) &mdash; el primero más fiel del año.</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Segundos más repetidos &mdash; 2026 (28 semanas)</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Plato</th><th class="tr">Semanas</th><th>Presencia</th></tr>
+    <tr><td>Cargols al forn amb allioli gratinat</td><td class="tr fm">6/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:21.4%"></div></div></td></tr>
+    <tr><td>Canelons de foie trufat</td><td class="tr fm">6/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:21.4%"></div></div></td></tr>
+    <tr><td>Pit de pollastre a la planxa</td><td class="tr fm">5/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:17.9%"></div></div></td></tr>
+    <tr><td>Coca pizza quatre formatges</td><td class="tr fm">5/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:17.9%"></div></div></td></tr>
+    <tr><td>Coca pizza americana</td><td class="tr fm">5/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:17.9%"></div></div></td></tr>
+    <tr><td>Ous estrellats amb ibèric</td><td class="tr fm">4/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:14.3%"></div></div></td></tr>
+    <tr><td>Carn en salsa</td><td class="tr fm">4/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:14.3%"></div></div></td></tr>
+    <tr><td>Burguer de vedella a la planxa</td><td class="tr fm">4/28</td><td><div class="bar-track"><div class="bar-fill bar-b" style="width:14.3%"></div></div></td></tr>
+  </table></div>
+  <div class="pc">Calamars (54%), Canelons de foie (43%), Ous estrellats (54%) combinando variantes &mdash; familias fijas que rotan de nombre.</div>
+</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Rentabilidad real 2026 &mdash; coste ingrediente a ingrediente (Cocina &rarr; Recetas, Yurest)</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Plato</th><th class="tr">Coste</th><th class="tr">PVP</th><th class="tr">Margen</th><th>%</th></tr>
+    <tr><td>Bomba de la Taperia Mn</td><td class="tr fm">0,58€</td><td class="tr fm">14,90€</td><td class="tr fm pos fw">+14,32€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:96.0%"></div></div></td></tr>
+    <tr><td>Gaspatxo de remolatxa</td><td class="tr fm">0,54€</td><td class="tr fm">14,90€</td><td class="tr fm pos fw">+14,36€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:96.0%"></div></div></td></tr>
+    <tr><td>Matrimoni</td><td class="tr fm">1,92€</td><td class="tr fm">19,90€</td><td class="tr fm pos fw">+17,98€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:90.0%"></div></div></td></tr>
+    <tr><td>Flors Carxofa Mn</td><td class="tr fm">2,02€</td><td class="tr fm">19,90€</td><td class="tr fm pos fw">+17,88€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:90.0%"></div></div></td></tr>
+    <tr><td>Coca pizza Quatre formatges Mn</td><td class="tr fm">1,40€</td><td class="tr fm">14,90€</td><td class="tr fm pos fw">+13,50€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:91.0%"></div></div></td></tr>
+    <tr><td>Arròs a la cubana</td><td class="tr fm">0,88€</td><td class="tr fm">14,90€</td><td class="tr fm pos fw">+14,02€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:94.0%"></div></div></td></tr>
+    <tr><td>Ous amb ibèric Mn</td><td class="tr fm">2,31€</td><td class="tr fm">20,90€</td><td class="tr fm pos fw">+18,59€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:89.0%"></div></div></td></tr>
+    <tr><td>Canelones de foie Mn</td><td class="tr fm">2,86€</td><td class="tr fm">17,90€</td><td class="tr fm pos fw">+15,04€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:84.0%"></div></div></td></tr>
+    <tr><td>Coca pizza Americana Mn</td><td class="tr fm">2,05€</td><td class="tr fm">14,90€</td><td class="tr fm pos fw">+12,85€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:86.0%"></div></div></td></tr>
+    <tr><td>Carn amb salsa <span class="pc">(lote 16 rac.)</span></td><td class="tr fm">4,18€</td><td class="tr fm">17,90€</td><td class="tr fm pos fw">+13,72€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:77.0%"></div></div></td></tr>
+    <tr><td>Hamburguesa (vedella)</td><td class="tr fm">3,26€</td><td class="tr fm">14,90€</td><td class="tr fm pos fw">+11,64€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:78.0%"></div></div></td></tr>
+    <tr><td>Cargols forn Mn</td><td class="tr fm">4,28€</td><td class="tr fm">19,90€</td><td class="tr fm pos fw">+15,62€</td><td><div class="bar-track"><div class="bar-fill bar-g" style="width:79.0%"></div></div></td></tr>
+    <tr><td>Amanida Cèsar Mn</td><td class="tr fm">4,94€</td><td class="tr fm">17,90€</td><td class="tr fm pos fw">+12,96€</td><td><div class="bar-track"><div class="bar-fill bar-o" style="width:72.0%"></div></div></td></tr>
+  </table></div>
+  <div class="pc">Ninguno de los 13 platos más repetidos pierde dinero &mdash; margen entre 72% (Amanida Cèsar) y 96% (Bomba, Gaspatxo remolatxa).</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Platos que sí pierden dinero &mdash; ventas reales 2025</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Plato</th><th class="tr">Uds</th><th class="tr">€/ud</th><th class="tr">Total</th></tr>
+    <tr><td>Peix del dia a la planxa (bacaladilla)</td><td class="tr fm">29</td><td class="tr fm neg">-2,95€</td><td class="tr fm neg fw">-86€</td></tr>
+    <tr><td>Calamars a la planxa amb amanida</td><td class="tr fm">32</td><td class="tr fm neg">-1,83€</td><td class="tr fm neg fw">-59€</td></tr>
+    <tr><td>Calamars a la planxa amb guarnició</td><td class="tr fm">14</td><td class="tr fm neg">-2,33€</td><td class="tr fm neg fw">-33€</td></tr>
+    <tr><td>Estofat de patata i calamar</td><td class="tr fm">22</td><td class="tr fm neg">-1,44€</td><td class="tr fm neg fw">-32€</td></tr>
+    <tr><td>Amanida amb formatges i fruits secs</td><td class="tr fm">18</td><td class="tr fm neg">-1,35€</td><td class="tr fm neg fw">-24€</td></tr>
+  </table></div>
+  <div class="pc">Ninguno coincide con los 13 platos actuales &mdash; carta ya renovada. Con &ge;5 uds hay &ge;16 platos más con margen negativo en 2025.</div>
+</div>
+
+<div class="alert err">2025 vs 2026 (ene&ndash;abr, único tramo con datos 2026 cargados): el <b>ritmo semanal de menús vendidos baja 45&ndash;57%</b> en enero&ndash;marzo. Pero la facturación total de esos mismos meses (hoja Facturación 2026) va <b>plana o al alza</b> (+10,1% ene, +2,6% feb, -2,1% mar, +9,3% abr vs 2025) &mdash; así que no es una caída real del negocio, apunta más bien a que suben otras partidas (carta, bebida) mientras el menú del día pierde peso, o a huecos en la carga de datos de Product Mix. A vigilar, no a dar por hecho todavía.</div>
+
+<div class="sec">
+  <div class="sec-title">Menús del día vendidos por mes &mdash; 2025 real vs 2026 (parcial)</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Mes</th><th class="tr">2025</th><th class="tr">Ritmo 25 (u/sem)</th><th class="tr">2026</th><th class="tr">Sem. con dato</th><th class="tr">Ritmo 26 (u/sem)</th><th class="tr">Var. ritmo</th></tr>
+    <tr><td>Enero</td><td class="tr fm">165</td><td class="tr fm">41,2</td><td class="tr fm">108</td><td class="tr fm">5</td><td class="tr fm">21,6</td><td class="tr fm neg fw">-48%</td></tr>
+    <tr><td>Febrero</td><td class="tr fm">193</td><td class="tr fm">48,2</td><td class="tr fm">62</td><td class="tr fm">3</td><td class="tr fm">20,7</td><td class="tr fm neg fw">-57%</td></tr>
+    <tr><td>Marzo</td><td class="tr fm">159</td><td class="tr fm">39,8</td><td class="tr fm">66</td><td class="tr fm">3</td><td class="tr fm">22,0</td><td class="tr fm neg fw">-45%</td></tr>
+    <tr><td>Abril</td><td class="tr fm">77</td><td class="tr fm">19,2</td><td class="tr fm">30</td><td class="tr fm">1</td><td class="tr fm">30,0</td><td class="tr fm pos fw">+56%</td></tr>
+    <tr><td>Mayo</td><td class="tr fm">68</td><td class="tr fm">17,0</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Junio</td><td class="tr fm">145</td><td class="tr fm">29,0</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Julio</td><td class="tr fm">114</td><td class="tr fm">23,8</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Agosto</td><td class="tr fm">156</td><td class="tr fm">36,0</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Septiembre</td><td class="tr fm">128</td><td class="tr fm">29,8</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Octubre</td><td class="tr fm">96</td><td class="tr fm">21,8</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Noviembre</td><td class="tr fm">97</td><td class="tr fm">32,3</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+    <tr><td>Diciembre</td><td class="tr fm">71</td><td class="tr fm">17,8</td><td class="tr fm">&mdash;</td><td class="tr fm">0</td><td class="tr fm">&mdash;</td><td class="tc"><span class="badge bgr">Sin dato</span></td></tr>
+  </table></div>
+  <div class="pc">2025 completo: 1.469 menús (fuente BD_Datos). 2026: solo hay semanas sueltas de Product Mix Unificado hasta el 19/04 &mdash; abril con 1 sola semana no es representativo del ritmo real. Mayo&ndash;agosto 2026 aún no tienen ninguna semana cargada.</div>
+</div>
+
+</div>
 
 <script>
 /* ─── DATOS (reemplazado automáticamente por generar_tracker.py) ─── */
