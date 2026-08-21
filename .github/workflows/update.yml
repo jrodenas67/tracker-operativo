@@ -44,11 +44,12 @@ jobs:
 
       - name: Preparar carpeta deploy
         run: |
-          mkdir -p Netfily/netlify/functions
           cp tracker-operativo.html Netfily/index.html
           cp tracker-operativo.html Netfily/tracker-operativo.html
-          cp netlify.toml Netfily/netlify.toml
-          cp netlify/functions/trigger-update.js Netfily/netlify/functions/trigger-update.js
+          # Netfily/_worker.js (Cloudflare Pages Function del botón "Actualizar datos") ya está
+          # en el repo; NO copiar netlify.toml ni netlify/functions (obsoletos e interfieren
+          # con la compilación del Worker de Cloudflare).
+          rm -rf Netfily/netlify Netfily/netlify.toml
 
       # Netlify desactivado (deploy roto por token/CLI, ver ref_pipelines_kpi_tracker_verificacion.md).
       # tracker-operativo-taperia.pages.dev (Cloudflare) es ahora el sitio en uso.
