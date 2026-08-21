@@ -714,7 +714,7 @@ async function triggerUpdate() {
   btn.disabled = true;
   btn.textContent = '⏳ Lanzando...';
   try {
-    const res = await fetch('/.netlify/functions/trigger-update', { method: 'POST' });
+    const res = await fetch('/trigger-update', { method: 'POST' });
     const data = await res.json();
     if (data.ok) {
       btn.textContent = '✓ Lanzado — listo en ~2 min';
